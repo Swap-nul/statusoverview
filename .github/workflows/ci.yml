@@ -1,0 +1,22 @@
+# --For angular 17+ version that support Node.js 18.x
+name: Statusoverview App
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x' # Use Node.js 18.x, compatible with Angular 17+
+    - name: Install pnpm
+      run: npm install -g pnpm # Install pnpm globally
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile # Use pnpm to install dependencies with lockfile integrity
+    - name: Build Statusoverview Angular project
+      run: pnpm build # Build the project using pnpm
