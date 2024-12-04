@@ -1,5 +1,5 @@
 # --For angular 17+ version that support Node.js 18.x
-name: Statusoverview App
+name: Build
 on:
   push:
     branches:
