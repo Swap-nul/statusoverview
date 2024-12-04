@@ -16,6 +16,12 @@ jobs:
         node-version: '20.x' # Use Node.js 18.x, compatible with Angular 17+
     - name: Install pnpm
       run: npm install -g pnpm # Install pnpm globally
+    - name: Configure pnpm to use a mirror like the one hosted by Cloudflare
+      run: pnpm config set registry https://registry.npmmirror.com/
+    - name: Reduce the number of simultaneous requests to avoid triggering rate limits   
+      run: pnpm config set fetch-retries 5
+    - name: Reduce the number of simultaneous requests to avoid triggering rate limits
+      run: pnpm config set fetch-concurrency 5
     - name: Install dependencies
       run: pnpm install --frozen-lockfile # Use pnpm to install dependencies with lockfile integrity
     - name: Build Statusoverview Angular project
