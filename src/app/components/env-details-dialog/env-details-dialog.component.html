@@ -1,0 +1,59 @@
+<h1 mat-dialog-title>
+  <b><i>{{envName}}</i></b> &nbsp; Details
+</h1>
+<mat-dialog-content class="mat-typography">
+
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+    </ng-container>
+
+    <!--App Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.appName}} </td>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef> Type </th>
+      <td mat-cell *matCellDef="let element">
+        <span>
+          <mat-icon *ngIf="element?.appType === ''" svgIcon="app">{{element.appType}}</mat-icon>
+          <mat-icon *ngIf="element?.appType === 'Spring'" svgIcon="springio"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'Mule'" svgIcon="mulesoft"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'ShellScript'" svgIcon="shellscript"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'Python'" svgIcon="python"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'NodeJS'" svgIcon="nodejs"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'PowerShell'" svgIcon="powershell"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'React'" svgIcon="react"></mat-icon>
+          <mat-icon *ngIf="element?.appType === 'DotNet'" svgIcon="dotnet"></mat-icon>
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Url Column -->
+    <ng-container matColumnDef="url">
+      <th mat-header-cell *matHeaderCellDef> Url </th>
+      <td mat-cell *matCellDef="let element">
+        <span>
+          <mat-icon (click)="copyToClipboard(element.url!)" *ngIf="element?.url" svgIcon="copyToClipboard"></mat-icon>
+          <mat-icon matTooltip="Open in new tab" matTooltipPosition="above" (click)="goToLink(element.url)"
+            *ngIf="element?.url" svgIcon="externalLink"></mat-icon>
+          {{element.url}}
+        </span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close><mat-icon svgIcon="close"></mat-icon>Close</button>
+</mat-dialog-actions>

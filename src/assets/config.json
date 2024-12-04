@@ -1,0 +1,12 @@
+{
+  "argoCD_nonprod_Url": "https://argocd.hostname.cloud/applications/",
+  "argoCD_prod_Url": "https://argocd.prod_hostname.cloud/applications/",
+  "argoCD_dr_Url": "https://argocd.dr_hostname.cloud/applications/",
+
+  "kibanaFilterUrl": "https://HOSTNAME/s/PARENT/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:60000),time:(from:now-30m,to:now))&_a=(columns:!(message),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logs-*',key:kubernetes.labels.app_kubernetes_io%2Fname,negate:!f,params:(query:APP_NAME),type:phrase),query:(match_phrase:(kubernetes.labels.app_kubernetes_io%2Fname:APP_NAME))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logs-*',key:message,negate:!f,type:exists,value:exists),query:(exists:(field:message))),('$state':(store:appState),meta:(alias:!n,disabled:!f,field:message,index:'logs-*',key:message,negate:!t,params:(query:%5Belastic-apm-server-reporter%5D),type:phrase),query:(match_phrase:(message:%5Belastic-apm-server-reporter%5D)))),grid:(columns:(host.hostname:(width:251),kubernetes.deployment.name:(width:319))),hideChart:!t,index:'logs-*',interval:auto,query:(language:kuery,query:''),sort:!(!('@timestamp',desc)))",
+  "KibanaHOSTNAME_PROD_DR": "kibana.prod_hostname.cloud",
+  "KibanaHOSTNAME_NONPROD": "kibana.hostname.cloud",
+
+  "database_hostname_port": "http://localhost:3000",
+  "database_baseUrl": "/statusoverview"
+}

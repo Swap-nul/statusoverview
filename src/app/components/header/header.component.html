@@ -1,0 +1,31 @@
+<mat-toolbar
+  class="custom-mat-toolbar"
+  [ngClass]="{ 'custom-mat-toolbar-dark': addCssDarkmode }"
+>
+  <img src="../../../assets/images/SO-logo.png" class="logo"/>
+  <span class="toolbar-spacer">
+    <div style="vertical-align: baseline">Status Overview</div>
+  </span>
+  <a
+    href="https://github.com/swapnil512/statusoverview"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Go to Repository"
+    style="color: rgb(210, 210, 210); text-decoration: none"
+    class="repoText"
+  >
+    <mat-icon
+      style="height: 40px; width: 40px"
+      svgIcon="github_repo"
+    ></mat-icon>
+    GitHub
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+  <div>
+    <mat-icon *ngIf="mode == false" svgIcon="light"></mat-icon>
+    <mat-icon *ngIf="mode == true" svgIcon="dark"></mat-icon>
+    <input type="checkbox" [formControl]="toggleControl" id="switch" />
+    <label for="switch">Toggle</label>
+  </div>
+</mat-toolbar>

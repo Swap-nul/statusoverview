@@ -1,0 +1,31 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-column-app {
+    width: 10%;
+    white-space: nowrap;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  .mat-basic-chip {
+    font-size: 10px;
+    text-align: right;
+  }
+  
+  .filter-toolbar {
+    display: flex;
+    flex-flow: row;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .mat-divider.mat-divider-vertical {
+    border-color: #ffcd33;
+    border-right-width: 2px;
+  }
+  

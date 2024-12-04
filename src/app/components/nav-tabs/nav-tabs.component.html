@@ -1,0 +1,25 @@
+<mat-tab-group
+  mat-stretch-tabs="false"
+  mat-align-tabs="start"
+  animationDuration="0ms"
+>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon svgIcon="tag"></mat-icon>
+      <span><b> Project Alpha </b></span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-project-alpha></app-project-alpha>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon svgIcon="tag"></mat-icon>
+      <span><b>Project Beta</b></span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-project-beta></app-project-beta>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

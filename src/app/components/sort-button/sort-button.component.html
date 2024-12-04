@@ -1,0 +1,31 @@
+<button mat-icon-button color="basic" matTooltip="{{ selectedFieldLabel || 'Select to Sort By' }}"
+  matTooltipPosition="right" [matMenuTriggerFor]="menu" *ngIf="!isSorting">
+  <mat-icon svgIcon="sort"></mat-icon>
+</button>
+<button mat-icon-button color="basic" matTooltip="{{ selectedFieldLabel || 'Select to Sort By' }}"
+  matTooltipPosition="right" [matMenuTriggerFor]="menu" *ngIf="isSorting">
+  <mat-icon svgIcon="sort_active"></mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="selectField('')" style="font-style: italic !important;"><mat-icon
+      svgIcon="clear_sort"></mat-icon>Clear Sort</button>
+  <button mat-menu-item [matMenuTriggerFor]="deploy_details">Deployment Details</button>
+  <button mat-menu-item [matMenuTriggerFor]="commit_details">Commit Details</button>
+  <button mat-menu-item (click)="selectField('tag')">Current Tag</button>
+  <button mat-menu-item (click)="selectField('previous_tag')">Previous Tag</button>
+  <button mat-menu-item (click)="selectField('latest_build_tag')">Latest Build Tag</button>
+  <button mat-menu-item (click)="selectField('status')">Status</button>
+</mat-menu>
+
+<mat-menu #commit_details="matMenu">
+  <button mat-menu-item (click)="selectField('commitby')">Commit By</button>
+  <button mat-menu-item (click)="selectField('commit_id')">Commit Id</button>
+  <button mat-menu-item (click)="selectField('commitmessage')">Commit Message</button>
+</mat-menu>
+
+<mat-menu #deploy_details="matMenu">
+  <button mat-menu-item (click)="selectField('image_deployed_at')">Deployed At</button>
+  <button mat-menu-item (click)="selectField('image_deployed_by')">Deployed By</button>
+  <button mat-menu-item (click)="selectField('branch')">Deployed Branch</button>
+  <button mat-menu-item (click)="selectField('image_created_at')">Image Created At</button>
+</mat-menu>

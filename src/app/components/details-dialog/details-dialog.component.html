@@ -1,0 +1,168 @@
+<h1 mat-dialog-title>
+  <mat-icon svgIcon="deployment"></mat-icon> App <b><i>{{data.app_name}}</i></b>
+</h1>
+<mat-dialog-content class="mat-typography">
+
+  <h4>
+    <span>
+      <mat-icon svgIcon="tag"></mat-icon>
+      <b> Tag: </b> {{data.deployDetails.tag}}
+      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+        (click)="copyToClipboard(data.deployDetails.tag)" svgIcon="copyToClipboard"></mat-icon>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <mat-icon svgIcon="tag"></mat-icon>
+      <b> Previous Tag: </b> {{data.deployDetails.previous_tag}}
+      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+        (click)="copyToClipboard(data.deployDetails.previous_tag)" svgIcon="copyToClipboard"></mat-icon>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <mat-icon svgIcon="tag"></mat-icon>
+      <b> Latest Build Tag: </b> {{data.deployDetails.latest_build_tag}}
+      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+        (click)="copyToClipboard(data.deployDetails.latest_build_tag)" svgIcon="copyToClipboard"></mat-icon>
+    </span>
+  </h4>
+
+  <h4><mat-icon svgIcon="env"></mat-icon> <b> Environment: </b> {{data.envName}}
+    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(data.envName)"
+      svgIcon="copyToClipboard"></mat-icon>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    Open ArgoCD : <mat-icon matTooltip="open ArgoCD" matTooltipPosition="above"
+      (click)="goToLink(data.app_name,data.envName)" svgIcon="argo"></mat-icon>
+  </h4>
+  <h4><b> Commit Details: </b> <mat-icon svgIcon="commit"></mat-icon></h4>
+  <ul>
+    <li>
+      <span><mat-icon svgIcon="hashtag"></mat-icon><b> Commit Id: </b></span>
+      <span>{{data.deployDetails.commit_id}}</span>
+      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+        (click)="copyToClipboard(data.deployDetails.commit_id)" svgIcon="copyToClipboard"></mat-icon>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="message"></mat-icon><b> Commit Message: </b></span>
+      <span>{{data.deployDetails.commitmessage}}</span>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="person"></mat-icon><b> Commit By: </b></span>
+      <span>{{data.deployDetails.commitby}}</span>
+    </li>
+  </ul>
+
+  <h4><b> Deployment Details: </b> <mat-icon svgIcon="rocket"></mat-icon></h4>
+
+  <ul>
+    <li>
+      <span><mat-icon svgIcon="time"></mat-icon><b> Deployed At: </b></span>
+      <span>{{data.deployDetails.image_deployed_at}}</span>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="person"></mat-icon><b> Deployed By: </b></span>
+      <span>{{data.deployDetails.image_deployed_by}}</span>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="branch"></mat-icon><b> Deployed Branch: </b></span>
+      <span>{{data.deployDetails.branch}}</span>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="question"></mat-icon><b> Deployment Status: </b></span>
+      <span>
+        {{data.deployDetails.status}}
+        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
+          *ngIf="data.deployDetails?.status === 'Healthy'" svgIcon="greenHeart"></mat-icon>
+        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
+          *ngIf="data.deployDetails?.status === 'Progressing'" svgIcon="progress"></mat-icon>
+        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
+          *ngIf="data.deployDetails?.status === 'Degraded'" svgIcon="brokenHeart"></mat-icon>
+        <mat-icon matTooltip="Null Status" matTooltipPosition="right" *ngIf="data.deployDetails?.status === ''"
+          svgIcon="nullStatus"></mat-icon>
+      </span>
+    </li>
+    <li>
+      <span><mat-icon svgIcon="time"></mat-icon><b> Image Created At: </b></span>
+      <span>{{data.deployDetails.image_created_at}}</span>
+    </li>
+  </ul>
+
+
+  <h4> <b> Builds List  </b> </h4>
+  <div>
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b><i>{{data.deployDetails.branch}}</i></b> &nbsp; branch >
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef>NO. </th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+          </ng-container>
+
+          <!-- Build Version Column -->
+          <ng-container matColumnDef="version">
+            <th mat-header-cell *matHeaderCellDef>
+              Build Version
+            </th>
+            <td mat-cell *matCellDef="let element"> {{element.tag}}
+              <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(element.tag)"
+                svgIcon="copyToClipboard"></mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- created_at Column -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>
+              Created At
+            </th>
+            <td mat-cell *matCellDef="let element"> {{element.created_at}} </td>
+          </ng-container>
+
+          <!-- commitby Column -->
+          <ng-container matColumnDef="commitby">
+            <th mat-header-cell *matHeaderCellDef>
+              Commit By
+            </th>
+            <td mat-cell *matCellDef="let element"> {{element.commitby}} </td>
+          </ng-container>
+
+          <!-- commitby Column -->
+          <ng-container matColumnDef="commitmessage">
+            <th mat-header-cell *matHeaderCellDef>
+              Commit Message
+            </th>
+            <td mat-cell *matCellDef="let element"> {{element.commitmessage}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  &nbsp;
+  &nbsp;
+  <h4><mat-icon svgIcon="portfolio"></mat-icon>
+    <b> Portfolio: </b> {{data.portfolio}}
+    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(data.portfolio)"
+      svgIcon="copyToClipboard"></mat-icon>
+  </h4>
+  <h4><mat-icon svgIcon="namespace"></mat-icon>
+    <b> Namespace: </b> {{data.deployDetails.namespace}}
+    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+      (click)="copyToClipboard(data.deployDetails.namespace)" svgIcon="copyToClipboard"></mat-icon>
+  </h4>
+  <h4><mat-icon svgIcon="cluster"></mat-icon>
+    <b> Cluster: </b> {{data.deployDetails.cluster}}
+    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
+      (click)="copyToClipboard(data.deployDetails.cluster)" svgIcon="copyToClipboard"></mat-icon>
+  </h4>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close><mat-icon svgIcon="close"></mat-icon>Close</button>
+</mat-dialog-actions>

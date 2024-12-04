@@ -1,0 +1,35 @@
+volumes:
+  postgres-statusoverview:
+
+services:
+  statusoverview-db:
+    container_name: statusoverview-db
+    image: postgres
+    ports:
+      - "3579:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pgdbPassword
+      POSTGRES_DB: statusoverview_DB
+    volumes:
+      - postgres-statusoverview:/var/lib/postgresql/data
+    networks:
+      - statusoverview-net
+
+  postgrest:
+    container_name: postgrest
+    image: postgrest/postgrest:latest
+    depends_on:
+      - statusoverview-db  # Ensuring postgrest starts after statusoverview-db
+    ports:
+      - "3000:3000"
+    environment:
+      - PGRST_DB_URI=postgres://postgres:pgdbPassword@host.docker.internal:3579/statusoverview_DB
+      - PGRST_DB_SCHEMA=public
+      - PGRST_DB_ANON_ROLE=postgres  # Here the user should be DIFFERENT, Currently using the root user
+      - PGRST_OPENAPI_SERVER_PROXY_URI=http://host.docker.internal:3000
+    networks:
+      - statusoverview-net
+
+networks:
+  statusoverview-net:
