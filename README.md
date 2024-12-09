@@ -21,7 +21,7 @@
 
 ---
 
-## How to Use
+## Quick Start Guide
 
 Download the Git repository and navigate to the root folder.
 
