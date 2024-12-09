@@ -85,12 +85,9 @@ The frontend app will now be accessible at `http://localhost:4200` by default.
 ### Configuring the Project as Per Your Needs
 
 The project is highly configurable. To customize:
-1. Update environment variables in `.env` files for both the database and frontend:
-   - **Database**: `DATABASE_URL`, `POSTGREST_URL`, etc.
-   - **Frontend**: `API_BASE_URL`, `ENVIRONMENTS` list, etc.
-2. Modify the `docker-compose.yml` file to suit your infrastructure needs.
-3. Update configurations in `statusoverview` services for API endpoints, environment names, and specific project requirements.
-4. As per your project requirements you need to configure 4 files files:
+1. Modify the `docker-compose.yml` file to suit your infrastructure needs.
+2. Update configurations in `statusoverview` services for API endpoints, environment names, and specific project requirements.
+3. As per your project requirements you need to configure 4 files files:
 ````
 src/assests/config.json
 
@@ -129,7 +126,7 @@ Visit the application in your browser at [http://localhost:4200](http://localhos
 To deploy the project in a production environment:
 1. Build the frontend application:
    ```bash
-   npm run build
+   pnpm run build
    ```
    The build artifacts will be stored in the `dist/` directory.
 2. Deploy the `dist/` directory to a web server such as NGINX or Apache.
