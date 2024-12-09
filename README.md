@@ -24,7 +24,7 @@
 ## Pros:
  - Get to know if the latest version is deployed or not, Yellow badge over the verion tag showcases if new verison is available or not.
  - Drill down who did the last deployment with the commit id and commit message
- - ![DrillDownPopUp]( https://swapnil512.github.io/statusoverview/screenshots/drilldown.png?raw=true "Drill Down Popup")
+ - ![DrillDownPopUp](https://swapnil512.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
 
 ## Quick Start Guide
 
