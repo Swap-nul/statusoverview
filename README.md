@@ -4,7 +4,7 @@
 # StatusOverview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/swapnil512/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview" width="838">
+  <img src="https://swapnil512.github.io/swapnil512/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview" width="838">
 </p>
 
 [![Build](https://github.com/swapnil512/statusoverview/actions/workflows/Build.yml/badge.svg)](https://github.com/swapnil512/statusoverview/actions/workflows/Build.yml)
@@ -16,7 +16,7 @@
 ## Screenshots:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/swapnil512/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
+  <img src="https://swapnil512.github.io/swapnil512/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
 </p>
 
 ---
