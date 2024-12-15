@@ -4,10 +4,10 @@
 # StatusOverview
 
 <p align="center">
-  <img src="https://swapnil512.github.io/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview" width="838">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview" width="838">
 </p>
 
-[![Build](https://github.com/swapnil512/statusoverview/actions/workflows/Build.yml/badge.svg)](https://github.com/swapnil512/statusoverview/actions/workflows/Build.yml)
+[![Build](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml/badge.svg)](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml)
 
 **StatusOverview** is a tool designed to display version information, deployments, environments, and endpoints for multiple applications, typically microservices. It helps developers maintain an eagle-eye view across all environments, ensuring seamless operations and quick insights into the application landscape.
 
@@ -16,15 +16,15 @@
 ## Screenshots:
 
 <p align="center">
-  <img src="https://swapnil512.github.io/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
 </p>
 
 ---
 
 ## Pros:
  - Get to know if the latest version is deployed or not, Yellow badge over the verion tag showcases if new verison is available or not.
- - Drill down who did the last deployment with the commit id and commit message
- - ![DrillDownPopUp](https://swapnil512.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
+ - Drill down who did the last deployment with the commit id and commit message ![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
+ - DarkMode
 
 ## Quick Start Guide
 
@@ -32,7 +32,7 @@ Download the Git repository and navigate to the root folder.
 
 Execute the following commands in your terminal or command prompt:
 ```bash
-git clone https://github.com/swapnil512/statusoverview.git
+git clone https://github.com/Swap-nul/statusoverview.git
 
 cd statusoverview
 ```
