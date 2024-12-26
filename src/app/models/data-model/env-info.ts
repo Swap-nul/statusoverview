@@ -1,4 +1,4 @@
-import { EnvAppInfo } from "./EnvAppInfo";
+import { EnvAppInfo } from "./env-app-info";
 
 export interface EnvironmentByParent {
   parent: string,

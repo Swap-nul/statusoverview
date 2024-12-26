@@ -1,4 +1,4 @@
-import { EnvDeployment } from './EnvDeployment';
+import { EnvDeployment } from './env-deployment';
 export interface App {
   portfolio: string,
   parent: string,

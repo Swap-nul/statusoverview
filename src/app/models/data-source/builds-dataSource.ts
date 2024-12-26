@@ -1,6 +1,6 @@
 import { MatTableDataSource } from "@angular/material/table";
 import { BehaviorSubject } from "rxjs";
-import { Builds } from "../tagsVersionModels/Builds";
+import { Builds } from "../tag-version/builds";
 
 export class BuildsDataSource extends MatTableDataSource<Builds> {
 

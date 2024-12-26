@@ -1,4 +1,4 @@
-import { EnvironmentByParent as EnvironmentsForParent } from './EnvInfo';
+import { EnvironmentByParent as EnvironmentsForParent } from './env-info';
 
 export const EnvAppInfoByParent: EnvironmentsForParent[] = [
   {

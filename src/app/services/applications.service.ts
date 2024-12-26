@@ -2,14 +2,14 @@ import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
-import { Repository } from '../models/dataModel/RepoData';
-import { EnvList } from '../models/dataModel/envsList';
-import { App } from '../models/tagsVersionModels/App';
-import { Builds } from '../models/tagsVersionModels/Builds';
-import { DeployDetails } from '../models/tagsVersionModels/DeployDetails';
-import { HttpsService } from './https.service';
-import { PostgRestHttpService } from './postgresthttp.service';
 import { AppConfigService } from '../app-config.service';
+import { EnvList } from '../models/data-model/envs-list';
+import { Repository } from '../models/data-model/repo-data';
+import { Builds } from '../models/tag-version/builds';
+import { DeployDetails } from '../models/tag-version/deploy-details';
+import { HttpsService } from './https.service';
+import { PostgRestHttpService } from './postgrest-http.service';
+import { App } from '../models/tag-version/app';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {

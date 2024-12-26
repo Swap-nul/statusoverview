@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AppInfo } from 'src/app/models/dataModel/AppInfo';
-import { EnvAppInfoByParent } from 'src/app/models/dataModel/EnvAppInfoData';
+import { AppInfo } from 'src/app/models/data-model/app-info';
+import { EnvAppInfoByParent } from 'src/app/models/data-model/env-app-info-data';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { EnvironmentByParent } from 'src/app/models/dataModel/EnvInfo';
+import { EnvironmentByParent } from 'src/app/models/data-model/env-info';
 
 export interface EnvDetailsDialogData {
   parent: string;

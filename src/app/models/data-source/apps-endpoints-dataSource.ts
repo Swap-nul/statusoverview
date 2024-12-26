@@ -1,6 +1,6 @@
 import { MatTableDataSource } from "@angular/material/table";
 import { BehaviorSubject } from "rxjs";
-import { AppsEndpoints } from "../AppsEndpoints";
+import { AppsEndpoints } from "../apps-endpoints";
 
 export class AppsEndpointsDataSource extends MatTableDataSource<AppsEndpoints> {
 

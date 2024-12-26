@@ -4,9 +4,9 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
-import { BuildsDataSource } from 'src/app/models/dataSource/BuildsDataSource';
-import { Builds } from 'src/app/models/tagsVersionModels/Builds';
-import { DialogData } from 'src/app/models/tagsVersionModels/DailogData';
+import { BuildsDataSource } from 'src/app/models/data-source/builds-dataSource';
+import { Builds } from 'src/app/models/tag-version/builds';
+import { DialogData } from 'src/app/models/tag-version/dialog-data';
 import { ApplicationsService } from 'src/app/services/applications.service';
 
 @Component({

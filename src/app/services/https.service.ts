@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
-import { ErrorHandlerService } from './errorhandler.service';
+import { ErrorHandlerService } from './error-handler.service';
 
 const ENDPOINT_PREFIX = 'https://';
 

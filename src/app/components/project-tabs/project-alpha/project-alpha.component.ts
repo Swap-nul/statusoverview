@@ -3,9 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { BehaviorSubject, Subject, takeUntil, Observable } from 'rxjs';
-import { AppDataSource } from 'src/app/models/dataSource/AppDataSource';
-import { PROJECT_BETA } from 'src/app/models/ELEMENT_DATA';
-import { App } from 'src/app/models/tagsVersionModels/App';
+import { AppDataSource } from 'src/app/models/data-source/app-dataSource';
+import { PROJECT_ALPHA } from 'src/app/models/ELEMENT_DATA';
+import { App } from 'src/app/models/tag-version/app';
 import { ApplicationsService } from 'src/app/services/applications.service';
 import {
   EnvDetailsDialogData,
@@ -13,11 +13,11 @@ import {
 } from '../../env-details-dialog/env-details-dialog.component';
 
 @Component({
-  selector: 'app-project-beta',
-  templateUrl: './project-beta.component.html',
-  styleUrl: './project-beta.component.scss',
+  selector: 'app-project-alpha',
+  templateUrl: './project-alpha.component.html',
+  styleUrl: './project-alpha.component.scss',
 })
-export class ProjectBetaComponent implements OnInit, OnDestroy {
+export class ProjectAlphaComponent implements OnInit, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private applicationService: ApplicationsService
@@ -29,30 +29,31 @@ export class ProjectBetaComponent implements OnInit, OnDestroy {
     'position',
     'name',
     'alpha',
-    'alpha2',
     'qa',
+    'qa2',
     'uat',
-    'uat2',
     'staging',
     'staging1',
+    'staging2',
     'prod',
     'dr',
   ];
   envs: string[];
+  selectedEnvs: string[];
+  envForm: FormControl;
+
   environments = [
     { name: 'alpha', displayName: 'ALPHA' },
-    { name: 'alpha2', displayName: 'ALPHA2' },
     { name: 'qa', displayName: 'QA' },
+    { name: 'qa2', displayName: 'QA2' },
     { name: 'uat', displayName: 'UAT' },
-    { name: 'uat2', displayName: 'UAT2' },
-    { name: 'staging', displayName: 'STAGING' },
-    { name: 'staging1', displayName: 'STAGING1' },
+    { name: 'staging', displayName: 'STG' },
+    { name: 'staging1', displayName: 'STG1' },
+    { name: 'staging2', displayName: 'STG2' },
     { name: 'prod', displayName: 'PROD' },
     { name: 'dr', displayName: 'DR' },
   ];
 
-  selectedEnvs: string[];
-  envForm: FormControl;
   dataTableApps: App[] = [];
   dataSource: AppDataSource;
   dataApp = new BehaviorSubject<App[]>([]);
@@ -67,7 +68,7 @@ export class ProjectBetaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((apps) => {
         apps.forEach((app) => {
-          if (PROJECT_BETA.includes(app.app_name)) {
+          if (PROJECT_ALPHA.includes(app.app_name)) {
             this.applicationService
               .fillLatestBuildTagForEachEnv(app)
               .then((updateApp) => {

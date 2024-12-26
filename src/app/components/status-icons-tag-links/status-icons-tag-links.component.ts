@@ -2,9 +2,9 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { App } from 'src/app/models/tagsVersionModels/App';
-import { DialogData } from 'src/app/models/tagsVersionModels/DailogData';
-import { DeployDetails } from 'src/app/models/tagsVersionModels/DeployDetails';
+import { App } from 'src/app/models/tag-version/app';
+import { DialogData } from 'src/app/models/tag-version/dialog-data';
+import { DeployDetails } from 'src/app/models/tag-version/deploy-details';
 import { ApplicationsService } from 'src/app/services/applications.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 

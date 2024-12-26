@@ -1,4 +1,4 @@
-import { AppInfo } from "./AppInfo";
+import { AppInfo } from "./app-info";
 
 export interface EnvAppInfo {
   [env: string]: AppInfo[]
