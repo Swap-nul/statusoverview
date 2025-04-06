@@ -1,58 +1,65 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
 import { AppConfigService } from '../app-config.service';
 import { EnvList } from '../models/data-model/envs-list';
-import { Repository } from '../models/data-model/repo-data';
+import { Repo } from '../models/data-model/Repo';
+import { App } from '../models/tag-version/app';
 import { Builds } from '../models/tag-version/builds';
 import { DeployDetails } from '../models/tag-version/deploy-details';
 import { HttpsService } from './https.service';
 import { PostgRestHttpService } from './postgrest-http.service';
-import { App } from '../models/tag-version/app';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
   constructor(
     private postgrestHttpService: PostgRestHttpService,
     private httpsService: HttpsService,
-    private configService: AppConfigService
+    private configService: AppConfigService,
+    private http: HttpClient
   ) {}
 
   async fillLatestBuildTagForEachEnv(app: App): Promise<App> {
     return new Promise<App>((resolve, reject) => {
-      const envKeys = Object.keys(EnvList).filter((v) => isNaN(Number(v)));
-      const appKeys = Object.keys(app);
-      const appObjects = Object.values(app);
-      appKeys.forEach((appKey, index) => {
-        if (
-          envKeys.includes(appKey.toString()) &&
-          appObjects[index] != undefined
-        ) {
-          if (!(appObjects[index].branch == undefined)) {
-            const branch = appObjects[index].branch.replace(/\//g, '%2F');
-            const endpoint =
-              '/builds?branch=like.*' +
-              branch +
-              '*&image=like.*' +
-              app.app_name +
-              '*&order=build_id.desc';
-            this.postgrestHttpService
-              .get(endpoint)
-              .subscribe((builds: Builds[]) => {
-                if (builds.length != 0) {
-                  appObjects[index].latest_build_tag = builds[0].tag;
-                }
-              });
-          }
-        }
-      });
-      app.app_repo = Repository[app.app_name];
-      resolve(app);
+      this.http
+        .get<{ Repository: Repo }>('/assets/config.json')
+        .subscribe((data) => {
+          const envKeys = Object.keys(EnvList).filter((v) => isNaN(Number(v)));
+          const appKeys = Object.keys(app);
+          const appObjects = Object.values(app);
+          appKeys.forEach((appKey, index) => {
+            if (
+              envKeys.includes(appKey.toString()) &&
+              appObjects[index] != undefined
+            ) {
+              if (!(appObjects[index].branch == undefined)) {
+                const branch = appObjects[index].branch.replace(/\//g, '%2F');
+                const endpoint =
+                  '/builds?branch=like.*' +
+                  branch +
+                  '*&image=like.*' +
+                  app.app_name +
+                  '*&order=build_id.desc';
+                this.postgrestHttpService
+                  .get(endpoint)
+                  .subscribe((builds: Builds[]) => {
+                    if (builds.length != 0) {
+                      appObjects[index].latest_build_tag = builds[0].tag;
+                    }
+                  });
+              }
+            }
+          });
+          app.app_repo = data.Repository[app.app_name];
+          resolve(app);
+        });
     });
   }
 
-  getFilteredAppsByProjectAndDeployments(projectName: string): Observable<App[]> {
+  getFilteredAppsByProjectAndDeployments(
+    projectName: string
+  ): Observable<App[]> {
     const endpoint =
       this.configService.get('database_baseUrl') + '?parent=eq.' + projectName;
 
@@ -171,10 +178,6 @@ export class ApplicationsService {
         bEnvDetail = envBObjects[index];
       }
     });
-    // console.log("a  ---- ");
-    // console.log(aEnvDetail);
-    // console.log("b  ---- ");
-    // console.log(bEnvDetail);
 
     if (aEnvDetail === null && bEnvDetail === null) {
       return 0;
