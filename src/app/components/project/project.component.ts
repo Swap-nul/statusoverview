@@ -1,93 +1,124 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
-import { BehaviorSubject, Subject, takeUntil, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { Entity } from 'src/app/models/data-model/entity';
 import { AppDataSource } from 'src/app/models/data-source/app-dataSource';
-import { PROJECT_BETA } from 'src/app/models/ELEMENT_DATA';
 import { App } from 'src/app/models/tag-version/app';
 import { ApplicationsService } from 'src/app/services/applications.service';
 import {
-  EnvDetailsDialogData,
   EnvDetailsDialogComponent,
-} from '../../env-details-dialog/env-details-dialog.component';
+  EnvDetailsDialogData,
+} from '../env-details-dialog/env-details-dialog.component';
 
 @Component({
-  selector: 'app-project-beta',
-  templateUrl: './project-beta.component.html',
-  styleUrl: './project-beta.component.scss',
+  selector: 'app-project',
+  templateUrl: './project.component.html',
+  styleUrl: './project.component.scss',
 })
-export class ProjectBetaComponent implements OnInit, OnDestroy {
+export class ProjectComponent implements OnInit, OnDestroy {
+  @Input() projectName: string;
   constructor(
     public dialog: MatDialog,
-    private applicationService: ApplicationsService
+    private applicationService: ApplicationsService,
+    private http: HttpClient
   ) {}
 
   isLoading = true;
-  displayedColumns: string[];
-  columnDef: string[] = [
-    'position',
-    'name',
-    'alpha',
-    'alpha2',
-    'qa',
-    'uat',
-    'uat2',
-    'staging',
-    'staging1',
-    'prod',
-    'dr',
-  ];
-  envs: string[];
-  environments = [
-    { name: 'alpha', displayName: 'ALPHA' },
-    { name: 'alpha2', displayName: 'ALPHA2' },
-    { name: 'qa', displayName: 'QA' },
-    { name: 'uat', displayName: 'UAT' },
-    { name: 'uat2', displayName: 'UAT2' },
-    { name: 'staging', displayName: 'STAGING' },
-    { name: 'staging1', displayName: 'STAGING1' },
-    { name: 'prod', displayName: 'PROD' },
-    { name: 'dr', displayName: 'DR' },
-  ];
+  columnDef: string[] = ['position', 'name'];
 
-  selectedEnvs: string[];
+  selectedProject: Entity | undefined;
+
+  envs: string[] = [];
   envForm: FormControl;
+  environmentsFilterForProject: Entity[];
+
   dataTableApps: App[] = [];
   dataSource: AppDataSource;
   dataApp = new BehaviorSubject<App[]>([]);
+
+  displayedColumns: string[];
   displayedColumnsSubject = new BehaviorSubject<string[]>(this.columnDef);
   displayedColumnsSubject$ = this.displayedColumnsSubject.asObservable();
+
   componentDestroyed$: Subject<boolean> = new Subject();
 
   ngOnInit() {
     this.dataSource = new AppDataSource(this.dataApp);
+    this.loadProjects();
+  }
+
+  loadProjects() {
+    this.http
+      .get<{ projects: Entity[]; environments: Entity[] }>(
+        '/assets/config.json'
+      )
+      .subscribe((data) => {
+        let allEnvironmentsFromConfig = data.environments;
+
+        // Find the selected project configuration
+        this.selectedProject = data.projects.find(
+          (project) => project.name === this.projectName
+        );
+
+        if (!this.selectedProject) {
+          console.error(`Project ${this.projectName} not found in config.json`);
+          return;
+        }
+
+        this.fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig);
+      });
+  }
+
+  fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig: Entity[]) {
     this.applicationService
-      .getAppDeployments()
+      .getFilteredAppsByProjectAndDeployments(this.selectedProject!.displayName)
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((apps) => {
-        apps.forEach((app) => {
-          if (PROJECT_BETA.includes(app.app_name)) {
-            this.applicationService
-              .fillLatestBuildTagForEachEnv(app)
-              .then((updateApp) => {
-                this.dataTableApps.push(updateApp);
-                this.dataApp.next(this.dataTableApps);
+        let projectEnvironments = new Set<string>();
+
+        // Collect all promises from fillLatestBuildTagForEachEnv
+        let updatePromises = apps.map((app) => {
+          return this.applicationService
+            .fillLatestBuildTagForEachEnv(app)
+            .then((updatedApp) => {
+              this.dataTableApps.push(updatedApp);
+              this.dataApp.next(this.dataTableApps);
+
+              // Collect unique environments (ignore null values)
+              Object.keys(updatedApp).forEach((key) => {
+                if ((updatedApp as Record<string, any>)[key] != null) {
+                  projectEnvironments.add(key);
+                }
               });
-          }
+            });
         });
-        this.isLoading = false;
+
+        // Wait for all promises to complete
+        Promise.all(updatePromises).then(() => {
+          this.isLoading = false;
+
+          // Filter environments dynamically based on the project
+          this.environmentsFilterForProject = allEnvironmentsFromConfig.filter(
+            (e) => projectEnvironments.has(e.name)
+          );
+
+          // Update `envs` and `displayedColumns`
+          this.envs = this.environmentsFilterForProject.map((e) => e.name);
+          this.envForm = new FormControl(this.envs);
+
+          this.resetColumns();
+        });
       });
+
+    // Subscribe to column updates
     this.getDisplayedColumns()
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((columnsToDisplay) => {
         this.displayedColumns = columnsToDisplay;
       });
-    this.envs = this.displayedColumns.slice();
-    this.envs = this.envs
-      .filter((col) => !col.includes('position'))
-      .filter((col) => !col.includes('name'));
-    this.envForm = new FormControl(this.envs);
   }
 
   ngOnDestroy() {
@@ -130,15 +161,21 @@ export class ProjectBetaComponent implements OnInit, OnDestroy {
 
     if (filterValue != '') {
       let columnsToDisplay: string[] = ['position', 'name'];
-      let filteredColumns: string[] = this.columnDef.slice();
+      let filteredColumns: string[] = this.envs.slice();
       filteredColumns = filteredColumns.filter((columnName) =>
         columnName.includes(filterValue.trim().toLowerCase())
       );
       filteredColumns.forEach((c) => columnsToDisplay.push(c));
       this.displayedColumnsSubject.next(columnsToDisplay);
     } else {
-      this.displayedColumnsSubject.next(this.columnDef);
+      this.resetColumns();
     }
+  }
+
+  resetColumns() {
+    let columnsToDisplay: string[] = ['position', 'name'];
+    this.envs.forEach((e) => columnsToDisplay.push(e));
+    this.displayedColumnsSubject.next(columnsToDisplay);
   }
 
   filterSelectedColumns() {
@@ -149,7 +186,7 @@ export class ProjectBetaComponent implements OnInit, OnDestroy {
       filteredColumns.forEach((c) => columnsToDisplay.push(c));
       this.displayedColumnsSubject.next(columnsToDisplay);
     } else {
-      this.displayedColumnsSubject.next(this.columnDef);
+      this.resetColumns();
     }
   }
 

@@ -52,8 +52,10 @@ export class ApplicationsService {
     });
   }
 
-  getAppDeployments(): Observable<App[]> {
-    const endpoint = this.configService.get('database_baseUrl');
+  getFilteredAppsByProjectAndDeployments(projectName: string): Observable<App[]> {
+    const endpoint =
+      this.configService.get('database_baseUrl') + '?parent=eq.' + projectName;
+
     return this.postgrestHttpService.get(endpoint);
   }
 

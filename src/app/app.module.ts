@@ -39,9 +39,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { NavTabsComponent } from './components/nav-tabs/nav-tabs.component';
 import { SortButtonComponent } from './components/sort-button/sort-button.component';
 import { StatusIconsTagLinksComponent } from './components/status-icons-tag-links/status-icons-tag-links.component';
-import { ProjectAlphaComponent } from './components/project-tabs/project-alpha/project-alpha.component';
-import { ProjectBetaComponent } from './components/project-tabs/project-beta/project-beta.component';
 import { AppConfigService } from './app-config.service';
+import { ProjectComponent } from './components/project/project.component';
 
 export function initializeApp(appConfig: AppConfigService) {
   return () => appConfig.loadConfig();
@@ -52,11 +51,10 @@ export function initializeApp(appConfig: AppConfigService) {
     AppComponent,
     HeaderComponent,
     NavTabsComponent,
-    ProjectAlphaComponent,
-    ProjectBetaComponent,
     StatusIconsTagLinksComponent,
     DetailsDialogComponent,
     EnvDetailsDialogComponent,
+    ProjectComponent,
     SortButtonComponent,
   ],
   imports: [
