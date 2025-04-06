@@ -1,4 +1,4 @@
-import { Envs } from "./Envs"
+import { Envs } from "./envs"
 
 export interface AppsEndpoints {
   name: string,

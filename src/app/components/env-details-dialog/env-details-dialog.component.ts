@@ -1,9 +1,9 @@
+import { Clipboard } from '@angular/cdk/clipboard';
+import { HttpClient } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppInfo } from 'src/app/models/data-model/app-info';
-import { EnvAppInfoByParent } from 'src/app/models/data-model/env-app-info-data';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { EnvironmentByParent } from 'src/app/models/data-model/env-info';
 
 export interface EnvDetailsDialogData {
@@ -26,18 +26,23 @@ export class EnvDetailsDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public filterParam: EnvDetailsDialogData,
     private clipboard: Clipboard,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private http: HttpClient
   ) {
-    this.filteredData = EnvAppInfoByParent.filter(
-      (e) => e.parent === filterParam.parent
-    )[0];
-    const envObjects = Object.values(this.filteredData.envs);
-    Object.keys(this.filteredData.envs).forEach((appKey, index) => {
-      if (appKey === filterParam.env) {
-        this.envName = appKey.toUpperCase();
-        this.dataSource = envObjects[index];
-      }
-    });
+    this.http
+      .get<{ EnvAppInfoByParent: EnvironmentByParent[] }>('/assets/config.json')
+      .subscribe((data) => {
+        this.filteredData = data.EnvAppInfoByParent.filter(
+          (e) => e.parent === filterParam.parent
+        )[0];
+        const envObjects = Object.values(this.filteredData.envs);
+        Object.keys(this.filteredData.envs).forEach((appKey, index) => {
+          if (appKey === filterParam.env) {
+            this.envName = appKey.toUpperCase();
+            this.dataSource = envObjects[index];
+          }
+        });
+      });
   }
 
   goToLink(url: string) {
