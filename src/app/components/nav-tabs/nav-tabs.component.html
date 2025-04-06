@@ -3,23 +3,15 @@
   mat-align-tabs="start"
   animationDuration="0ms"
 >
-  <mat-tab>
+  <mat-tab *ngFor="let project of projects">
     <ng-template mat-tab-label>
       <mat-icon svgIcon="tag"></mat-icon>
-      <span><b> Project Alpha </b></span>
+      <span
+        ><b>{{ project.displayName }}</b></span
+      >
     </ng-template>
     <ng-template matTabContent>
-      <app-project-alpha></app-project-alpha>
-    </ng-template>
-  </mat-tab>
-
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon svgIcon="tag"></mat-icon>
-      <span><b>Project Beta</b></span>
-    </ng-template>
-    <ng-template matTabContent>
-      <app-project-beta></app-project-beta>
+      <app-project [projectName]="project.name"></app-project>
     </ng-template>
   </mat-tab>
 </mat-tab-group>

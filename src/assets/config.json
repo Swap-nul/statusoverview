@@ -8,5 +8,23 @@
   "KibanaHOSTNAME_NONPROD": "kibana.hostname.cloud",
 
   "database_hostname_port": "http://localhost:3000",
-  "database_baseUrl": "/statusoverview"
+  "database_baseUrl": "/statusoverview",
+
+  "projects": [
+    { "name": "alpha", "displayName": "Project-Alpha" },
+    { "name": "beta", "displayName": "Project-Beta" }
+  ],
+
+  "environments": [
+    { "name": "alpha", "displayName": "ALPHA" },
+    { "name": "alpha2", "displayName": "ALPHA2" },
+    { "name": "qa", "displayName": "QA" },
+    { "name": "qa2", "displayName": "QA2" },
+    { "name": "uat", "displayName": "UAT" },
+    { "name": "staging", "displayName": "STG" },
+    { "name": "staging1", "displayName": "STG1" },
+    { "name": "staging2", "displayName": "STG2" },
+    { "name": "prod", "displayName": "PROD" },
+    { "name": "dr", "displayName": "DR" }
+  ]
 }

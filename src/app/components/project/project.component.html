@@ -1,0 +1,74 @@
+<div class="filter-toolbar">
+  <mat-form-field>
+    <mat-label>Filter By App Name</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by AppName" #input>
+  </mat-form-field>
+  <mat-divider vertical></mat-divider>
+  <mat-form-field>
+    <mat-label>Filter Environments</mat-label>
+    <input matInput (keyup)="filterColumn($event)" placeholder="Filter Column by Env Name" #input>
+  </mat-form-field>
+  <mat-divider vertical></mat-divider>
+  <mat-form-field *ngIf="envForm">
+    <mat-label>Select Environments</mat-label>
+    <mat-select [formControl]="envForm" multiple>
+      <mat-option *ngFor="let env of envs" [value]="env">{{env.toUpperCase()}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div>
+    <button mat-raised-button (click)="filterSelectedColumns()" style="height: 56px;">Filter
+      <mat-icon svgIcon="filter"></mat-icon>
+    </button>
+  </div>
+</div>
+<section class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortData($event)" *ngIf="environmentsFilterForProject">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>NO. </th>
+      <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+    </ng-container>
+    <!-- App Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header><mat-icon svgIcon="app"></mat-icon> APPLICATION</th>
+      <td mat-cell *matCellDef="let element">
+        <div><b>{{ element.app_name }} &nbsp;&nbsp;</b>
+          <mat-icon matTooltip="open Repo" matTooltipPosition="below" *ngIf="element.app_repo" svgIcon="github"
+            (click)="goToRepos(element.app_repo)">
+          </mat-icon>
+        </div>
+        <mat-basic-chip><i>{{ element ? element.portfolio : " " }}</i></mat-basic-chip>
+      </td>
+    </ng-container>
+
+    <!-- Environment Column Template -->
+    <ng-container *ngFor="let env of environmentsFilterForProject" [matColumnDef]="env.name">
+      <th mat-header-cell *matHeaderCellDef>
+        <button mat-raised-button (click)="openEnvInfoDialog(projectName, env.name)">{{ env.displayName }}</button>
+        <div>
+          <app-sort-button (dataEmitter)="sortTableBy($event, env.name)"></app-sort-button>
+          <button mat-icon-button color="basic" matTooltip="Download Env Details" matTooltipPosition="right"
+            (click)="downloadCSV(env.name)">
+            <mat-icon svgIcon="csv"></mat-icon>
+          </button>
+        </div>
+      </th>
+      <td mat-cell matRipple matTooltip="{{element.app_name}}" matTooltipPosition="left" *matCellDef="let element">
+        <app-status-icons-tag-links [appDeployDetails]="element[env.name]" [env]="env.name" [app]="element"></app-status-icons-tag-links>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+    </tr>
+  </table>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; ">
+    <mat-progress-spinner color="primary" mode="indeterminate" diameter="650" strokeWidth="8">
+    </mat-progress-spinner>
+  </div>
+</section>
