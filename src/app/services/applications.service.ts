@@ -1,10 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Sort } from '@angular/material/sort';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AppConfigService } from '../app-config.service';
-import { EnvList } from '../models/data-model/envs-list';
-import { Repo } from '../models/data-model/Repo';
 import { App } from '../models/tag-version/app';
 import { Builds } from '../models/tag-version/builds';
 import { DeployDetails } from '../models/tag-version/deploy-details';
@@ -13,6 +11,8 @@ import { PostgRestHttpService } from './postgrest-http.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
+  private envList: string[];
+
   constructor(
     private postgrestHttpService: PostgRestHttpService,
     private httpsService: HttpsService,
@@ -20,68 +20,49 @@ export class ApplicationsService {
     private http: HttpClient
   ) {}
 
+  private async getEnvList(): Promise<string[]> {
+    if (this.envList) {
+      return this.envList!;
+    }
+    const config: any = await firstValueFrom(this.http.get('/assets/config.json'));
+    this.envList = config.EnvList;
+    return this.envList;
+  }
+
   async fillLatestBuildTagForEachEnv(app: App): Promise<App> {
-    return new Promise<App>((resolve, reject) => {
-      this.http
-        .get<{ Repository: Repo }>('/assets/config.json')
-        .subscribe((data) => {
-          const envKeys = Object.keys(EnvList).filter((v) => isNaN(Number(v)));
-          const appKeys = Object.keys(app);
-          const appObjects = Object.values(app);
-          appKeys.forEach((appKey, index) => {
-            if (
-              envKeys.includes(appKey.toString()) &&
-              appObjects[index] != undefined
-            ) {
-              if (!(appObjects[index].branch == undefined)) {
-                const branch = appObjects[index].branch.replace(/\//g, '%2F');
-                const endpoint =
-                  '/builds?branch=like.*' +
-                  branch +
-                  '*&image=like.*' +
-                  app.app_name +
-                  '*&order=build_id.desc';
-                this.postgrestHttpService
-                  .get(endpoint)
-                  .subscribe((builds: Builds[]) => {
-                    if (builds.length != 0) {
-                      appObjects[index].latest_build_tag = builds[0].tag;
-                    }
-                  });
+    return new Promise<App>(async (resolve, reject) => {
+      const config: any = await firstValueFrom(this.http.get('/assets/config.json'));
+      const envKeys: string[] = config.EnvList;
+      const appKeys = Object.keys(app);
+      const appObjects = Object.values(app);
+      appKeys.forEach((appKey, index) => {
+        if (envKeys.includes(appKey.toString()) && appObjects[index] != undefined) {
+          if (!(appObjects[index].branch == undefined)) {
+            const branch = appObjects[index].branch.replace(/\//g, '%2F');
+            const endpoint =
+              '/builds?branch=like.*' + branch + '*&image=like.*' + app.app_name + '*&order=build_id.desc';
+            this.postgrestHttpService.get(endpoint).subscribe((builds: Builds[]) => {
+              if (builds.length != 0) {
+                appObjects[index].latest_build_tag = builds[0].tag;
               }
-            }
-          });
-          app.app_repo = data.Repository[app.app_name];
-          resolve(app);
-        });
+            });
+          }
+        }
+      });
+      app.app_repo = config.Repository[app.app_name];
+      resolve(app);
     });
   }
 
-  getFilteredAppsByProjectAndDeployments(
-    projectName: string
-  ): Observable<App[]> {
-    const endpoint =
-      this.configService.get('database_baseUrl') + '?parent=eq.' + projectName;
+  getFilteredAppsByProjectAndDeployments(projectName: string): Observable<App[]> {
+    const endpoint = this.configService.get('database_baseUrl') + '?parent=eq.' + projectName;
 
     return this.postgrestHttpService.get(endpoint);
   }
 
-  // getBuilds(): Observable<Builds[]> {
-  //   const endpoint = '/builds';
-  //   return this.postgrestHttpService.get(endpoint);
-  // }
-
-  getAllBuildsForAppAndBranch(
-    appId: string,
-    branch: string
-  ): Observable<Builds[]> {
+  getAllBuildsForAppAndBranch(appId: string, branch: string): Observable<Builds[]> {
     branch = branch.replace(/\//g, '%2F');
-    const endpoint =
-      '/builds?app_id=eq.' +
-      appId +
-      '&branch=eq.' +
-      branch +
-      '&order=build_id.desc';
+    const endpoint = '/builds?app_id=eq.' + appId + '&branch=eq.' + branch + '&order=build_id.desc';
     return this.postgrestHttpService.get(endpoint);
   }
 
@@ -127,13 +108,7 @@ export class ApplicationsService {
     return data;
   }
 
-  private compareEnvApps(
-    a: App,
-    b: App,
-    env: string,
-    sortBy: string,
-    isAsc: boolean
-  ) {
+  private compareEnvApps(a: App, b: App, env: string, sortBy: string, isAsc: boolean) {
     let aEnvDetail: DeployDetails = {
       tag: '',
       branch: '',
@@ -190,94 +165,44 @@ export class ApplicationsService {
         case 'tag':
           return (aEnvDetail.tag < bEnvDetail.tag ? -1 : 1) * (isAsc ? 1 : -1);
         case 'branch':
-          return (
-            (aEnvDetail.branch < bEnvDetail.branch ? -1 : 1) * (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.branch < bEnvDetail.branch ? -1 : 1) * (isAsc ? 1 : -1);
         case 'status':
-          return (
-            (aEnvDetail.status < bEnvDetail.status ? -1 : 1) * (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.status < bEnvDetail.status ? -1 : 1) * (isAsc ? 1 : -1);
         case 'cluster':
-          return (
-            (aEnvDetail.cluster < bEnvDetail.cluster ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.cluster < bEnvDetail.cluster ? -1 : 1) * (isAsc ? 1 : -1);
         case 'commitby':
-          return (
-            (aEnvDetail.commitby < bEnvDetail.commitby ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.commitby < bEnvDetail.commitby ? -1 : 1) * (isAsc ? 1 : -1);
         case 'commit_id':
-          return (
-            (aEnvDetail.commit_id < bEnvDetail.commit_id ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.commit_id < bEnvDetail.commit_id ? -1 : 1) * (isAsc ? 1 : -1);
         case 'namespace':
-          return (
-            (aEnvDetail.namespace < bEnvDetail.namespace ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.namespace < bEnvDetail.namespace ? -1 : 1) * (isAsc ? 1 : -1);
         case 'previous_tag':
-          return (
-            (aEnvDetail.previous_tag < bEnvDetail.previous_tag ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.previous_tag < bEnvDetail.previous_tag ? -1 : 1) * (isAsc ? 1 : -1);
         case 'commitmessage':
-          return (
-            (aEnvDetail.commitmessage < bEnvDetail.commitmessage ? -1 : 1) *
-            (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.commitmessage < bEnvDetail.commitmessage ? -1 : 1) * (isAsc ? 1 : -1);
         case 'image_created_at':
-          return this.compareImageCreatedAtDateField(
-            aEnvDetail,
-            bEnvDetail,
-            isAsc
-          );
+          return this.compareImageCreatedAtDateField(aEnvDetail, bEnvDetail, isAsc);
         case 'image_deployed_at':
-          return this.compareImageDeployedAtDateField(
-            aEnvDetail,
-            bEnvDetail,
-            isAsc
-          );
+          return this.compareImageDeployedAtDateField(aEnvDetail, bEnvDetail, isAsc);
         case 'image_deployed_by':
-          return (
-            (aEnvDetail.image_deployed_by < bEnvDetail.image_deployed_by
-              ? -1
-              : 1) * (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.image_deployed_by < bEnvDetail.image_deployed_by ? -1 : 1) * (isAsc ? 1 : -1);
         case 'latest_build_tag':
-          return (
-            (aEnvDetail.latest_build_tag < bEnvDetail.latest_build_tag
-              ? -1
-              : 1) * (isAsc ? 1 : -1)
-          );
+          return (aEnvDetail.latest_build_tag < bEnvDetail.latest_build_tag ? -1 : 1) * (isAsc ? 1 : -1);
         default:
           return 0;
       }
     }
   }
 
-  compareImageCreatedAtDateField(
-    a: DeployDetails,
-    b: DeployDetails,
-    isAsc: boolean
-  ) {
+  compareImageCreatedAtDateField(a: DeployDetails, b: DeployDetails, isAsc: boolean) {
     if (
-      (a.image_created_at === null ||
-        this.isEmptyOrWhitespace(a.image_created_at)) &&
-      (b.image_created_at === null ||
-        this.isEmptyOrWhitespace(b.image_created_at))
+      (a.image_created_at === null || this.isEmptyOrWhitespace(a.image_created_at)) &&
+      (b.image_created_at === null || this.isEmptyOrWhitespace(b.image_created_at))
     ) {
       return 0;
-    } else if (
-      a.image_created_at === null ||
-      this.isEmptyOrWhitespace(a.image_created_at)
-    ) {
+    } else if (a.image_created_at === null || this.isEmptyOrWhitespace(a.image_created_at)) {
       return isAsc ? 1 : -1; // Place null values at the end for ascending order, and vice versa
-    } else if (
-      b.image_created_at === null ||
-      this.isEmptyOrWhitespace(b.image_created_at)
-    ) {
+    } else if (b.image_created_at === null || this.isEmptyOrWhitespace(b.image_created_at)) {
       return isAsc ? -1 : 1; // Place null values at the end for ascending order, and vice versa
     } else {
       // Compare non-null values as usual
@@ -287,30 +212,17 @@ export class ApplicationsService {
     }
   }
 
-  compareImageDeployedAtDateField(
-    a: DeployDetails,
-    b: DeployDetails,
-    isAsc: boolean
-  ) {
+  compareImageDeployedAtDateField(a: DeployDetails, b: DeployDetails, isAsc: boolean) {
     if (
-      (a.image_deployed_at === null ||
-        this.isEmptyOrWhitespace(a.image_deployed_at)) &&
-      (b.image_deployed_at === null ||
-        this.isEmptyOrWhitespace(b.image_deployed_at))
+      (a.image_deployed_at === null || this.isEmptyOrWhitespace(a.image_deployed_at)) &&
+      (b.image_deployed_at === null || this.isEmptyOrWhitespace(b.image_deployed_at))
     ) {
       return 0;
-    } else if (
-      a.image_deployed_at === null ||
-      this.isEmptyOrWhitespace(a.image_deployed_at)
-    ) {
+    } else if (a.image_deployed_at === null || this.isEmptyOrWhitespace(a.image_deployed_at)) {
       return isAsc ? 1 : -1; // Place null values at the end for ascending order, and vice versa
-    } else if (
-      b.image_deployed_at === null ||
-      this.isEmptyOrWhitespace(b.image_deployed_at)
-    ) {
+    } else if (b.image_deployed_at === null || this.isEmptyOrWhitespace(b.image_deployed_at)) {
       return isAsc ? -1 : 1; // Place null values at the end for ascending order, and vice versa
     } else {
-      // Compare non-null values as usual
       const dateA = new Date(a.image_deployed_at);
       const dateB = new Date(b.image_deployed_at);
       return (isAsc ? 1 : -1) * (dateA < dateB ? -1 : 1);
@@ -389,39 +301,19 @@ export class ApplicationsService {
 
         if (a) {
           jsonCSVData.push({
-            appName: app.app_name
-              ? `'${app.app_name.replace(/\n/g, '')}'`
-              : app.app_name,
+            appName: app.app_name ? `'${app.app_name.replace(/\n/g, '')}'` : app.app_name,
             tag: a.tag ? `'${a.tag.replace(/\n/g, '')}'` : a.tag,
             branch: a.branch ? `'${a.branch.replace(/\n/g, '')}'` : a.branch,
             status: a.status ? `'${a.status.replace(/\n/g, '')}'` : a.status,
-            cluster: a.cluster
-              ? `'${a.cluster.replace(/\n/g, '')}'`
-              : a.cluster,
-            commitBy: a.commitby
-              ? `'${a.commitby.replace(/\n/g, '')}'`
-              : a.commitby,
-            commitId: a.commit_id
-              ? `'${a.commit_id.replace(/\n/g, '')}'`
-              : a.commit_id,
-            namespace: a.namespace
-              ? `'${a.namespace.replace(/\n/g, '')}'`
-              : a.namespace,
-            commitMessage: a.commitmessage
-              ? `'${a.commitmessage.replace(/\n/g, '')}'`
-              : a.commitmessage,
-            imageCreatedAt: a.image_created_at
-              ? `'${a.image_created_at.replace(/\n/g, '')}'`
-              : a.image_created_at,
-            imageDeployedAt: a.image_deployed_at
-              ? `'${a.image_deployed_at.replace(/\n/g, '')}'`
-              : a.image_deployed_at,
-            imageDeployedBy: a.image_deployed_by
-              ? `'${a.image_deployed_by.replace(/\n/g, '')}'`
-              : a.image_deployed_by,
-            latestBuildTag: a.latest_build_tag
-              ? `'${a.latest_build_tag.replace(/\n/g, '')}'`
-              : a.latest_build_tag,
+            cluster: a.cluster ? `'${a.cluster.replace(/\n/g, '')}'` : a.cluster,
+            commitBy: a.commitby ? `'${a.commitby.replace(/\n/g, '')}'` : a.commitby,
+            commitId: a.commit_id ? `'${a.commit_id.replace(/\n/g, '')}'` : a.commit_id,
+            namespace: a.namespace ? `'${a.namespace.replace(/\n/g, '')}'` : a.namespace,
+            commitMessage: a.commitmessage ? `'${a.commitmessage.replace(/\n/g, '')}'` : a.commitmessage,
+            imageCreatedAt: a.image_created_at ? `'${a.image_created_at.replace(/\n/g, '')}'` : a.image_created_at,
+            imageDeployedAt: a.image_deployed_at ? `'${a.image_deployed_at.replace(/\n/g, '')}'` : a.image_deployed_at,
+            imageDeployedBy: a.image_deployed_by ? `'${a.image_deployed_by.replace(/\n/g, '')}'` : a.image_deployed_by,
+            latestBuildTag: a.latest_build_tag ? `'${a.latest_build_tag.replace(/\n/g, '')}'` : a.latest_build_tag,
           });
         }
       }
@@ -445,15 +337,11 @@ export class ApplicationsService {
 
   goToArgoCD(appName: string, env: string) {
     if (env.includes('prod')) {
-      window.open(
-        this.configService.get('argoCD_prod_Url') + appName + '-' + env
-      );
+      window.open(this.configService.get('argoCD_prod_Url') + appName + '-' + env);
     } else if (env.includes('dr')) {
       window.open(this.configService.get('argoCD_dr_Url') + appName + '-prod');
     } else {
-      window.open(
-        this.configService.get('argoCD_nonprod_Url') + appName + '-' + env
-      );
+      window.open(this.configService.get('argoCD_nonprod_Url') + appName + '-' + env);
     }
   }
 
@@ -466,15 +354,9 @@ export class ApplicationsService {
       .replaceAll('PARENT', portfolio);
 
     if (env.includes('prod') || env.includes('dr')) {
-      filterEndpoint = filterEndpoint.replace(
-        'HOSTNAME',
-        this.configService.get('KibanaHOSTNAME_PROD_DR')
-      );
+      filterEndpoint = filterEndpoint.replace('HOSTNAME', this.configService.get('KibanaHOSTNAME_PROD_DR'));
     } else {
-      filterEndpoint = filterEndpoint.replace(
-        'HOSTNAME',
-        this.configService.get('KibanaHOSTNAME_NONPROD')
-      );
+      filterEndpoint = filterEndpoint.replace('HOSTNAME', this.configService.get('KibanaHOSTNAME_NONPROD'));
     }
     window.open(filterEndpoint);
   }

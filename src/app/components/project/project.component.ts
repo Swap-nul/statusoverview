@@ -8,10 +8,7 @@ import { Entity } from 'src/app/models/data-model/entity';
 import { AppDataSource } from 'src/app/models/data-source/app-dataSource';
 import { App } from 'src/app/models/tag-version/app';
 import { ApplicationsService } from 'src/app/services/applications.service';
-import {
-  EnvDetailsDialogComponent,
-  EnvDetailsDialogData,
-} from '../env-details-dialog/env-details-dialog.component';
+import { EnvDetailsDialogComponent, EnvDetailsDialogData } from '../env-details-dialog/env-details-dialog.component';
 
 @Component({
   selector: 'app-project',
@@ -20,11 +17,7 @@ import {
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   @Input() projectName: string;
-  constructor(
-    public dialog: MatDialog,
-    private applicationService: ApplicationsService,
-    private http: HttpClient
-  ) {}
+  constructor(public dialog: MatDialog, private applicationService: ApplicationsService, private http: HttpClient) {}
 
   isLoading = true;
   columnDef: string[] = ['position', 'name'];
@@ -51,25 +44,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   loadProjects() {
-    this.http
-      .get<{ projects: Entity[]; environments: Entity[] }>(
-        '/assets/config.json'
-      )
-      .subscribe((data) => {
-        let allEnvironmentsFromConfig = data.environments;
+    this.http.get<{ projects: Entity[]; environments: Entity[] }>('/assets/config.json').subscribe((data) => {
+      let allEnvironmentsFromConfig = data.environments;
 
-        // Find the selected project configuration
-        this.selectedProject = data.projects.find(
-          (project) => project.name === this.projectName
-        );
+      // Find the selected project configuration
+      this.selectedProject = data.projects.find((project) => project.name === this.projectName);
 
-        if (!this.selectedProject) {
-          console.error(`Project ${this.projectName} not found in config.json`);
-          return;
-        }
+      if (!this.selectedProject) {
+        console.error(`Project ${this.projectName} not found in config.json`);
+        return;
+      }
 
-        this.fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig);
-      });
+      this.fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig);
+    });
   }
 
   fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig: Entity[]) {
@@ -81,19 +68,17 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         // Collect all promises from fillLatestBuildTagForEachEnv
         let updatePromises = apps.map((app) => {
-          return this.applicationService
-            .fillLatestBuildTagForEachEnv(app)
-            .then((updatedApp) => {
-              this.dataTableApps.push(updatedApp);
-              this.dataApp.next(this.dataTableApps);
+          return this.applicationService.fillLatestBuildTagForEachEnv(app).then((updatedApp) => {
+            this.dataTableApps.push(updatedApp);
+            this.dataApp.next(this.dataTableApps);
 
-              // Collect unique environments (ignore null values)
-              Object.keys(updatedApp).forEach((key) => {
-                if ((updatedApp as Record<string, any>)[key] != null) {
-                  projectEnvironments.add(key);
-                }
-              });
+            // Collect unique environments (ignore null values)
+            Object.keys(updatedApp).forEach((key) => {
+              if ((updatedApp as Record<string, any>)[key] != null) {
+                projectEnvironments.add(key);
+              }
             });
+          });
         });
 
         // Wait for all promises to complete
@@ -101,9 +86,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
           this.isLoading = false;
 
           // Filter environments dynamically based on the project
-          this.environmentsFilterForProject = allEnvironmentsFromConfig.filter(
-            (e) => projectEnvironments.has(e.name)
-          );
+          this.environmentsFilterForProject = allEnvironmentsFromConfig.filter((e) => projectEnvironments.has(e.name));
 
           // Update `envs` and `displayedColumns`
           this.envs = this.environmentsFilterForProject.map((e) => e.name);
@@ -150,9 +133,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     let data = this.dataTableApps.slice();
-    data = data.filter((app) =>
-      app.app_name.includes(filterValue.trim().toLowerCase())
-    );
+    data = data.filter((app) => app.app_name.includes(filterValue.trim().toLowerCase()));
     this.dataApp.next(data);
   }
 
@@ -162,9 +143,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     if (filterValue != '') {
       let columnsToDisplay: string[] = ['position', 'name'];
       let filteredColumns: string[] = this.envs.slice();
-      filteredColumns = filteredColumns.filter((columnName) =>
-        columnName.includes(filterValue.trim().toLowerCase())
-      );
+      filteredColumns = filteredColumns.filter((columnName) => columnName.includes(filterValue.trim().toLowerCase()));
       filteredColumns.forEach((c) => columnsToDisplay.push(c));
       this.displayedColumnsSubject.next(columnsToDisplay);
     } else {
