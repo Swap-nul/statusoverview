@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@use './custom-palettes' as custom-palettes;
+@use "./custom-palettes" as custom-palettes;
 
 @include mat.core();
 
@@ -9,37 +9,42 @@ $angular-accent: custom-palettes.$yellow-palette;
 $angular-warn: custom-palettes.$grey-palette;
 
 // Define light theme
-$angular-default-theme: mat.define-light-theme((
-  color: (
-    primary: $angular-primary,
-    accent: $angular-accent,
-    warn: $angular-warn,
+$angular-default-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $angular-primary,
+      accent: $angular-accent,
+      warn: $angular-warn,
+    ),
   )
-));
+);
 
 // Apply the light theme
 @include mat.all-component-themes($angular-default-theme);
 
 // Define dark theme
-$angular-dark-theme: mat.define-dark-theme((
-  color: (
-    primary: $angular-accent,
-    accent: $angular-primary,
-    warn: $angular-warn,
+$angular-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $angular-accent,
+      accent: $angular-primary,
+      warn: $angular-warn,
+    ),
   )
-));
+);
 
 // Apply the dark theme in `.darkMode`
 .darkMode {
   @include mat.all-component-colors($angular-dark-theme);
 }
 
-
-table th, table td {
-  border-right: 1px solid rgba(100 , 100, 100, 0.5); /* Adjust the color and opacity as needed */
+table th,
+table td {
+  border-right: 1px solid rgba(100, 100, 100, 0.5); /* Adjust the color and opacity as needed */
   border-radius: 12px;
 }
 
-table th:last-child, table td:last-child {
+table th:last-child,
+table td:last-child {
   border-right: none; /* Remove the border from the last column */
 }

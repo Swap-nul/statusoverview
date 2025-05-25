@@ -1,25 +1,83 @@
-table {
-    width: 100%;
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  overflow: hidden;
+}
+.filter-toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+  padding: 8px 16px;
+
+  > mat-form-field {
+    width: auto;
+    flex-grow: 1;
+    min-width: 180px;
   }
-  
-  .mat-mdc-form-field {
-    font-size: 14px;
-    width: 100%;
-  }
-  
-  .mat-basic-chip {
-    font-size: 10px;
-    text-align: right;
-  }
-  
-  .filter-toolbar {
+
+  > div {
+    flex-shrink: 0;
     display: flex;
-    flex-flow: row;
-    flex-direction: row;
-    justify-content: space-around;
+    align-items: center;
   }
-  
-  .mat-divider.mat-divider-vertical {
+
+  > mat-divider[vertical] {
+    align-self: stretch;
     border-color: #ffcd33;
     border-right-width: 2px;
   }
+}
+
+.table-section-wrapper {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-scroll-container {
+  flex-grow: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.vertical-scroll-content {
+  height: 100%;
+  overflow-y: auto;
+
+  table.mat-table {
+    width: 100%;
+    min-width: max-content;
+  }
+}
+
+.mat-mdc-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.loading-spinner-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-basic-chip {
+  font-size: 10px;
+  text-align: right;
+}
+
+.mat-divider.mat-divider-vertical {
+  border-color: #ffcd33;
+  border-right-width: 2px;
+}
