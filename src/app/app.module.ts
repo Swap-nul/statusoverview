@@ -108,7 +108,7 @@ export function initializeApp(appConfig: AppConfigService) {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService],
+      deps: [KeycloakService, AppConfigService],
     },
     {
       provide: HTTP_INTERCEPTORS,

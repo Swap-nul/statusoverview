@@ -1,11 +1,29 @@
 import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../environments/environment';
+import { AppConfigService } from '../app-config.service';
 
 export function initializeKeycloak(
-  keycloak: KeycloakService
+  keycloak: KeycloakService,
+  configService: AppConfigService
 ): () => Promise<boolean> {
   return () => {
     console.log('Initializing Keycloak...');
+    
+    // Get authentication configuration with fallback
+    let authConfig;
+    try {
+      authConfig = configService.get('authentication');
+    } catch (error) {
+      console.warn('Config not ready during Keycloak init, using defaults');
+      authConfig = null;
+    }
+    
+    // Use fallback values if config is not available
+    const skipUrls = authConfig?.skipUrls || ['/assets', '/login', '/realms/', 'keycloak'];
+    const skipDomains = authConfig?.skipDomains || ['localhost:3000'];
+    
+    // Combine skip patterns for bearer excluded URLs
+    const bearerExcludedUrls = [...skipUrls, ...skipDomains];
     
     return keycloak.init({
       config: {
@@ -22,7 +40,7 @@ export function initializeKeycloak(
         checkLoginIframe: false
       },
       enableBearerInterceptor: false, // Disable built-in interceptor, we'll use our own
-      bearerExcludedUrls: ['/assets', '/login', '/realms/', 'keycloak'],
+      bearerExcludedUrls: bearerExcludedUrls,
       bearerPrefix: 'Bearer',
       loadUserProfileAtStartUp: false // Load profile only when needed
     }).then((authenticated) => {

@@ -157,10 +157,31 @@ Update `src/assets/config.json` for your environment:
     "realm": "statusoverview", 
     "clientId": "statusoverview-app"
   },
+  "authentication": {
+    "skipUrls": [
+      "/assets/",
+      "/login", 
+      "/silent-check-sso.html",
+      "keycloak",
+      "/realms/"
+    ],
+    "skipDomains": [
+      "localhost:3000"
+    ]
+  },
   "database_hostname_port": "http://localhost:3000",
   "database_baseUrl": "/statusoverview"
 }
 ```
+
+#### Authentication Configuration
+
+The `authentication` section controls which URLs and domains are excluded from JWT token injection:
+
+- **`skipUrls`**: URL patterns that should bypass authentication (static assets, login pages, Keycloak endpoints)
+- **`skipDomains`**: Domain patterns for external APIs that don't require authentication (like PostgREST database API)
+
+This configuration is automatically used by both the `AuthInterceptor` and Keycloak initialization, making it easy to manage authentication exclusions in one place.
 
 ### Environment-Specific Configuration
 

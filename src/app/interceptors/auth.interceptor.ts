@@ -2,16 +2,38 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { KeycloakService } from 'keycloak-angular';
+import { AppConfigService } from '../app-config.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(
+    private keycloakService: KeycloakService,
+    private configService: AppConfigService
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Skip token injection for certain URLs
-    const skipUrls = ['/assets/', '/login', '/silent-check-sso.html', 'keycloak', '/realms/', 'localhost:3000'];
-    const shouldSkip = skipUrls.some(url => req.url.includes(url));
+    // Always skip the config.json request to avoid circular dependency
+    if (req.url.includes('/assets/config.json')) {
+      return next.handle(req);
+    }
+    
+    // Get skip URLs and domains from configuration with fallback for when config isn't loaded yet
+    let authConfig;
+    try {
+      authConfig = this.configService.get('authentication');
+    } catch (error) {
+      // Config not loaded yet, use defaults
+      authConfig = null;
+    }
+    
+    // Use fallback values if config is not available or authentication section is missing
+    const skipUrls = authConfig?.skipUrls || ['/assets/', '/login', '/silent-check-sso.html', 'keycloak', '/realms/'];
+    const skipDomains = authConfig?.skipDomains || ['localhost:3000'];
+    
+    // Combine skipUrls and skipDomains for checking
+    const allSkipPatterns = [...skipUrls, ...skipDomains];
+    const shouldSkip = allSkipPatterns.some(pattern => req.url.includes(pattern));
     
     if (shouldSkip) {
       return next.handle(req);
