@@ -31,7 +31,9 @@ export function initializeKeycloak(
     }).catch((error) => {
       console.warn('Keycloak initialization failed:', error);
       // Return false to allow app to continue without authentication
-      return false;
+      console.error('Keycloak initialization failed:', error);
+      window.alert('Authentication service is unavailable. Please try again later.');
+      throw new Error('Keycloak initialization failed: ' + error);
     });
   };
 }
