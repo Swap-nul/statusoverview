@@ -1,17 +1,21 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+export class AppComponent implements OnInit {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
 
-
-export class AppComponent {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer, private overlay: OverlayContainer) {
+    private keycloakService: KeycloakService
+  ) {
     this.matIconRegistry
 
       .addSvgIcon(`app`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/app.svg"))
@@ -78,16 +82,23 @@ export class AppComponent {
       ;
   }
 
-  addCss = false; // set 'initial state' based on your needs
+ 
 
-  refreshCss(darkMode: boolean) {
-    const darkClassName = 'darkMode';
-    this.addCss = darkMode;
-    if (darkMode) {
-      this.overlay.getContainerElement().classList.add(darkClassName);
-    } else {
-      this.overlay.getContainerElement().classList.remove(darkClassName);
+  ngOnInit(): void {
+    // Check if user is authenticated on app initialization
+    this.checkAuthenticationState();
+  }
+
+  private async checkAuthenticationState(): Promise<void> {
+    try {
+      const isAuthenticated = await this.keycloakService.isLoggedIn();
+      if (!isAuthenticated) {
+        console.log('User not authenticated, redirecting to login');
+      }
+    } catch (error) {
+      console.error('Error checking authentication state:', error);
     }
   }
 
+ 
 }

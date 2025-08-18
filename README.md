@@ -9,11 +9,21 @@
 
 [![Build](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml/badge.svg)](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml)
 
-**StatusOverview** is a tool designed to display version information, deployments, environments, and endpoints for multiple applications, typically microservices. It helps developers maintain an eagle-eye view across all environments, ensuring seamless operations and quick insights into the application landscape.
+**StatusOverview** is a comprehensive dashboard tool designed to display version information, deployments, environments, and endpoints for multiple applications, typically microservices. It provides developers and DevOps teams with an eagle-eye view across all environments, ensuring seamless operations and quick insights into the application landscape.
+
+## 🚀 Latest Features
+
+- 🔐 **PKCE Authentication**: Integrated Keycloak with PKCE (Proof Key for Code Exchange) for secure, modern OAuth 2.0 authentication
+- 🎭 **Role-based Access Control**: Granular access control with custom roles and permissions
+- 🔑 **JWT Token Management**: Automatic token handling, refresh, and secure API calls
+- 🛡️ **Security Guards**: Route protection with automatic login redirection
+- 🎨 **Modern UI**: Angular 17 with Material Design components
+- 🌙 **Dark Mode Support**: Toggle between light and dark themes
+- 📱 **Responsive Design**: Works seamlessly across desktop and mobile devices
 
 ---
 
-## Screenshots:
+## 📸 Screenshots
 
 <p align="center">
   <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
@@ -21,121 +31,373 @@
 
 ---
 
-## Pros:
- - Get to know if the latest version is deployed or not, Yellow badge over the verion tag showcases if new verison is available or not.
- - Drill down who did the last deployment with the commit id and commit message ![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
- - DarkMode
+## ✨ Key Benefits
 
-## Quick Start Guide
+- **Version Tracking**: Instantly see if the latest version is deployed across environments
+- **Deployment Details**: Drill down to see who deployed what, with commit details and messages
+- **Environment Overview**: Compare application states across dev, staging, and production
+- **Security First**: PKCE-enabled OAuth 2.0 ensures secure access to sensitive deployment data
+- **Role-based UI**: Show/hide features based on user roles and permissions
+- **Dark Mode**: Eye-friendly interface for extended monitoring sessions
 
-Download the Git repository and navigate to the root folder.
+![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
 
-Execute the following commands in your terminal or command prompt:
+---
+
+## 🏗️ Architecture
+
+The application consists of:
+- **Frontend**: Angular 17 with TypeScript, Angular Material, and Keycloak integration
+- **Backend API**: PostgREST providing RESTful APIs over PostgreSQL
+- **Database**: PostgreSQL for storing application metadata and deployment information
+- **Authentication**: Keycloak server for identity and access management
+- **Container Stack**: Docker Compose for local development environment
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Docker** and **Docker Compose** installed
+- **Node.js** (v18+) and **pnpm** package manager
+- **Git** for version control
+
+### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/Swap-nul/statusoverview.git
-
 cd statusoverview
 ```
 
----
+### 2. Start the Backend Services
 
-### Database Setup
-
-Run the following command in the root folder to start the PostgreSQL database container along with the PostgREST container. Modify the configuration as needed for your environment:
+Start PostgreSQL, PostgREST, and Keycloak:
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
-- The **PostgreSQL** database will serve as the backend for storing app, deployment, and environment metadata.
-- **PostgREST** provides an API layer to interact with the database.
+This will start:
+- **PostgreSQL** on port 3579
+- **PostgREST** on port 3000
+- **Keycloak** on port 8081
 
-> Ensure Docker is installed and running on your machine before executing the command.
+### 3. Set Up Keycloak Authentication
 
-- Execute the ```Database/Database_Schema.sql``` to init the database tables and views
-- To create a ***dummy data***, execute  ```Database/Dummy_Data_Insert_Scripts.sql```.
+Wait for Keycloak to fully start (usually 1-2 minutes), then run the automated setup:
+
+**For Linux/Mac:**
+```bash
+chmod +x keycloak-setup.sh
+./keycloak-setup.sh
+```
+
+**For Windows (PowerShell):**
+```powershell
+.\keycloak-setup.ps1
+```
+
+The script automatically creates:
+- ✅ `statusoverview` realm
+- ✅ `statusoverview-app` client with PKCE enabled
+- ✅ Test user: `testuser` / `testpass123`
+- ✅ Default roles: `admin`, `user`, `viewer`
+
+### 4. Initialize Database
+
+```bash
+# Execute database schema
+docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Database_Schema.sql
+
+# Load sample data (optional)
+docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Dummy_Data_Insert_Scripts.sql
+```
+
+### 5. Start the Frontend Application
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm start
+```
+
+The application will be available at **http://localhost:4200**
 
 ---
 
-### CI/CD Pipelines Setup to Populate Data in the Database
+## 🔐 Authentication Flow
 
-To keep your data updated, you can configure CI/CD pipelines to automate data population:
-1. Set up a pipeline to push application version and deployment details to the database whenever a new build or deployment occurs.
-2. Use the provided database APIs to push deployment metadata for your microservices.
-3. Customize the pipeline YAML files available in the repository for integration with your existing CI/CD tools, such as GitHub Actions, Jenkins, or GitLab CI.
+1. **Visit** `http://localhost:4200`
+2. **Login Page** appears with Status Overview branding
+3. **Click** "Sign In with Keycloak"
+4. **Authenticate** with Keycloak (use `testuser` / `testpass123`)
+5. **Redirected** to the main dashboard upon successful authentication
+
+### Test Credentials
+
+| Username | Password | Roles |
+|----------|----------|-------|
+| testuser | testpass123 | user |
 
 ---
 
-### Frontend App Setup
+## ⚙️ Configuration
 
-To set up and run the frontend:
-1. Navigate to the root folder, Install the required dependencies:
-   ```bash
-   pnpm install
+### Keycloak Settings
+
+Update `src/assets/config.json` for your environment:
+
+```json
+{
+  "keycloak": {
+    "url": "http://localhost:8081",
+    "realm": "statusoverview", 
+    "clientId": "statusoverview-app"
+  },
+  "authentication": {
+    "skipUrls": [
+      "/assets/",
+      "/login", 
+      "/silent-check-sso.html",
+      "keycloak",
+      "/realms/"
+    ],
+    "skipDomains": [
+      "localhost:3000"
+    ]
+  },
+  "database_hostname_port": "http://localhost:3000",
+  "database_baseUrl": "/statusoverview"
+}
+```
+
+#### Authentication Configuration
+
+The `authentication` section controls which URLs and domains are excluded from JWT token injection:
+
+- **`skipUrls`**: URL patterns that should bypass authentication (static assets, login pages, Keycloak endpoints)
+- **`skipDomains`**: Domain patterns for external APIs that don't require authentication (like PostgREST database API)
+
+This configuration is automatically used by both the `AuthInterceptor` and Keycloak initialization, making it easy to manage authentication exclusions in one place.
+
+### Environment-Specific Configuration
+
+Configure the following files for your specific needs:
+
+```
+src/assets/config.json              # API endpoints, Keycloak config
+src/app/models/ELEMENT_DATA.ts       # Project and app names
+src/app/models/dataModel/EnvAppInfoData.ts  # Environment-specific app configurations
+src/app/models/dataModel/RepoData.ts        # Repository endpoints
+```
+
+---
+
+## 🛡️ Role-Based Access Control
+
+### Using the HasRole Directive
+
+Control UI elements based on user roles:
+
+```html
+<!-- Only visible to admins -->
+<button *appHasRole="'admin'" mat-raised-button>
+  Admin Controls
+</button>
+
+<!-- Visible to multiple roles -->
+<div *appHasRole="['admin', 'user']">
+  User Dashboard Content
+</div>
+
+<!-- Visible to everyone (no role check) -->
+<span>Public Information</span>
+```
+
+### Protecting Routes
+
+Routes are automatically protected by the `AuthGuard`:
+
+```typescript
+const routes: Routes = [
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['user', 'admin'] }  // Optional role requirement
+  }
+];
+```
+
+---
+
+## 🔧 Development
+
+### Project Structure
+
+```
+src/
+├── app/
+│   ├── components/          # Angular components
+│   │   ├── dashboard/       # Main dashboard
+│   │   ├── login/          # Custom login page
+│   │   └── header/         # Navigation header
+│   ├── services/           # Angular services
+│   │   ├── keycloak.service.ts     # Authentication service
+│   │   └── applications.service.ts # Business logic
+│   ├── guards/             # Route guards
+│   │   └── auth.guard.ts   # Authentication guard
+│   ├── interceptors/       # HTTP interceptors
+│   │   └── auth.interceptor.ts     # JWT token injection
+│   ├── directives/         # Custom directives
+│   │   └── has-role.directive.ts   # Role-based visibility
+│   └── init/              # App initialization
+│       └── keycloak-init.factory.ts # Keycloak setup
+├── assets/                # Static assets
+└── environments/          # Environment configs
+```
+
+### Available Scripts
+
+```bash
+# Development
+pnpm start              # Start dev server
+pnpm build              # Build for production
+pnpm test               # Run unit tests
+pnpm lint               # Lint code
+
+# Docker
+docker compose up       # Start all services
+docker compose down     # Stop all services
+docker compose restart  # Restart services
+```
+
+### Adding New Roles
+
+1. **Create role in Keycloak** (Admin Console → Roles)
+2. **Assign to users** (Admin Console → Users → Role Mappings)
+3. **Use in templates**:
+   ```html
+   <div *appHasRole="'new-role'">New Feature</div>
    ```
-2. Start the development server:
-   ```bash
-   pnpm start
-   ```
-
-The frontend app will now be accessible at `http://localhost:4200` by default.
 
 ---
 
-### Configuring the Project as Per Your Needs
+## 🏭 Production Deployment
 
-The project is highly configurable. To customize:
-1. Modify the `docker-compose.yml` file to suit your infrastructure needs.
-2. Update configurations in `statusoverview` services for API endpoints, environment names, and specific project requirements.
-3. As per your project requirements you need to configure 4 files files:
-````
-src/assests/config.json
+### Frontend Build
 
-src/app/models/ELEMENT_DATA.ts
+```bash
+# Build optimized production bundle
+pnpm run build
 
-src/app/models/dataModel/EnvAppInfoData.ts
+# Output will be in dist/ directory
+# Deploy to your web server (NGINX, Apache, etc.)
+```
 
-src/app/models/dataModel/RepoData.ts
-````
+### Production Keycloak Setup
 
-* Modify the `src/assests/config.json` file to setup your endpoints informations like kibana, argocd and database.
-* Modify the `src/app/models/ELEMENT_DATA.ts` file to configure the project and apps names.
-* Modify the `src/app/models/dataModel/EnvAppInfoData.ts` file to configure apps according to your environments.
-* Modify the `src/app/models/dataModel/RepoData.ts` file to configure the repository endpoints for your apps.
+1. **Use production-grade Keycloak deployment**
+2. **Configure proper SSL/TLS certificates**
+3. **Set strong admin passwords**
+4. **Configure production database**
+5. **Update CORS and redirect URIs**
 
----
+### Environment Variables
 
-### Running the Project Locally
+Create production environment files:
 
-Once the database and frontend app are set up, run both components:
-1. Start the backend (database and PostgREST):
-   ```bash
-   docker compose up
-   ```
-2. Start the frontend app:
-   ```bash
-   pnpm start
-   ```
+```typescript
+// src/environments/environment.prod.ts
+export const environment = {
+  production: true,
+  keycloak: {
+    url: 'https://your-keycloak.domain.com',
+    realm: 'statusoverview',
+    clientId: 'statusoverview-app'
+  }
+};
+```
 
-Visit the application in your browser at [http://localhost:4200](http://localhost:4200).
+### Security Checklist
 
----
-
-### Running the Project in Production
-
-To deploy the project in a production environment:
-1. Build the frontend application:
-   ```bash
-   pnpm run build
-   ```
-   The build artifacts will be stored in the `dist/` directory.
-2. Deploy the `dist/` directory to a web server such as NGINX or Apache.
-3. Use a managed database service or host PostgreSQL yourself.
-4. Set up PostgREST in production mode with appropriate configurations.
-5. Update your environment variables to match the production setup.
-
-> For cloud deployments, consider using services like AWS, GCP, or Azure to host the application securely and scalably.
+- [ ] HTTPS enabled for all services
+- [ ] Keycloak admin console secured
+- [ ] Strong passwords and proper token lifetimes
+- [ ] CORS properly configured
+- [ ] Production database secured
+- [ ] Regular security updates applied
 
 ---
 
-Feel free to contribute to the project or raise issues on GitHub if you encounter any problems!
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Authentication Errors:**
+```bash
+# Check Keycloak status
+docker logs keycloak
+
+# Verify Keycloak is accessible
+curl http://localhost:8081/realms/statusoverview
+```
+
+**Database Connection Issues:**
+```bash
+# Check PostgREST logs
+docker logs postgrest
+
+# Test database connection
+docker exec -it statusoverview-db psql -U postgres -d statusoverview_DB
+```
+
+**Build Errors:**
+```bash
+# Clear node modules and reinstall
+rm -rf node_modules package-lock.json
+pnpm install
+
+# Clear Angular cache
+pnpm ng cache clean
+```
+
+### CORS Issues
+
+If you encounter CORS errors, ensure your Keycloak client has the correct web origins configured:
+
+1. Open Keycloak Admin Console
+2. Navigate to Clients → statusoverview-app
+3. Add your application URL to "Web Origins"
+4. Save changes
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🆘 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Swap-nul/statusoverview/issues)
+- **Documentation**: Check the [Wiki](https://github.com/Swap-nul/statusoverview/wiki)
+- **Discussions**: [GitHub Discussions](https://github.com/Swap-nul/statusoverview/discussions)
+
+---
+
+**Made with ❤️ for the DevOps community**

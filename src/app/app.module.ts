@@ -32,7 +32,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { EnvDetailsDialogComponent } from './components/env-details-dialog/env-details-dialog.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -41,6 +42,11 @@ import { SortButtonComponent } from './components/sort-button/sort-button.compon
 import { StatusIconsTagLinksComponent } from './components/status-icons-tag-links/status-icons-tag-links.component';
 import { AppConfigService } from './app-config.service';
 import { ProjectComponent } from './components/project/project.component';
+import { LoginComponent } from './components/login/login.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { initializeKeycloak } from './init/keycloak-init.factory';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { HasRoleDirective } from './directives/has-role.directive';
 
 export function initializeApp(appConfig: AppConfigService) {
   return () => appConfig.loadConfig();
@@ -56,12 +62,16 @@ export function initializeApp(appConfig: AppConfigService) {
     EnvDetailsDialogComponent,
     ProjectComponent,
     SortButtonComponent,
+    LoginComponent,
+    DashboardComponent,
+    HasRoleDirective,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    KeycloakAngularModule,
     MatToolbarModule,
     MatIconModule,
     MatTabsModule,
@@ -92,6 +102,17 @@ export function initializeApp(appConfig: AppConfigService) {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
       deps: [AppConfigService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService, AppConfigService],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true,
     },
     {

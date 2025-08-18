@@ -1,4 +1,24 @@
 {
+  "keycloak": {
+    "url": "http://localhost:8081",
+    "realm": "statusoverview",
+    "clientId": "statusoverview-app"
+  },
+  "_comment_authentication": "Authentication configuration for JWT token injection control",
+  "authentication": {
+    "_comment_skipUrls": "URL patterns that should skip JWT token injection (path-based)",
+    "skipUrls": [
+      "/assets/",
+      "/login",
+      "/silent-check-sso.html",
+      "keycloak",
+      "/realms/"
+    ],
+    "_comment_skipDomains": "Domain patterns that should skip JWT token injection (hostname-based)",
+    "skipDomains": [
+      "localhost:3000"
+    ]
+  },
   "argoCD_nonprod_Url": "https://argocd.hostname.cloud/applications/",
   "argoCD_prod_Url": "https://argocd.prod_hostname.cloud/applications/",
   "argoCD_dr_Url": "https://argocd.dr_hostname.cloud/applications/",

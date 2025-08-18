@@ -1,17 +1,25 @@
-import { Component, EventEmitter, HostBinding, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Output, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { AuthService } from '../../services/keycloak.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @HostBinding('class') className = '';
   @Output() cssRefreshDarkMode = new EventEmitter<boolean>();
   toggleControl = new FormControl(false);
-  mode: boolean = false;   // light mode
+  mode: boolean = false; // light mode
   addCssDarkmode = false; // set 'initial state' based on your needs
+
+  // Authentication properties
+  isAuthenticated = false;
+  username: string = '';
+  userRoles: string[] = [];
+
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.toggleControl.valueChanges.subscribe((darkMode) => {
@@ -19,5 +27,20 @@ export class HeaderComponent {
       this.mode = !this.mode;
       this.addCssDarkmode = this.mode;
     });
+
+    // Check authentication status
+    this.isAuthenticated = this.authService.isAuthenticated();
+    if (this.isAuthenticated) {
+      this.username = this.authService.getUsername();
+      this.userRoles = this.authService.getUserRoles();
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  goToAccountManagement(): void {
+    this.authService.redirectToAccountManagement();
   }
 }

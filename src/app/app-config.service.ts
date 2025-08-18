@@ -15,6 +15,10 @@ export class AppConfigService {
   }
 
   get(key: string) {
+    if (!this.config) {
+      console.warn(`Config not loaded yet, cannot access key: ${key}`);
+      return null;
+    }
     return this.config[key];
   }
 }
