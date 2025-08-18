@@ -1,0 +1,19 @@
+.main-content {
+  min-height: calc(100vh - 120px);
+}
+
+@media (max-width: 768px) {
+  .user-profile-section {
+    padding: 12px 16px;
+  }
+  
+  .user-info {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .user-roles {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

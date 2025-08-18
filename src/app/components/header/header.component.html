@@ -1,23 +1,37 @@
-<mat-toolbar
-  class="custom-mat-toolbar"
-  [ngClass]="{ 'custom-mat-toolbar-dark': addCssDarkmode }"
->
+<mat-toolbar class="custom-mat-toolbar" [ngClass]="{ 'custom-mat-toolbar-dark': addCssDarkmode }">
   <img src="../../../assets/images/SO-logo.png" class="logo" />
   <span class="toolbar-spacer">
     <div style="vertical-align: baseline">Status Overview</div>
   </span>
-  <a
-    href="https://github.com/swapnil512/statusoverview"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Go to Repository"
-    style="color: rgb(210, 210, 210); text-decoration: none"
-    class="repoText"
-  >
-    <mat-icon
-      style="height: 40px; width: 40px"
-      svgIcon="github_repo"
-    ></mat-icon>
+
+  <!-- User Authentication Section -->
+  <div class="auth-section" *ngIf="isAuthenticated">
+    <span class="username">{{ username }}</span>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="goToAccountManagement()">
+        <mat-icon>settings</mat-icon>
+        <span>Account Settings</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+
+      <div class="user-roles" *ngIf="userRoles.length > 0">
+        <span class="roles-label">Roles:</span>
+        <mat-chip-set>
+          <mat-chip *ngFor="let role of userRoles">{{ role }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </mat-menu>
+  </div>
+
+  <a href="https://github.com/swapnil512/statusoverview" target="_blank" rel="noopener noreferrer" title="Go to Repository" style="color: rgb(210, 210, 210); text-decoration: none"
+    class="repoText">
+    <mat-icon style="height: 40px; width: 40px" svgIcon="github_repo"></mat-icon>
     GitHub
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -1,4 +1,9 @@
 {
+  "keycloak": {
+    "url": "http://localhost:8081",
+    "realm": "statusoverview",
+    "clientId": "statusoverview-app"
+  },
   "argoCD_nonprod_Url": "https://argocd.hostname.cloud/applications/",
   "argoCD_prod_Url": "https://argocd.prod_hostname.cloud/applications/",
   "argoCD_dr_Url": "https://argocd.dr_hostname.cloud/applications/",
