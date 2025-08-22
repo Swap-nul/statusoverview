@@ -92,6 +92,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
           this.envs = this.environmentsFilterForProject.map((e) => e.name);
           this.envForm = new FormControl(this.envs);
 
+          // Subscribe to envForm changes for automatic filtering
+          this.envForm.valueChanges
+            .pipe(takeUntil(this.componentDestroyed$))
+            .subscribe(() => {
+              this.filterSelectedColumns();
+            });
+
           this.resetColumns();
         });
       });
@@ -176,5 +183,26 @@ export class ProjectComponent implements OnInit, OnDestroy {
   downloadCSV(environment: string) {
     let data = this.dataTableApps.slice();
     this.applicationService.downloadCSV(environment, data);
+  }
+
+  toggleSelectAll() {
+    if (this.isAllSelected()) {
+      // If all are selected, deselect all
+      this.envForm.setValue([]);
+    } else {
+      // If not all are selected, select all
+      this.envForm.setValue([...this.envs]);
+    }
+    // Filtering will be triggered automatically by valueChanges subscription
+  }
+
+  isAllSelected(): boolean {
+    const selectedValues = this.envForm.value || [];
+    return selectedValues.length === this.envs.length;
+  }
+
+  isIndeterminate(): boolean {
+    const selectedValues = this.envForm.value || [];
+    return selectedValues.length > 0 && selectedValues.length < this.envs.length;
   }
 }

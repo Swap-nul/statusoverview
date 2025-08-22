@@ -9,7 +9,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 })
 export class DashboardComponent {
   constructor(private overlay: OverlayContainer) {}
-  addCss = false; // set 'initial state' based on your needs
+  addCss = true; // set 'initial state' based on your needs
 
   refreshCss(darkMode: boolean) {
     const darkClassName = 'darkMode';

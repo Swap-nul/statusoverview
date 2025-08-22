@@ -15,7 +15,7 @@
   > mat-form-field {
     width: auto;
     flex-grow: 1;
-    min-width: 180px;
+    max-width: 250px;
   }
 
   > div {
@@ -80,4 +80,16 @@
 .mat-divider.mat-divider-vertical {
   border-color: #ffcd33;
   border-right-width: 2px;
+}
+
+.select-all-option {
+  font-weight: 700 !important;
+  
+  &:hover {
+    background-color: rgba(63, 81, 181, 0.1) !important;
+  }
+  
+  .mat-checkbox {
+    pointer-events: none;
+  }
 }
