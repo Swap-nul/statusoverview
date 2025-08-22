@@ -6,6 +6,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -80,6 +81,7 @@ export function initializeApp(appConfig: AppConfigService) {
     MatSortModule,
     MatTooltipModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatRippleModule,
     MatDialogModule,
     MatFormFieldModule,

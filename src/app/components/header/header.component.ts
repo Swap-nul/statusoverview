@@ -10,9 +10,9 @@ import { AuthService } from '../../services/keycloak.service';
 export class HeaderComponent implements OnInit {
   @HostBinding('class') className = '';
   @Output() cssRefreshDarkMode = new EventEmitter<boolean>();
-  toggleControl = new FormControl(false);
-  mode: boolean = false; // light mode
-  addCssDarkmode = false; // set 'initial state' based on your needs
+  toggleControl = new FormControl(true);
+  mode: boolean = true; 
+  addCssDarkmode = true;
 
   // Authentication properties
   isAuthenticated = false;

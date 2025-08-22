@@ -1,50 +1,22 @@
 .user-profile-section {
-  background: white;
   border-bottom: 1px solid #e0e0e0;
   padding: 16px 24px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  
-  mat-icon {
-    color: #666;
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-  }
-  
-  .username {
-    font-weight: 500;
-    color: #333;
-    flex: 1;
-  }
-  
-  .user-actions {
-    .user-menu-trigger {
-      color: #666;
-    }
-  }
 }
 
 .user-roles {
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   .roles-label {
     font-size: 14px;
     color: #666;
     font-weight: 500;
   }
-  
+
   mat-chip-set {
     mat-chip {
-      background-color: #e3f2fd;
       color: #1976d2;
       font-size: 12px;
     }
@@ -75,14 +47,30 @@
   align-items: center;
   gap: 8px;
   margin-right: 16px;
-  
+
   .username {
     font-size: 14px;
     font-weight: 500;
+    color: #333;
+    flex: 1;
   }
-  
+
   .user-menu-btn {
     color: inherit;
+  }
+
+  .user-roles {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .roles-label {
+      font-size: 10px;
+    }
+
+    .roles {
+      font-size: 6px;
+    }
   }
 }
 
@@ -136,6 +124,6 @@ label:active:after {
 }
 
 .repoText {
-  -webkit-text-stroke: 1px rgb(161, 161, 161); 
+  -webkit-text-stroke: 1px rgb(161, 161, 161);
   font-size: larger;
 }

@@ -78,6 +78,11 @@ export class AppComponent implements OnInit {
 
       .addSvgIcon(`csv`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/csv.svg"))
 
+      .addSvgIcon(`account`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/account.svg"))
+      
+      .addSvgIcon(`logout`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/log-out.svg"))
+
+      .addSvgIcon(`account-settings`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/account-settings.svg"))
 
       ;
   }
