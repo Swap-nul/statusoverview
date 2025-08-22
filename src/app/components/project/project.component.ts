@@ -9,6 +9,7 @@ import { AppDataSource } from 'src/app/models/data-source/app-dataSource';
 import { App } from 'src/app/models/tag-version/app';
 import { ApplicationsService } from 'src/app/services/applications.service';
 import { EnvDetailsDialogComponent, EnvDetailsDialogData } from '../env-details-dialog/env-details-dialog.component';
+import { BulkDeployDialogComponent, BulkDeployDialogData } from '../bulk-deploy-dialog/bulk-deploy-dialog.component';
 
 @Component({
   selector: 'app-project',
@@ -204,5 +205,30 @@ export class ProjectComponent implements OnInit, OnDestroy {
   isIndeterminate(): boolean {
     const selectedValues = this.envForm.value || [];
     return selectedValues.length > 0 && selectedValues.length < this.envs.length;
+  }
+
+  openBulkDeployDialog() {
+    const dialogData: BulkDeployDialogData = {
+      projectName: this.projectName,
+      environments: this.environmentsFilterForProject,
+      apps: this.dataTableApps
+    };
+
+    const dialogRef = this.dialog.open(BulkDeployDialogComponent, {
+      width: '1000px',
+      maxWidth: '95vw',
+      data: dialogData,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+        // Optionally refresh the data or show a success message
+        console.log('Bulk deployment initiated successfully', result.response);
+        
+        // You might want to refresh the data to reflect any changes
+        // this.loadProjects();
+      }
+    });
   }
 }
