@@ -69,7 +69,8 @@
               "buildTarget": "statusoverview:build:production"
             },
             "development": {
-              "buildTarget": "statusoverview:build:development"
+              "buildTarget": "statusoverview:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

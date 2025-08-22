@@ -49,20 +49,21 @@ export class JenkinsService {
     const jenkinsJobName = this.configService.get('jenkinsBulkDeployJobName') || 'bulk-deployment-job';
     const url = `${this.jenkinsBaseUrl}/job/${jenkinsJobName}/buildWithParameters`;
 
-    // Create Jenkins job parameters
-    const formData = new FormData();
-    formData.append('PROJECT_NAME', payload.projectName);
-    formData.append('FROM_ENVIRONMENT', payload.fromEnvironment);
-    formData.append('TO_ENVIRONMENT', payload.toEnvironment);
-    formData.append('APPLICATIONS_JSON', JSON.stringify(payload.applications));
-    formData.append('TRIGGER_USER', this.getCurrentUser());
+    // Create URL parameters instead of FormData to avoid CORS preflight
+    const params = new URLSearchParams();
+    params.append('PROJECT_NAME', payload.projectName);
+    params.append('FROM_ENVIRONMENT', payload.fromEnvironment);
+    params.append('TO_ENVIRONMENT', payload.toEnvironment);
+    params.append('APPLICATIONS_JSON', JSON.stringify(payload.applications));
+    params.append('TRIGGER_USER', this.getCurrentUser());
 
     // Add authentication headers
     const headers = new HttpHeaders({
-      'Authorization': `Basic ${btoa(`${this.jenkinsApiUser}:${this.jenkinsApiToken}`)}`
+      'Authorization': `Basic ${btoa(`${this.jenkinsApiUser}:${this.jenkinsApiToken}`)}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post(url, formData, { 
+    return this.http.post(url, params.toString(), { 
       headers, 
       observe: 'response',
       responseType: 'text'

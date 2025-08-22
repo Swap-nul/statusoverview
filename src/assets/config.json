@@ -31,9 +31,9 @@
   "database_baseUrl": "/statusoverview",
 
   "_comment_jenkins": "Jenkins configuration for bulk deployment feature",
-  "jenkinsBaseUrl": "https://your-jenkins-instance.com",
-  "jenkinsApiUser": "your-jenkins-user",
-  "jenkinsApiToken": "your-jenkins-api-token",
+  "jenkinsBaseUrl": "/jenkins",
+  "jenkinsApiUser": "admin",
+  "jenkinsApiToken": "admin123",
   "jenkinsBulkDeployJobName": "bulk-deployment-job",
 
   "projects": [

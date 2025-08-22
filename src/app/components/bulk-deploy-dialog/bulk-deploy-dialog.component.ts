@@ -7,6 +7,7 @@ import { App } from 'src/app/models/tag-version/app';
 import { DeployDetails } from 'src/app/models/tag-version/deploy-details';
 import { Entity } from 'src/app/models/data-model/entity';
 import { ApplicationsService } from 'src/app/services/applications.service';
+import { JenkinsService } from 'src/app/services/jenkins.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
@@ -48,6 +49,7 @@ export class BulkDeployDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<BulkDeployDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BulkDeployDialogData,
     private applicationsService: ApplicationsService,
+    private jenkinsService: JenkinsService,
     private http: HttpClient,
     private snackBar: MatSnackBar
   ) {
@@ -196,12 +198,11 @@ export class BulkDeployDialogComponent implements OnInit {
     };
 
     // Call Jenkins service to trigger bulk deployment
-    // For now, we'll use a mock implementation
-    this.triggerMockDeployment(deploymentPayload).subscribe({
+    this.jenkinsService.triggerBulkDeployment(deploymentPayload).subscribe({
       next: (response: any) => {
         this.isLoading = false;
         this.snackBar.open(
-          `Bulk deployment initiated for ${selectedApps.length} applications from ${fromEnv.toUpperCase()} to ${toEnv.toUpperCase()}`,
+          `Bulk deployment initiated for ${selectedApps.length} applications from ${fromEnv.toUpperCase()} to ${toEnv.toUpperCase()}. Job ID: ${response.jobId}`,
           'Close',
           { duration: 5000 }
         );
