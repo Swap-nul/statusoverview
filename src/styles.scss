@@ -38,6 +38,17 @@ $angular-dark-theme: mat.define-dark-theme(
   @include mat.all-component-colors($angular-dark-theme);
 }
 
+// Body background handling
+body {
+  background-color: #fafafa; // Light theme default
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.darkMode body {
+  background-color: #303030; // Dark theme background
+}
+
 table th,
 table td {
   border-right: 1px solid rgba(100, 100, 100, 0.5); /* Adjust the color and opacity as needed */

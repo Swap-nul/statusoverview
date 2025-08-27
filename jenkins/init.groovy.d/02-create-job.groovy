@@ -1,23 +1,220 @@
 import jenkins.model.*
 import hudson.model.*
+import hudson.security.*
+import hudson.security.ACL
 
-// Wait for Jenkins to be fully loaded and plugins to be available
-Thread.start {
-    sleep(30000) // Wait 30 seconds for plugins to load
+def createSingleAppDeploymentJob(instance, WorkflowJob, CpsFlowDefinition) {
+    def jobName = "single-app-deployment"
+    def job = instance.getItem(jobName)
+
+    // Always recreate the job to ensure parameters are properly configured
+    if (job != null) {
+        println "Deleting existing single app deployment job to recreate with proper parameters..."
+        job.delete()
+    }
     
-    try {
-        // Import workflow classes after plugins are loaded
-        def WorkflowJob = Class.forName('org.jenkinsci.plugins.workflow.job.WorkflowJob')
-        def CpsFlowDefinition = Class.forName('org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition')
+    println "Creating single app deployment job..."
         
-        def instance = Jenkins.getInstance()
-        def jobName = "bulk-deployment-job"
-        def job = instance.getItem(jobName)
+        def jobDefinition = '''
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'PROJECT_NAME', defaultValue: '', description: 'Name of the project')
+        string(name: 'APP_NAME', defaultValue: '', description: 'Name of the application to deploy')
+        string(name: 'FROM_ENVIRONMENT', defaultValue: '', description: 'Source environment')
+        string(name: 'TO_ENVIRONMENT', defaultValue: '', description: 'Target environment')
+        string(name: 'VERSION', defaultValue: '', description: 'Application version to deploy')
+        string(name: 'BRANCH', defaultValue: '', description: 'Application branch')
+        string(name: 'TRIGGER_USER', defaultValue: 'system', description: 'User who triggered the deployment')
+        string(name: 'BULK_JOB_ID', defaultValue: '', description: 'ID of the bulk deployment job (if part of bulk)')
+    }
+    
+    stages {
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    if (!params.PROJECT_NAME) {
+                        error("PROJECT_NAME parameter is required")
+                    }
+                    if (!params.APP_NAME) {
+                        error("APP_NAME parameter is required")
+                    }
+                    if (!params.FROM_ENVIRONMENT) {
+                        error("FROM_ENVIRONMENT parameter is required")
+                    }
+                    if (!params.TO_ENVIRONMENT) {
+                        error("TO_ENVIRONMENT parameter is required")
+                    }
+                    if (!params.VERSION) {
+                        error("VERSION parameter is required")
+                    }
+                    
+                    echo "=== Deployment Parameters ==="
+                    echo "Project: ${params.PROJECT_NAME}"
+                    echo "Application: ${params.APP_NAME}"
+                    echo "Version: ${params.VERSION}"
+                    echo "Branch: ${params.BRANCH}"
+                    echo "From Environment: ${params.FROM_ENVIRONMENT}"
+                    echo "To Environment: ${params.TO_ENVIRONMENT}"
+                    echo "Triggered by: ${params.TRIGGER_USER}"
+                    if (params.BULK_JOB_ID) {
+                        echo "Part of bulk deployment: ${params.BULK_JOB_ID}"
+                    }
+                    echo "=========================="
+                }
+            }
+        }
+        
+        stage('Pre-deployment Checks') {
+            steps {
+                script {
+                    echo "Performing pre-deployment checks for ${params.APP_NAME}..."
+                    
+                    // Add your pre-deployment checks here
+                    // For example: check if the application exists, validate version, etc.
+                    
+                    // Simulate check
+                    sleep(2)
+                    echo "✓ ${params.APP_NAME} passed pre-deployment checks"
+                    echo "✓ Version ${params.VERSION} is available"
+                    echo "✓ Target environment ${params.TO_ENVIRONMENT} is accessible"
+                }
+            }
+        }
+        
+        stage('Deploy Application') {
+            steps {
+                script {
+                    echo "Deploying ${params.APP_NAME} version ${params.VERSION} to ${params.TO_ENVIRONMENT}..."
+                    
+                    try {
+                        // Simulate deployment process
+                        echo "1. Pulling image for ${params.APP_NAME}:${params.VERSION}"
+                        sleep(3)
+                        
+                        echo "2. Updating deployment configuration for ${params.TO_ENVIRONMENT}"
+                        sleep(2)
+                        
+                        echo "3. Rolling out ${params.APP_NAME} to ${params.TO_ENVIRONMENT}"
+                        sleep(4)
+                        
+                        echo "4. Verifying deployment of ${params.APP_NAME}"
+                        sleep(2)
+                        
+                        echo "✓ ${params.APP_NAME} deployed successfully to ${params.TO_ENVIRONMENT}"
+                        
+                        // Store deployment result
+                        def deploymentResult = [
+                            appName: params.APP_NAME,
+                            version: params.VERSION,
+                            branch: params.BRANCH,
+                            fromEnvironment: params.FROM_ENVIRONMENT,
+                            toEnvironment: params.TO_ENVIRONMENT,
+                            status: 'SUCCESS',
+                            deployedAt: new Date().toString(),
+                            deployedBy: params.TRIGGER_USER,
+                            buildNumber: env.BUILD_NUMBER,
+                            bulkJobId: params.BULK_JOB_ID ?: null
+                        ]
+                        
+                        writeJSON file: 'deployment-result.json', json: deploymentResult
+                        archiveArtifacts artifacts: 'deployment-result.json', fingerprint: true
+                        
+                    } catch (Exception e) {
+                        echo "✗ ${params.APP_NAME} deployment failed: ${e.message}"
+                        
+                        def deploymentResult = [
+                            appName: params.APP_NAME,
+                            version: params.VERSION,
+                            branch: params.BRANCH,
+                            fromEnvironment: params.FROM_ENVIRONMENT,
+                            toEnvironment: params.TO_ENVIRONMENT,
+                            status: 'FAILED',
+                            error: e.message,
+                            deployedAt: new Date().toString(),
+                            deployedBy: params.TRIGGER_USER,
+                            buildNumber: env.BUILD_NUMBER,
+                            bulkJobId: params.BULK_JOB_ID ?: null
+                        ]
+                        
+                        writeJSON file: 'deployment-result.json', json: deploymentResult
+                        archiveArtifacts artifacts: 'deployment-result.json', fingerprint: true
+                        
+                        throw e
+                    }
+                }
+            }
+        }
+        
+        stage('Post-deployment Verification') {
+            steps {
+                script {
+                    echo "Running post-deployment verification for ${params.APP_NAME}..."
+                    
+                    // Add your post-deployment verification here
+                    // For example: health checks, smoke tests, etc.
+                    
+                    sleep(2)
+                    echo "✓ ${params.APP_NAME} is healthy in ${params.TO_ENVIRONMENT}"
+                    echo "✓ Post-deployment verification completed"
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                def status = currentBuild.result ?: 'SUCCESS'
+                def summary = "App Deployment Summary\\n"
+                summary += "Application: ${params.APP_NAME}\\n"
+                summary += "Version: ${params.VERSION}\\n"
+                summary += "Environment: ${params.FROM_ENVIRONMENT} → ${params.TO_ENVIRONMENT}\\n"
+                summary += "Status: ${status}\\n"
+                summary += "Build: #${env.BUILD_NUMBER}"
+                
+                currentBuild.description = summary
+                
+                echo "=== Deployment Complete ==="
+                echo "Application: ${params.APP_NAME}"
+                echo "Status: ${status}"
+                echo "Build Number: ${env.BUILD_NUMBER}"
+                echo "=========================="
+            }
+        }
+        
+        success {
+            echo "✅ ${params.APP_NAME} deployment completed successfully!"
+        }
+        
+        failure {
+            echo "❌ ${params.APP_NAME} deployment failed"
+        }
+    }
+}
+'''
 
-        if (job == null) {
-            println "Creating bulk deployment job..."
-            
-            def jobDefinition = '''
+        job = instance.createProject(WorkflowJob, jobName)
+        job.definition = CpsFlowDefinition.newInstance(jobDefinition, true)
+        job.save()
+        
+        println "Single app deployment job created successfully"
+}
+
+def createBulkDeploymentTriggerJob(instance, WorkflowJob, CpsFlowDefinition) {
+    def jobName = "bulk-deployment-trigger"
+    def job = instance.getItem(jobName)
+
+    // Always recreate the job to ensure parameters are properly configured
+    if (job != null) {
+        println "Deleting existing bulk deployment trigger job to recreate with proper parameters..."
+        job.delete()
+    }
+    
+    println "Creating bulk deployment trigger job..."
+        
+        def jobDefinition = '''
 pipeline {
     agent any
     
@@ -43,115 +240,100 @@ pipeline {
                         error("TO_ENVIRONMENT parameter is required")
                     }
                     
+                    def applications = readJSON text: params.APPLICATIONS_JSON
+                    if (applications.size() == 0) {
+                        error("No applications specified for deployment")
+                    }
+                    
+                    echo "=== Bulk Deployment Parameters ==="
                     echo "Project: ${params.PROJECT_NAME}"
                     echo "From Environment: ${params.FROM_ENVIRONMENT}"
                     echo "To Environment: ${params.TO_ENVIRONMENT}"
                     echo "Triggered by: ${params.TRIGGER_USER}"
-                    
-                    def applications = readJSON text: params.APPLICATIONS_JSON
                     echo "Applications to deploy: ${applications.size()}"
                     
                     applications.each { app ->
-                        echo "- ${app.appName} (${app.version})"
+                        echo "- ${app.appName} (${app.version}) [${app.branch}]"
                     }
+                    echo "================================"
                 }
             }
         }
         
-        stage('Pre-deployment Checks') {
-            steps {
-                script {
-                    echo "Performing pre-deployment checks..."
-                    
-                    def applications = readJSON text: params.APPLICATIONS_JSON
-                    
-                    applications.each { app ->
-                        echo "Checking ${app.appName}..."
-                        // Add your pre-deployment checks here
-                        // For example: check if the application exists, validate version, etc.
-                        
-                        // Simulate check
-                        sleep(1)
-                        echo "✓ ${app.appName} passed pre-deployment checks"
-                    }
-                }
-            }
-        }
-        
-        stage('Deploy Applications') {
+        stage('Trigger Individual Deployments') {
             steps {
                 script {
                     def applications = readJSON text: params.APPLICATIONS_JSON
-                    def deploymentResults = []
+                    def bulkJobId = "bulk-${env.BUILD_NUMBER}-${System.currentTimeMillis()}"
+                    def triggeredJobs = []
+                    
+                    echo "Starting bulk deployment with ID: ${bulkJobId}"
                     
                     applications.each { app ->
-                        echo "Deploying ${app.appName} version ${app.version} to ${params.TO_ENVIRONMENT}..."
+                        echo "Triggering deployment for ${app.appName}..."
                         
                         try {
-                            // Simulate deployment process
-                            echo "1. Pulling image for ${app.appName}:${app.version}"
-                            sleep(2)
+                            def jobParameters = [
+                                string(name: 'PROJECT_NAME', value: params.PROJECT_NAME),
+                                string(name: 'APP_NAME', value: app.appName),
+                                string(name: 'FROM_ENVIRONMENT', value: params.FROM_ENVIRONMENT),
+                                string(name: 'TO_ENVIRONMENT', value: params.TO_ENVIRONMENT),
+                                string(name: 'VERSION', value: app.version),
+                                string(name: 'BRANCH', value: app.branch),
+                                string(name: 'TRIGGER_USER', value: params.TRIGGER_USER),
+                                string(name: 'BULK_JOB_ID', value: bulkJobId)
+                            ]
                             
-                            echo "2. Updating deployment configuration"
-                            sleep(1)
+                            def triggeredJob = build job: 'single-app-deployment', 
+                                                   parameters: jobParameters,
+                                                   wait: false
                             
-                            echo "3. Rolling out to ${params.TO_ENVIRONMENT}"
-                            sleep(3)
-                            
-                            echo "4. Verifying deployment"
-                            sleep(2)
-                            
-                            deploymentResults.add([
+                            triggeredJobs.add([
                                 appName: app.appName,
-                                status: 'SUCCESS',
-                                version: app.version,
-                                message: "Successfully deployed to ${params.TO_ENVIRONMENT}"
+                                jobName: 'single-app-deployment',
+                                buildNumber: triggeredJob.number,
+                                buildUrl: triggeredJob.absoluteUrl
                             ])
                             
-                            echo "✓ ${app.appName} deployed successfully"
+                            echo "✓ Triggered deployment job for ${app.appName} (Build #${triggeredJob.number})"
                             
                         } catch (Exception e) {
-                            deploymentResults.add([
+                            echo "✗ Failed to trigger deployment for ${app.appName}: ${e.message}"
+                            triggeredJobs.add([
                                 appName: app.appName,
-                                status: 'FAILED',
-                                version: app.version,
-                                message: "Deployment failed: ${e.message}"
+                                error: e.message,
+                                status: 'FAILED_TO_TRIGGER'
                             ])
-                            
-                            echo "✗ ${app.appName} deployment failed: ${e.message}"
                         }
                     }
                     
-                    // Store results for post-processing
-                    writeJSON file: 'deployment-results.json', json: deploymentResults
-                    archiveArtifacts artifacts: 'deployment-results.json', fingerprint: true
-                }
-            }
-        }
-        
-        stage('Post-deployment Verification') {
-            steps {
-                script {
-                    echo "Running post-deployment verification..."
+                    // Store the triggered jobs information
+                    def bulkResult = [
+                        bulkJobId: bulkJobId,
+                        projectName: params.PROJECT_NAME,
+                        fromEnvironment: params.FROM_ENVIRONMENT,
+                        toEnvironment: params.TO_ENVIRONMENT,
+                        triggeredBy: params.TRIGGER_USER,
+                        triggeredAt: new Date().toString(),
+                        totalApplications: applications.size(),
+                        triggeredJobs: triggeredJobs,
+                        bulkBuildNumber: env.BUILD_NUMBER
+                    ]
                     
-                    def results = readJSON file: 'deployment-results.json'
-                    def successCount = results.count { it.status == 'SUCCESS' }
-                    def failCount = results.count { it.status == 'FAILED' }
+                    writeJSON file: 'bulk-deployment-result.json', json: bulkResult
+                    archiveArtifacts artifacts: 'bulk-deployment-result.json', fingerprint: true
                     
-                    echo "Deployment Summary:"
-                    echo "- Successful: ${successCount}"
-                    echo "- Failed: ${failCount}"
-                    echo "- Total: ${results.size()}"
+                    echo "Bulk deployment trigger completed. ${triggeredJobs.size()} jobs triggered."
                     
-                    if (failCount > 0) {
-                        echo "Some deployments failed:"
-                        results.findAll { it.status == 'FAILED' }.each { app ->
-                            echo "  ✗ ${app.appName}: ${app.message}"
-                        }
-                        
-                        // Mark build as unstable if some deployments failed
-                        currentBuild.result = 'UNSTABLE'
-                    }
+                    // Set build description
+                    def summary = "Bulk Deployment Summary\\n"
+                    summary += "Project: ${params.PROJECT_NAME}\\n"
+                    summary += "Environment: ${params.FROM_ENVIRONMENT} → ${params.TO_ENVIRONMENT}\\n"
+                    summary += "Applications: ${applications.size()}\\n"
+                    summary += "Jobs Triggered: ${triggeredJobs.findAll { !it.error }.size()}\\n"
+                    summary += "Bulk ID: ${bulkJobId}"
+                    
+                    currentBuild.description = summary
                 }
             }
         }
@@ -159,47 +341,49 @@ pipeline {
     
     post {
         always {
-            echo "Bulk deployment job completed"
-            
-            script {
-                def results = readJSON file: 'deployment-results.json'
-                def summary = "Bulk Deployment Summary\\n"
-                summary += "Project: ${params.PROJECT_NAME}\\n"
-                summary += "From: ${params.FROM_ENVIRONMENT} → To: ${params.TO_ENVIRONMENT}\\n"
-                summary += "Applications: ${results.size()}\\n"
-                summary += "Success: ${results.count { it.status == 'SUCCESS' }}\\n"
-                summary += "Failed: ${results.count { it.status == 'FAILED' }}\\n"
-                
-                currentBuild.description = summary
-            }
+            echo "Bulk deployment trigger job completed"
         }
         
         success {
-            echo "All deployments completed successfully!"
-        }
-        
-        unstable {
-            echo "Deployment completed with some failures"
+            echo "✅ All deployment jobs triggered successfully!"
         }
         
         failure {
-            echo "Deployment job failed"
+            echo "❌ Bulk deployment trigger failed"
         }
     }
 }
 '''
 
-            job = instance.createProject(WorkflowJob, jobName)
-            job.definition = CpsFlowDefinition.newInstance(jobDefinition, true)
-            job.save()
+        job = instance.createProject(WorkflowJob, jobName)
+        job.definition = CpsFlowDefinition.newInstance(jobDefinition, true)
+        job.save()
+        
+        println "Bulk deployment trigger job created successfully"
+}
+
+// Wait for Jenkins to be fully loaded and plugins to be available
+Thread.start {
+    sleep(30000) // Wait 30 seconds for plugins to load
+    
+    try {
+        // Import workflow classes after plugins are loaded
+        def WorkflowJob = Class.forName('org.jenkinsci.plugins.workflow.job.WorkflowJob')
+        def CpsFlowDefinition = Class.forName('org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition')
+        
+        def instance = Jenkins.getInstance()
+        
+        // Use system ACL to create jobs
+        ACL.impersonate(ACL.SYSTEM, {
+            // Create single app deployment job
+            createSingleAppDeploymentJob(instance, WorkflowJob, CpsFlowDefinition)
             
-            println "Bulk deployment job created successfully"
-        } else {
-            println "Bulk deployment job already exists"
-        }
+            // Create bulk deployment trigger job
+            createBulkDeploymentTriggerJob(instance, WorkflowJob, CpsFlowDefinition)
+        } as Runnable)
         
     } catch (Exception e) {
-        println "Error creating job: ${e.message}"
+        println "Error creating jobs: ${e.message}"
         e.printStackTrace()
     }
 }

@@ -6,21 +6,13 @@ import hudson.model.*
 
 def instance = Jenkins.getInstance()
 
-// Check if Jenkins is already configured
-if (instance.getInstallState() == jenkins.install.InstallState.INITIAL_SETUP_COMPLETED) {
-    println "Jenkins is already configured"
-    return
-}
+println "Starting Jenkins basic configuration..."
 
-// Disable setup wizard
-try {
-    instance.setInstallState(jenkins.install.InstallState.INITIAL_SETUP_COMPLETED)
-    println "Setup wizard disabled"
-} catch (Exception e) {
-    println "Failed to disable setup wizard: ${e.message}"
-}
+// Disable setup wizard by setting system property
+System.setProperty("jenkins.install.runSetupWizard", "false")
+println "Setup wizard disabled"
 
-// Configure security
+// Configure security realm but set unsecured authorization initially
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 try {
     if (!hudsonRealm.getAllUsers().find { it.getId() == "admin" }) {
@@ -35,9 +27,10 @@ try {
 
 instance.setSecurityRealm(hudsonRealm)
 
-def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
-strategy.setAllowAnonymousRead(false)
-instance.setAuthorizationStrategy(strategy)
+// Set unsecured authorization strategy for job creation
+def unsecuredStrategy = new AuthorizationStrategy.Unsecured()
+instance.setAuthorizationStrategy(unsecuredStrategy)
+println "Unsecured authorization strategy set for job creation"
 
 // Disable CSRF protection for API endpoints to allow cross-origin requests
 try {
@@ -68,9 +61,9 @@ try {
 // Save configuration
 try {
     instance.save()
-    println "Jenkins configuration saved"
+    println "Jenkins configuration saved with unsecured authorization"
 } catch (Exception e) {
     println "Error saving configuration: ${e.message}"
 }
 
-println "Basic Jenkins configuration completed"
+println "Basic Jenkins configuration completed (using unsecured authorization for job creation)"

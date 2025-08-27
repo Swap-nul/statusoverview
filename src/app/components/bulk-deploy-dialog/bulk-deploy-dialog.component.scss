@@ -242,6 +242,86 @@
   }
 }
 
+// Dark theme styles
+:host-context(.darkMode) .bulk-deploy-dialog {
+  .environment-selection {
+    h3 {
+      color: #fff;
+    }
+
+    .env-dropdowns {
+      .arrow-icon {
+        color: #ccc;
+      }
+    }
+  }
+
+  .apps-section {
+    .apps-header {
+      h3 {
+        color: #fff;
+      }
+    }
+
+    .table-container {
+      border-color: #555;
+
+      .apps-table {
+        .mat-header-row {
+          background-color: #424242;
+        }
+
+        .mat-header-cell {
+          background-color: #424242;
+          color: #fff;
+          border-bottom-color: #555;
+        }
+
+        .mat-row {
+          &:hover {
+            background-color: #555;
+          }
+
+          &.selected-row {
+            background-color: #1e3a5f;
+          }
+        }
+
+        .na-text {
+          color: #aaa;
+        }
+      }
+
+      .no-data {
+        color: #ccc;
+
+        mat-icon {
+          color: #666;
+        }
+      }
+    }
+
+    .selection-summary {
+      background-color: #2d5a2d;
+      color: #81c784;
+
+      mat-icon {
+        color: #4caf50;
+      }
+    }
+  }
+
+  .loading-container {
+    p {
+      color: #ccc;
+    }
+  }
+
+  .dialog-actions {
+    border-top-color: #555;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .bulk-deploy-dialog {

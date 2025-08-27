@@ -34,7 +34,8 @@
   "jenkinsBaseUrl": "/jenkins",
   "jenkinsApiUser": "admin",
   "jenkinsApiToken": "admin123",
-  "jenkinsBulkDeployJobName": "bulk-deployment-job",
+  "jenkinsBulkDeployJobName": "bulk-deployment-trigger",
+  "jenkinsSingleAppDeployJobName": "single-app-deployment",
 
   "projects": [
     { "name": "alpha", "displayName": "Project-Alpha" },
