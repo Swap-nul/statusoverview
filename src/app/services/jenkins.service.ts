@@ -290,7 +290,7 @@ export class JenkinsService {
   }
 
   private generateJobId(): string {
-    return `bulk-deploy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `bulk-deploy-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   }
 
   private getCurrentUser(): string {
