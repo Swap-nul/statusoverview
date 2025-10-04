@@ -9,14 +9,47 @@
       <h2>Welcome</h2>
       <p>Please sign in to access the Status Overview Dashboard</p>
       
-      <button 
-        mat-raised-button 
-        color="primary" 
-        class="login-button"
-        (click)="login()">
-        <mat-icon>login</mat-icon>
-        Sign In with Keycloak
-      </button>
+      <!-- Single provider mode -->
+      <div *ngIf="availableProviders.length === 1" class="single-provider">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="login-button"
+          (click)="login(availableProviders[0])">
+          <mat-icon>{{ getProviderIcon(availableProviders[0]) }}</mat-icon>
+          Sign In with {{ getProviderDisplayName(availableProviders[0]) }}
+        </button>
+      </div>
+      
+      <!-- Multiple provider mode -->
+      <div *ngIf="availableProviders.length > 1" class="multi-provider">
+        <p class="provider-selection-text">Choose your authentication method:</p>
+        
+        <div class="provider-buttons">
+          <button 
+            *ngFor="let provider of availableProviders"
+            mat-raised-button 
+            [color]="getProviderColor(provider)"
+            class="provider-button"
+            (click)="login(provider)">
+            <mat-icon>{{ getProviderIcon(provider) }}</mat-icon>
+            Sign In with {{ getProviderDisplayName(provider) }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Loading state -->
+      <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Signing you in...</p>
+      </div>
+      
+      <!-- Error state -->
+      <div *ngIf="errorMessage" class="error-state">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ errorMessage }}</p>
+        <button mat-button (click)="clearError()">Try Again</button>
+      </div>
     </div>
   </div>
 </div>

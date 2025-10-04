@@ -14,14 +14,32 @@
   <!-- User Authentication Section -->
   <div class="auth-section" *ngIf="isAuthenticated">
     <span class="username">{{ username }}</span>
+    <span class="provider-badge" *ngIf="authProvider">
+      <small>({{ getProviderDisplayName() }})</small>
+    </span>
     <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
       <mat-icon svgIcon="account"></mat-icon>
     </button>
     <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="goToAccountManagement()">
+      <div class="user-info-header" mat-menu-item disabled>
+        <strong>{{ username }}</strong>
+        <br>
+        <small>{{ userInfo?.email }}</small>
+        <br>
+        <small class="provider-info">Authenticated via {{ getProviderDisplayName() }}</small>
+      </div>
+      <mat-divider></mat-divider>
+      
+      <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'keycloak'">
         <mat-icon svgIcon="account-settings"></mat-icon>
-        <span>Account Settings</span>
+        <span>KeyClock Portal</span>
       </button>
+      
+      <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'azure'">
+        <mat-icon svgIcon="account-settings"></mat-icon>
+        <span>Azure Portal</span>
+      </button>
+      
       <button mat-menu-item (click)="logout()">
         <mat-icon svgIcon="logout"></mat-icon>
         <span>Logout</span>

@@ -35,6 +35,19 @@ import { AppComponent } from './app.component';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+
+// Azure MSAL imports
+import { 
+  MsalModule, 
+  MsalService, 
+  MSAL_INSTANCE,
+  MSAL_GUARD_CONFIG,
+  MSAL_INTERCEPTOR_CONFIG,
+  MsalGuard,
+  MsalBroadcastService
+} from '@azure/msal-angular';
+import { IPublicClientApplication } from '@azure/msal-browser';
+
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { EnvDetailsDialogComponent } from './components/env-details-dialog/env-details-dialog.component';
 import { BulkDeployDialogComponent } from './components/bulk-deploy-dialog/bulk-deploy-dialog.component';
@@ -47,6 +60,12 @@ import { ProjectComponent } from './components/project/project.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { initializeKeycloak } from './init/keycloak-init.factory';
+import { 
+  initializeAzureMsal, 
+  MSALInstanceFactory, 
+  MSALGuardConfigFactory,
+  MSALInterceptorConfigFactory 
+} from './init/azure-init.factory';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { HasRoleDirective } from './directives/has-role.directive';
 
@@ -75,6 +94,7 @@ export function initializeApp(appConfig: AppConfigService) {
     HttpClientModule,
     BrowserAnimationsModule,
     KeycloakAngularModule,
+    MsalModule,
     MatToolbarModule,
     MatIconModule,
     MatTabsModule,
@@ -115,6 +135,25 @@ export function initializeApp(appConfig: AppConfigService) {
       deps: [KeycloakService, AppConfigService],
     },
     {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAzureMsal,
+      multi: true,
+      deps: [AppConfigService],
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory,
+      deps: [AppConfigService],
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory,
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory,
+    },
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
@@ -123,6 +162,9 @@ export function initializeApp(appConfig: AppConfigService) {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { subscriptSizing: 'dynamic' },
     },
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
     DatePipe,
   ],
   bootstrap: [AppComponent],
