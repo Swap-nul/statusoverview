@@ -45,7 +45,7 @@
 - **Bulk Operations**: Deploy multiple applications simultaneously with automated workflows
 - **Jenkins Integration**: Built-in CI/CD pipeline for streamlined deployment processes
 
-![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/Drilldown.png "Drill Down Popup")
+![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
 
 ---
 
