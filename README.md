@@ -187,6 +187,10 @@ The application supports **multiple authentication providers**:
 
 ### Authentication Providers
 
+<p align="center">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/MultiLoginProvider.png" alt="Multi-Provider Login Selection" width="600">
+</p>
+
 | Provider | Description | Use Case |
 |----------|-------------|----------|
 | **Keycloak** | Open-source identity management | Traditional enterprise environments |
@@ -203,6 +207,12 @@ The application supports **multiple authentication providers**:
 **Azure AD:**
 Use your organization's Azure AD credentials or set up a test user in your Azure AD tenant.
 
+### Keycloak Login Interface
+
+<p align="center">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/LoginWithKeyClock.png" alt="Keycloak Login Interface" width="600">
+</p>
+
 ---
 
 ## 🚀 Bulk Deployment Feature
@@ -216,6 +226,10 @@ The bulk deployment feature allows you to:
 - Deploy them to a target environment with a single operation
 - Monitor deployment progress and results in real-time
 - View detailed deployment logs and status
+
+<p align="center">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/bulkDeployments.png" alt="Bulk Deployment Interface" width="838">
+</p>
 
 ### How It Works
 
