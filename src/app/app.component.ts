@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
 import { KeycloakService } from 'keycloak-angular';
+import { AuthProviderService } from './services/auth-provider.service';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,8 @@ export class AppComponent implements OnInit {
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-
-    private keycloakService: KeycloakService
+    private keycloakService: KeycloakService,
+    private authProviderService: AuthProviderService
   ) {
     this.matIconRegistry
 
@@ -96,9 +97,12 @@ export class AppComponent implements OnInit {
 
   private async checkAuthenticationState(): Promise<void> {
     try {
-      const isAuthenticated = await this.keycloakService.isLoggedIn();
+      const isAuthenticated = await this.authProviderService.isAuthenticated();
       if (!isAuthenticated) {
-        console.log('User not authenticated, redirecting to login');
+        console.log('User not authenticated, will show login options');
+      } else {
+        const userInfo = await this.authProviderService.getUserInfo();
+        console.log('User authenticated:', userInfo?.provider, userInfo?.name);
       }
     } catch (error) {
       console.error('Error checking authentication state:', error);

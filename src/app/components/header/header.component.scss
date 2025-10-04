@@ -55,6 +55,13 @@
     flex: 1;
   }
 
+  .provider-badge {
+    font-size: 12px;
+    color: #666;
+    opacity: 0.8;
+    margin-left: 4px;
+  }
+
   .user-menu-btn {
     color: inherit;
   }
@@ -71,6 +78,16 @@
     .roles {
       font-size: 6px;
     }
+  }
+}
+
+.user-info-header {
+  min-width: 200px;
+  padding: 8px 18px;
+  
+  .provider-info {
+    color: #666;
+    font-style: italic;
   }
 }
 
@@ -144,6 +161,16 @@ label:active:after {
   .auth-section {
     .username {
       color: #fff;
+    }
+    
+    .provider-badge {
+      color: #ccc;
+    }
+  }
+
+  .user-info-header {
+    .provider-info {
+      color: #ccc;
     }
   }
 

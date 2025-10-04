@@ -36,7 +36,35 @@ export function initializeAzureMsal(
         return false;
       }
 
-      console.log('Azure MSAL configuration loaded successfully');
+      // Create and initialize MSAL instance
+      const msalInstance = new PublicClientApplication({
+        auth: {
+          clientId: azureConfig.clientId,
+          authority: azureConfig.authority,
+          redirectUri: azureConfig.redirectUri,
+          postLogoutRedirectUri: azureConfig.postLogoutRedirectUri,
+        },
+        cache: {
+          cacheLocation: BrowserCacheLocation.SessionStorage,
+          storeAuthStateInCookie: false,
+        },
+        system: {
+          loggerOptions: {
+            loggerCallback: (level: LogLevel, message: string) => {
+              if (level === LogLevel.Error) {
+                console.error('MSAL:', message);
+              }
+            },
+            logLevel: LogLevel.Warning,
+            piiLoggingEnabled: false
+          }
+        }
+      });
+
+      // Initialize the MSAL instance
+      await msalInstance.initialize();
+      console.log('Azure MSAL instance initialized successfully');
+      
       return true;
     } catch (error) {
       console.error('Azure MSAL initialization failed:', error);
@@ -54,7 +82,7 @@ export function MSALInstanceFactory(configService: AppConfigService): IPublicCli
     azureConfig = environment.azure;
   }
 
-  return new PublicClientApplication({
+  const msalInstance = new PublicClientApplication({
     auth: {
       clientId: azureConfig.clientId,
       authority: azureConfig.authority,
@@ -69,7 +97,7 @@ export function MSALInstanceFactory(configService: AppConfigService): IPublicCli
       loggerOptions: {
         loggerCallback: (level: LogLevel, message: string) => {
           if (level === LogLevel.Error) {
-            console.error(message);
+            console.error('MSAL:', message);
           }
         },
         logLevel: LogLevel.Warning,
@@ -77,6 +105,13 @@ export function MSALInstanceFactory(configService: AppConfigService): IPublicCli
       }
     }
   });
+
+  // Initialize the instance immediately
+  msalInstance.initialize().catch(error => {
+    console.error('MSAL instance initialization failed:', error);
+  });
+
+  return msalInstance;
 }
 
 export function MSALGuardConfigFactory(): MsalGuardConfiguration {

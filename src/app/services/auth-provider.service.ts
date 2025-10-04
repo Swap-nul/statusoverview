@@ -59,11 +59,11 @@ export class AuthProviderService {
       case 'keycloak':
         return this.isKeycloakAuthenticated();
       case 'azure':
-        return this.isAzureAuthenticated();
+        return await this.isAzureAuthenticatedAsync();
       case 'both':
         // Check if authenticated with either provider
         const keycloakAuth = this.isKeycloakAuthenticated();
-        const azureAuth = this.isAzureAuthenticated();
+        const azureAuth = await this.isAzureAuthenticatedAsync();
         return keycloakAuth || azureAuth;
       default:
         return false;
@@ -149,7 +149,7 @@ export class AuthProviderService {
         if (this.isKeycloakAuthenticated()) {
           return this.getKeycloakUserInfo();
         }
-        if (this.isAzureAuthenticated()) {
+        if (await this.isAzureAuthenticatedAsync()) {
           return this.getAzureUserInfo();
         }
         return null;
@@ -240,6 +240,12 @@ export class AuthProviderService {
   // Azure MSAL specific methods
   private isAzureAuthenticated(): boolean {
     try {
+      // Check if MSAL instance is initialized
+      if (!this.msalService.instance) {
+        console.warn('MSAL instance not available');
+        return false;
+      }
+      
       const accounts = this.msalService.instance.getAllAccounts();
       return accounts.length > 0;
     } catch (error) {
@@ -248,11 +254,26 @@ export class AuthProviderService {
     }
   }
 
+  private async isAzureAuthenticatedAsync(): Promise<boolean> {
+    try {
+      await this.ensureMsalInitialized();
+      const accounts = this.msalService.instance.getAllAccounts();
+      return accounts.length > 0;
+    } catch (error) {
+      console.warn('Error checking Azure authentication (async):', error);
+      return false;
+    }
+  }
+
   private async loginWithAzure(): Promise<void> {
     try {
+      // Ensure MSAL instance is initialized
+      await this.ensureMsalInitialized();
+      
       const result = await this.msalService.loginPopup({
         scopes: ['user.read']
       }).toPromise();
+      
       if (result?.account) {
         this.msalService.instance.setActiveAccount(result.account);
       }
@@ -264,7 +285,8 @@ export class AuthProviderService {
 
   private async logoutFromAzure(): Promise<void> {
     try {
-      if (this.isAzureAuthenticated()) {
+      if (await this.isAzureAuthenticatedAsync()) {
+        await this.ensureMsalInitialized();
         await this.msalService.logoutPopup();
       }
     } catch (error) {
@@ -274,8 +296,9 @@ export class AuthProviderService {
 
   private async getAzureToken(): Promise<string | null> {
     try {
-      if (!this.isAzureAuthenticated()) return null;
+      if (!(await this.isAzureAuthenticatedAsync())) return null;
 
+      await this.ensureMsalInitialized();
       const accounts = this.msalService.instance.getAllAccounts();
       if (accounts.length === 0) return null;
 
@@ -293,8 +316,9 @@ export class AuthProviderService {
 
   private async getAzureUserInfo(): Promise<UserInfo | null> {
     try {
-      if (!this.isAzureAuthenticated()) return null;
+      if (!(await this.isAzureAuthenticatedAsync())) return null;
 
+      await this.ensureMsalInitialized();
       const accounts = this.msalService.instance.getAllAccounts();
       if (accounts.length === 0) return null;
 
@@ -309,6 +333,29 @@ export class AuthProviderService {
     } catch (error) {
       console.warn('Error getting Azure user info:', error);
       return null;
+    }
+  }
+
+  /**
+   * Ensure MSAL instance is properly initialized
+   */
+  private async ensureMsalInitialized(): Promise<void> {
+    try {
+      if (!this.msalService.instance) {
+        throw new Error('MSAL instance not available');
+      }
+
+      // Check if already initialized by attempting to get accounts
+      // This will throw if not initialized
+      this.msalService.instance.getAllAccounts();
+    } catch (error: any) {
+      if (error.message?.includes('uninitialized_public_client_application')) {
+        console.log('Initializing MSAL instance...');
+        await this.msalService.instance.initialize();
+        console.log('MSAL instance initialized successfully');
+      } else {
+        throw error;
+      }
     }
   }
 }
