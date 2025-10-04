@@ -37,6 +37,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { DetailsDialogComponent } from './components/details-dialog/details-dialog.component';
 import { EnvDetailsDialogComponent } from './components/env-details-dialog/env-details-dialog.component';
+import { BulkDeployDialogComponent } from './components/bulk-deploy-dialog/bulk-deploy-dialog.component';
 import { HeaderComponent } from './components/header/header.component';
 import { NavTabsComponent } from './components/nav-tabs/nav-tabs.component';
 import { SortButtonComponent } from './components/sort-button/sort-button.component';
@@ -61,6 +62,7 @@ export function initializeApp(appConfig: AppConfigService) {
     StatusIconsTagLinksComponent,
     DetailsDialogComponent,
     EnvDetailsDialogComponent,
+    BulkDeployDialogComponent,
     ProjectComponent,
     SortButtonComponent,
     LoginComponent,

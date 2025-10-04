@@ -1,0 +1,141 @@
+<div class="bulk-deploy-dialog">
+  <h2 mat-dialog-title>Bulk Deployment</h2>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Environment Selection Section -->
+    <div class="environment-selection">
+      <h3>Select Environments</h3>
+      <div class="env-dropdowns">
+        <mat-form-field appearance="outline" class="env-dropdown">
+          <mat-label>FROM Environment</mat-label>
+          <mat-select [formControl]="fromEnvControl">
+            <mat-option *ngFor="let env of availableEnvironments" [value]="env.name">
+              {{ env.displayName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+
+        <mat-form-field appearance="outline" class="env-dropdown">
+          <mat-label>TO Environment</mat-label>
+          <mat-select [formControl]="toEnvControl">
+            <mat-option *ngFor="let env of availableEnvironments" [value]="env.name" [disabled]="env.name === fromEnvControl.value">
+              {{ env.displayName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Applications Table Section -->
+    <div class="apps-section" *ngIf="showAppsTable">
+      <div class="apps-header">
+        <h3>Applications in {{ getFromEnvironmentDisplayName() }}</h3>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Filter Applications</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search by app name">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="table-container">
+        <table mat-table [dataSource]="filteredApps" class="apps-table">
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="toggleAllRows()" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
+                [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let app">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="toggleAppSelection(app)" [checked]="selection.isSelected(app)" [aria-label]="checkboxLabel(app)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+
+          <!-- App Name Column -->
+          <ng-container matColumnDef="appName">
+            <th mat-header-cell *matHeaderCellDef>Application Name</th>
+            <td mat-cell *matCellDef="let app">
+              <strong>{{ app.appName }}</strong>
+            </td>
+          </ng-container>
+
+          <!-- Current Version Column -->
+          <ng-container matColumnDef="currentVersion">
+            <th mat-header-cell *matHeaderCellDef>FROM: Version/Tag</th>
+            <td mat-cell *matCellDef="let app">
+              <mat-chip class="version-chip">{{ app.currentVersion }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Current Branch Column -->
+          <ng-container matColumnDef="currentBranch">
+            <th mat-header-cell *matHeaderCellDef>FROM: Branch</th>
+            <td mat-cell *matCellDef="let app">
+              <mat-chip class="branch-chip" *ngIf="app.currentBranch !== 'N/A'">
+                <mat-icon>branch</mat-icon>
+                {{ app.currentBranch }}
+              </mat-chip>
+              <span *ngIf="app.currentBranch === 'N/A'" class="na-text">N/A</span>
+            </td>
+          </ng-container>
+
+          <!-- TO Environment Version Column -->
+          <ng-container matColumnDef="toEnvVersion">
+            <th mat-header-cell *matHeaderCellDef>TO: Version/Tag</th>
+            <td mat-cell *matCellDef="let app">
+              <mat-chip class="to-version-chip" *ngIf="app.toEnvVersion !== 'N/A'">{{ app.toEnvVersion }}</mat-chip>
+              <span *ngIf="app.toEnvVersion === 'N/A'" class="na-text">N/A</span>
+            </td>
+          </ng-container>
+
+          <!-- TO Environment Branch Column -->
+          <ng-container matColumnDef="toEnvBranch">
+            <th mat-header-cell *matHeaderCellDef>TO: Branch</th>
+            <td mat-cell *matCellDef="let app">
+              <mat-chip class="to-branch-chip" *ngIf="app.toEnvBranch !== 'N/A'">
+                <mat-icon>branch</mat-icon>
+                {{ app.toEnvBranch }}
+              </mat-chip>
+              <span *ngIf="app.toEnvBranch === 'N/A'" class="na-text">N/A</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleAppSelection(row)" [class.selected-row]="selection.isSelected(row)">
+          </tr>
+        </table>
+
+        <!-- No data message -->
+        <div *ngIf="filteredApps.length === 0 && !isLoading" class="no-data">
+          <mat-icon>info</mat-icon>
+          <p>No applications found matching the filter criteria.</p>
+        </div>
+      </div>
+
+      <!-- Selection Summary -->
+      <div class="selection-summary" *ngIf="selection.selected.length > 0">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ selection.selected.length }} application(s) selected for deployment from {{ getFromEnvironmentDisplayName() }} to {{getToEnvironmentDisplayName()}}</span>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+      <p>{{ showAppsTable ? 'Initiating deployment...' : 'Loading applications...' }}</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="onDeploy()" [disabled]="!canDeploy() || isLoading">
+      <mat-icon>rocket_launch</mat-icon>
+      Deploy {{ selection.selected.length }} App(s)
+    </button>
+  </mat-dialog-actions>
+</div>

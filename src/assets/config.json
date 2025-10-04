@@ -30,6 +30,13 @@
   "database_hostname_port": "http://localhost:3000",
   "database_baseUrl": "/statusoverview",
 
+  "_comment_jenkins": "Jenkins configuration for bulk deployment feature",
+  "jenkinsBaseUrl": "/jenkins",
+  "jenkinsApiUser": "admin",
+  "jenkinsApiToken": "admin123",
+  "jenkinsBulkDeployJobName": "bulk-deployment-trigger",
+  "jenkinsSingleAppDeployJobName": "single-app-deployment",
+
   "projects": [
     { "name": "alpha", "displayName": "Project-Alpha" },
     { "name": "beta", "displayName": "Project-Beta" }

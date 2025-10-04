@@ -127,3 +127,33 @@ label:active:after {
   -webkit-text-stroke: 1px rgb(161, 161, 161);
   font-size: larger;
 }
+
+// Dark theme styles
+:host-context(.darkMode) {
+  .user-profile-section {
+    border-bottom-color: #555;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  .user-roles {
+    .roles-label {
+      color: #ccc;
+    }
+  }
+
+  .auth-section {
+    .username {
+      color: #fff;
+    }
+  }
+
+  .custom-mat-toolbar {
+    color: #000000;
+    background-color: #f1c40f;
+  }
+
+  .repoText {
+    -webkit-text-stroke: 1px rgb(100, 100, 100);
+    color: #000;
+  }
+}

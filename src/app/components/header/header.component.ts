@@ -22,6 +22,9 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
+    // Initialize the dark mode state immediately
+    this.cssRefreshDarkMode.emit(this.toggleControl.value!);
+    
     this.toggleControl.valueChanges.subscribe((darkMode) => {
       this.cssRefreshDarkMode.emit(darkMode!);
       this.mode = !this.mode;

@@ -93,3 +93,16 @@
     pointer-events: none;
   }
 }
+
+.bulk-deploy-btn {
+  min-width: 140px;
+  height: 40px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+  }
+}
