@@ -29,7 +29,7 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewDashboard.png" alt="StatusOverview Dashboard" width="838">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/Dashboard.png" alt="StatusOverview Dashboard" width="838">
 </p>
 
 ---
@@ -45,7 +45,7 @@
 - **Bulk Operations**: Deploy multiple applications simultaneously with automated workflows
 - **Jenkins Integration**: Built-in CI/CD pipeline for streamlined deployment processes
 
-![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
+![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/Drilldown.png "Drill Down Popup")
 
 ---
 
@@ -207,10 +207,16 @@ The application supports **multiple authentication providers**:
 **Azure AD:**
 Use your organization's Azure AD credentials or set up a test user in your Azure AD tenant.
 
-### Keycloak Login Interface
+### Authentication Interfaces
 
+**Keycloak Login:**
 <p align="center">
   <img src="https://Swap-nul.github.io/statusoverview/screenshots/LoginWithKeyClock.png" alt="Keycloak Login Interface" width="600">
+</p>
+
+**Azure AD Login:**
+<p align="center">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/LoginWithAzure.png" alt="Azure AD Login Interface" width="600">
 </p>
 
 ---
