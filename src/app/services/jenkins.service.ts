@@ -313,7 +313,7 @@ export class JenkinsService {
     return this.http.get(url, { headers }).pipe(
       map(() => true),
       catchError(() => {
-        return throwError(() => false);
+        return of(false);
       })
     );
   }
