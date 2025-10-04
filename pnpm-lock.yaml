@@ -38,6 +38,12 @@ importers:
       '@angular/router':
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@17.3.12(@angular/animations@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1)
+      '@azure/msal-angular':
+        specifier: ^4.0.20
+        version: 4.0.20(@azure/msal-browser@4.24.1)(rxjs@7.8.1)
+      '@azure/msal-browser':
+        specifier: ^4.24.1
+        version: 4.24.1
       keycloak-angular:
         specifier: ^15.2.1
         version: 15.3.0(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(@angular/router@17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@17.3.12(@angular/animations@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(keycloak-js@25.0.6)
@@ -262,6 +268,20 @@ packages:
       '@angular/core': 17.3.12
       '@angular/platform-browser': 17.3.12
       rxjs: ^6.5.3 || ^7.4.0
+
+  '@azure/msal-angular@4.0.20':
+    resolution: {integrity: sha512-xdKgeLI9SMHiiNbfAtZi03Cxn7ikQ/3u0DaVvze9BLbvSJCzheT0YWWpHm/TYm1P+ktG4bhtiJDFGl2ZtSLvHA==}
+    peerDependencies:
+      '@azure/msal-browser': ^4.24.0
+      rxjs: ^7.0.0
+
+  '@azure/msal-browser@4.24.1':
+    resolution: {integrity: sha512-e4sp8ihJIyZQvN0ZM1MMuKlEiiLWUS9V9+kxsVAc6K8MtpXHui8VINmKUxXH0OOksLhFDpdq4sGW1w6uYp431A==}
+    engines: {node: '>=0.8.0'}
+
+  '@azure/msal-common@15.13.0':
+    resolution: {integrity: sha512-8oF6nj02qX7eE/6+wFT5NluXRHc05AgdCC3fJnkjiJooq8u7BcLmxaYYSwc2AfEkWRMRi6Eyvvbeqk4U4412Ag==}
+    engines: {node: '>=0.8.0'}
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -4399,6 +4419,18 @@ snapshots:
       '@angular/platform-browser': 17.3.12(@angular/animations@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.10))
       rxjs: 7.8.1
       tslib: 2.8.1
+
+  '@azure/msal-angular@4.0.20(@azure/msal-browser@4.24.1)(rxjs@7.8.1)':
+    dependencies:
+      '@azure/msal-browser': 4.24.1
+      rxjs: 7.8.1
+      tslib: 2.8.1
+
+  '@azure/msal-browser@4.24.1':
+    dependencies:
+      '@azure/msal-common': 15.13.0
+
+  '@azure/msal-common@15.13.0': {}
 
   '@babel/code-frame@7.26.2':
     dependencies:

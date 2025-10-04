@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { KeycloakService } from 'keycloak-angular';
 import { AppConfigService } from '../app-config.service';
+import { AuthProviderService } from '../services/auth-provider.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   
   constructor(
     private keycloakService: KeycloakService,
-    private configService: AppConfigService
+    private configService: AppConfigService,
+    private authProviderService: AuthProviderService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -39,7 +42,25 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    // Check if Keycloak is initialized and user is authenticated
+    // Get token from the current authentication provider
+    return from(this.authProviderService.getAccessToken()).pipe(
+      switchMap(token => {
+        if (token) {
+          const authReq = req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          return next.handle(authReq);
+        }
+
+        // Fallback: Check Keycloak directly for backward compatibility
+        return this.handleKeycloakFallback(req, next);
+      })
+    );
+  }
+
+  private handleKeycloakFallback(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     try {
       const keycloakInstance = this.keycloakService.getKeycloakInstance();
       
@@ -58,7 +79,7 @@ export class AuthInterceptor implements HttpInterceptor {
       console.warn('Keycloak not ready, proceeding without token:', error);
     }
     
-    // Proceed without token if Keycloak is not ready or user is not authenticated
+    // Proceed without token if no auth provider is ready or user is not authenticated
     return next.handle(req);
   }
 }

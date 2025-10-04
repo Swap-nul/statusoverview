@@ -13,13 +13,14 @@
 
 ## 🚀 Latest Features
 
-- 🔐 **PKCE Authentication**: Integrated Keycloak with PKCE (Proof Key for Code Exchange) for secure, modern OAuth 2.0 authentication
+- 🔐 **Multi-Provider PKCE Authentication**: Integrated both Keycloak and Azure AD with PKCE (Proof Key for Code Exchange) for secure, modern OAuth 2.0 authentication
 - 🎭 **Role-based Access Control**: Granular access control with custom roles and permissions
 - 🔑 **JWT Token Management**: Automatic token handling, refresh, and secure API calls
 - 🛡️ **Security Guards**: Route protection with automatic login redirection
 - 🎨 **Modern UI**: Angular 17 with Material Design components
 - 🌙 **Dark Mode Support**: Toggle between light and dark themes
 - 📱 **Responsive Design**: Works seamlessly across desktop and mobile devices
+- 🏢 **Enterprise Ready**: Support for Azure AD integration alongside Keycloak
 - 🚀 **Bulk Deployment**: Deploy multiple applications from one environment to another using Jenkins automation
 - ⚙️ **Jenkins Integration**: Built-in Jenkins server for automated deployment workflows
 
@@ -175,17 +176,32 @@ The application will be available at **http://localhost:4200**
 
 ## 🔐 Authentication Flow
 
+The application supports **multiple authentication providers**:
+
 1. **Visit** `http://localhost:4200`
-2. **Login Page** appears with Status Overview branding
-3. **Click** "Sign In with Keycloak"
-4. **Authenticate** with Keycloak (use `testuser` / `testpass123`)
-5. **Redirected** to the main dashboard upon successful authentication
+2. **Choose provider** from the login page:
+   - **Keycloak**: Traditional enterprise SSO
+   - **Azure AD**: Microsoft cloud authentication
+3. **Authenticate** with your chosen provider
+4. **Redirected** to the main dashboard upon successful authentication
+
+### Authentication Providers
+
+| Provider | Description | Use Case |
+|----------|-------------|----------|
+| **Keycloak** | Open-source identity management | Traditional enterprise environments |
+| **Azure AD** | Microsoft cloud identity platform | Microsoft-centric organizations |
+| **Both** | Multi-provider selection | Flexible enterprise environments |
 
 ### Test Credentials
 
+**Keycloak:**
 | Username | Password | Roles |
 |----------|----------|-------|
 | testuser | testpass123 | user |
+
+**Azure AD:**
+Use your organization's Azure AD credentials or set up a test user in your Azure AD tenant.
 
 ---
 
@@ -246,7 +262,7 @@ The feature uses Jenkins REST API for:
 
 ## ⚙️ Configuration
 
-### Keycloak Settings
+### Keycloak & Azure AD Configuration
 
 Update `src/assets/config.json` for your environment:
 
@@ -257,6 +273,14 @@ Update `src/assets/config.json` for your environment:
     "realm": "statusoverview", 
     "clientId": "statusoverview-app"
   },
+  "azure": {
+    "clientId": "your-azure-app-client-id",
+    "authority": "https://login.microsoftonline.com/your-tenant-id",
+    "redirectUri": "http://localhost:4200",
+    "postLogoutRedirectUri": "http://localhost:4200",
+    "scopes": ["user.read"]
+  },
+  "authProvider": "both",
   "authentication": {
     "skipUrls": [
       "/assets/",
@@ -296,7 +320,23 @@ The `authentication` section controls which URLs and domains are excluded from J
 - **`skipUrls`**: URL patterns that should bypass authentication (static assets, login pages, Keycloak endpoints)
 - **`skipDomains`**: Domain patterns for external APIs that don't require authentication (like PostgREST database API)
 
-This configuration is automatically used by both the `AuthInterceptor` and Keycloak initialization, making it easy to manage authentication exclusions in one place.
+#### Authentication Provider Selection
+
+The `authProvider` configuration controls which authentication methods are available:
+
+- **`"keycloak"`**: Only Keycloak authentication
+- **`"azure"`**: Only Azure AD authentication  
+- **`"both"`**: User can choose between Keycloak and Azure AD
+
+#### Azure AD Setup
+
+For Azure AD authentication, you'll need to:
+
+1. **Create** an Azure AD app registration
+2. **Configure** redirect URIs and permissions
+3. **Update** the configuration with your client ID and tenant ID
+
+📚 **Detailed setup guide**: See [AZURE_SETUP.md](./AZURE_SETUP.md) for complete Azure AD configuration instructions.
 
 ### Environment-Specific Configuration
 

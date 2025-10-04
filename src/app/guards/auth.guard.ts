@@ -1,27 +1,32 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { KeycloakAuthGuard, KeycloakService } from 'keycloak-angular';
+import { AuthProviderService } from '../services/auth-provider.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard extends KeycloakAuthGuard {
-  
-  constructor(
-    protected override router: Router,
-    protected override keycloakAngular: KeycloakService
-  ) {
-    super(router, keycloakAngular);
-  }
+export class AuthGuard implements CanActivate {
 
-  public async isAccessAllowed(
+  constructor(
+    private router: Router,
+    private keycloakService: KeycloakService,
+    private authProviderService: AuthProviderService
+  ) {}
+
+  async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean> {
-    // Force the user to log in if currently unauthenticated.
-    if (!this.authenticated) {
-      // Redirect to custom login page instead of directly to Keycloak
-      this.router.navigate(['/login']);
+    
+    // Check if user is authenticated with any provider
+    const isAuthenticated = await this.authProviderService.isAuthenticated();
+    
+    if (!isAuthenticated) {
+      // Redirect to login page instead of directly to provider
+      this.router.navigate(['/login'], { 
+        queryParams: { returnUrl: state.url } 
+      });
       return false;
     }
 
@@ -33,7 +38,23 @@ export class AuthGuard extends KeycloakAuthGuard {
       return true;
     }
 
-    // Allow the user to proceed if all the required roles are present.
-    return requiredRoles.every((role) => this.roles.includes(role));
+    // Check roles based on current provider
+    return this.checkUserRoles(requiredRoles);
+  }
+
+  private async checkUserRoles(requiredRoles: string[]): Promise<boolean> {
+    try {
+      const userInfo = await this.authProviderService.getUserInfo();
+      
+      if (!userInfo || !userInfo.roles) {
+        return false;
+      }
+
+      // Allow the user to proceed if all the required roles are present.
+      return requiredRoles.every((role) => userInfo.roles.includes(role));
+    } catch (error) {
+      console.warn('Error checking user roles:', error);
+      return false;
+    }
   }
 }

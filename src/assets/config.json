@@ -4,6 +4,15 @@
     "realm": "statusoverview",
     "clientId": "statusoverview-app"
   },
+  "azure": {
+    "clientId": "your-azure-app-client-id",
+    "authority": "https://login.microsoftonline.com/your-tenant-id",
+    "redirectUri": "http://localhost:4200",
+    "postLogoutRedirectUri": "http://localhost:4200",
+    "scopes": ["user.read"]
+  },
+  "_comment_authProvider": "Authentication provider selection: 'keycloak', 'azure', or 'both'",
+  "authProvider": "both",
   "_comment_authentication": "Authentication configuration for JWT token injection control",
   "authentication": {
     "_comment_skipUrls": "URL patterns that should skip JWT token injection (path-based)",
