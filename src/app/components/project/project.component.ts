@@ -11,6 +11,30 @@ import { ApplicationsService } from 'src/app/services/applications.service';
 import { EnvDetailsDialogComponent, EnvDetailsDialogData } from '../env-details-dialog/env-details-dialog.component';
 import { BulkDeployDialogComponent, BulkDeployDialogData } from '../bulk-deploy-dialog/bulk-deploy-dialog.component';
 
+interface ExpiryConfigEntry {
+  appName: string;
+  appType: string;
+  expiryDate: string;
+}
+
+interface CountdownAlertThreshold {
+  months?: number;
+  days?: number;
+}
+
+interface ParentExpiryConfig {
+  parent: string;
+  expiryTime?: Record<string, ExpiryConfigEntry[]>;
+}
+
+interface CountdownRow {
+  id: string;
+  label: string;
+  appName: string;
+  appType: string;
+  [env: string]: string | ExpiryConfigEntry;
+}
+
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
@@ -22,6 +46,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   isLoading = true;
   columnDef: string[] = ['position', 'name'];
+  currentView: 'status' | 'countdown' = 'status';
+  currentTime = Date.now();
+  countdownTimerId?: ReturnType<typeof setInterval>;
+  countdownViewSwitchTimerId?: ReturnType<typeof setTimeout>;
+  appFilterValue = '';
+  countdownAlertThreshold: CountdownAlertThreshold = { months: 1, days: 0 };
+  isCountdownLoading = false;
 
   selectedProject: Entity | undefined;
 
@@ -32,6 +63,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
   dataTableApps: App[] = [];
   dataSource: AppDataSource;
   dataApp = new BehaviorSubject<App[]>([]);
+  filteredStatusApps: App[] = [];
+  countdownRows: CountdownRow[] = [];
+  filteredCountdownRows: CountdownRow[] = [];
 
   displayedColumns: string[];
   displayedColumnsSubject = new BehaviorSubject<string[]>(this.columnDef);
@@ -45,8 +79,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   loadProjects() {
-    this.http.get<{ projects: Entity[]; environments: Entity[] }>('/assets/config.json').subscribe((data) => {
+    this.http
+      .get<{
+        projects: Entity[];
+        environments: Entity[];
+        EnvAppInfoByParent: ParentExpiryConfig[];
+        countdownAlertThreshold?: CountdownAlertThreshold;
+      }>('/assets/config.json')
+      .subscribe((data) => {
       let allEnvironmentsFromConfig = data.environments;
+      this.countdownAlertThreshold = this.normalizeCountdownAlertThreshold(data.countdownAlertThreshold);
 
       // Find the selected project configuration
       this.selectedProject = data.projects.find((project) => project.name === this.projectName);
@@ -56,8 +98,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
         return;
       }
 
+      this.initializeCountdownRows(data.EnvAppInfoByParent || []);
       this.fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig);
-    });
+      });
   }
 
   fetchAppsAndFilterForSelectedProject(allEnvironmentsFromConfig: Entity[]) {
@@ -101,6 +144,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             });
 
           this.resetColumns();
+          this.applyAppFilter();
         });
       });
 
@@ -113,6 +157,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.countdownTimerId) {
+      clearInterval(this.countdownTimerId);
+    }
+    if (this.countdownViewSwitchTimerId) {
+      clearTimeout(this.countdownViewSwitchTimerId);
+    }
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
   }
@@ -139,10 +189,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    let data = this.dataTableApps.slice();
-    data = data.filter((app) => app.app_name.includes(filterValue.trim().toLowerCase()));
-    this.dataApp.next(data);
+    this.appFilterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.applyAppFilter();
   }
 
   filterColumn(event: Event) {
@@ -179,6 +227,91 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   getDisplayedColumns(): Observable<string[]> {
     return this.displayedColumnsSubject$;
+  }
+
+  setView(view: 'status' | 'countdown') {
+    if (view === this.currentView) {
+      return;
+    }
+
+    if (this.countdownViewSwitchTimerId) {
+      clearTimeout(this.countdownViewSwitchTimerId);
+    }
+
+    this.isCountdownLoading = true;
+    this.countdownViewSwitchTimerId = setTimeout(() => {
+      this.currentView = view;
+      this.ensureCountdownTimer();
+      this.applyAppFilter();
+      this.isCountdownLoading = false;
+    }, 0);
+  }
+
+  isCountdownView(): boolean {
+    return this.currentView === 'countdown';
+  }
+
+  formatCountdownLabel(row: CountdownRow): string {
+    return `${this.formatAppType(row.appType)} / ${row.appName}`;
+  }
+
+  formatAppType(appType: string): string {
+    switch (appType) {
+      case 'AppCertificate':
+        return 'Certificate';
+      case 'AppReg':
+        return 'App Reg';
+      default:
+        return appType;
+    }
+  }
+
+  getCountdownEntry(row: CountdownRow, env: string): ExpiryConfigEntry | null {
+    const value = row[env];
+    return value && typeof value !== 'string' ? (value as ExpiryConfigEntry) : null;
+  }
+
+  getCountdownDisplay(expiryDate: string): string {
+    const remainingMs = this.getRemainingMs(expiryDate);
+    if (remainingMs <= 0) {
+      return '0m 0d';
+    }
+
+    const startDate = new Date(this.currentTime);
+    const targetDate = new Date(`${expiryDate} 23:59:59`);
+    const breakdown = this.getDurationBreakdown(startDate, targetDate);
+
+    return `${breakdown.months}m ${breakdown.days}d`;
+  }
+
+  getCountdownMeta(expiryDate: string): string {
+    const remainingMs = this.getRemainingMs(expiryDate);
+    if (remainingMs <= 0) {
+      return `Expired on ${expiryDate}`;
+    }
+
+    return `Expires on ${expiryDate}`;
+  }
+
+  isExpired(expiryDate: string): boolean {
+    return this.getRemainingMs(expiryDate) <= 0;
+  }
+
+  isUrgent(expiryDate: string): boolean {
+    if (this.isExpired(expiryDate)) {
+      return false;
+    }
+
+    const threshold = this.countdownAlertThreshold;
+    const thresholdDate = new Date(this.currentTime);
+    thresholdDate.setMonth(thresholdDate.getMonth() + (threshold.months || 0));
+    thresholdDate.setDate(thresholdDate.getDate() + (threshold.days || 0));
+
+    return new Date(`${expiryDate} 23:59:59`) <= thresholdDate;
+  }
+
+  trackByCountdownRow(_: number, row: CountdownRow): string {
+    return row.id;
   }
 
   downloadCSV(environment: string) {
@@ -230,5 +363,89 @@ export class ProjectComponent implements OnInit, OnDestroy {
         // this.loadProjects();
       }
     });
+  }
+
+  private initializeCountdownRows(parentConfigs: ParentExpiryConfig[]) {
+    const parentExpiry = parentConfigs.find((item) => item.parent === this.projectName)?.expiryTime || {};
+    const countdownMap = new Map<string, CountdownRow>();
+
+    Object.entries(parentExpiry).forEach(([envName, entries]) => {
+      entries.forEach((entry) => {
+        const rowId = `${entry.appType}::${entry.appName}`;
+        const existingRow = countdownMap.get(rowId);
+
+        if (existingRow) {
+          existingRow[envName] = entry;
+          return;
+        }
+
+        countdownMap.set(rowId, {
+          id: rowId,
+          label: `${this.formatAppType(entry.appType)} / ${entry.appName}`,
+          appName: entry.appName,
+          appType: entry.appType,
+          [envName]: entry,
+        });
+      });
+    });
+
+    this.countdownRows = Array.from(countdownMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+    this.filteredCountdownRows = this.countdownRows.slice();
+    this.ensureCountdownTimer();
+  }
+
+  private ensureCountdownTimer() {
+    if (!this.isCountdownView() || this.countdownTimerId) {
+      return;
+    }
+
+    this.countdownTimerId = setInterval(() => {
+      this.currentTime = Date.now();
+    }, 1000);
+  }
+
+  private applyAppFilter() {
+    const filterValue = this.appFilterValue;
+
+    this.filteredStatusApps = this.dataTableApps.filter((app) => app.app_name.toLowerCase().includes(filterValue));
+    this.dataApp.next(this.filteredStatusApps);
+
+    this.filteredCountdownRows = this.countdownRows.filter((row) => row.label.toLowerCase().includes(filterValue));
+  }
+
+  private getRemainingMs(expiryDate: string): number {
+    const target = new Date(`${expiryDate} 23:59:59`).getTime();
+    return target - this.currentTime;
+  }
+
+  private getDurationBreakdown(startDate: Date, endDate: Date): { months: number; days: number; hours: number } {
+    const cursor = new Date(startDate);
+    let months = 0;
+
+    while (true) {
+      const nextMonth = new Date(cursor);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+      if (nextMonth <= endDate) {
+        months++;
+        cursor.setMonth(cursor.getMonth() + 1);
+      } else {
+        break;
+      }
+    }
+
+    const remainingMs = endDate.getTime() - cursor.getTime();
+    const totalHours = Math.max(0, Math.floor(remainingMs / (1000 * 60 * 60)));
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+
+    return { months, days, hours };
+  }
+
+  private normalizeCountdownAlertThreshold(threshold?: CountdownAlertThreshold): CountdownAlertThreshold {
+    return {
+      months: Math.max(0, Number(threshold?.months || 0)),
+      days: Math.max(0, Number(threshold?.days || 0)),
+    };
   }
 }

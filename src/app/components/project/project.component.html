@@ -22,22 +22,37 @@
 
     <mat-divider vertical></mat-divider>
     
-    <!-- Bulk Deploy button -->
-    <button mat-raised-button 
+    <button mat-raised-button
             color="primary" 
             (click)="openBulkDeployDialog()" 
-            [disabled]="isLoading || !dataTableApps.length"
+            [disabled]="isLoading || isCountdownLoading || !dataTableApps.length"
             matTooltip="Deploy multiple applications from one environment to another"
             class="bulk-deploy-btn">
       <mat-icon>rocket_launch</mat-icon>
       Bulk Deploy
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="setView(isCountdownView() ? 'status' : 'countdown')"
+      [disabled]="isLoading || isCountdownLoading"
+      matTooltip="Switch to the live certificate and app registration countdown table"
+      class="countdown-btn">
+      <mat-icon>{{ isCountdownView() ? 'monitoring' : 'timer' }}</mat-icon>
+      {{ isCountdownView() ? 'Status View' : 'Count Down' }}
     </button>
   </span>
 
   <section class="mat-elevation-z8 table-section-wrapper">
     <div class="horizontal-scroll-container">
       <div class="vertical-scroll-content">
-        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortData($event)" *ngIf="environmentsFilterForProject">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          (matSortChange)="onSortData($event)"
+          *ngIf="environmentsFilterForProject && !isCountdownView()">
           <!-- Position Column -->
           <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef>NO.</th>
@@ -86,9 +101,58 @@
             </td>
           </tr>
         </table>
+
+        <table mat-table [dataSource]="filteredCountdownRows" *ngIf="environmentsFilterForProject && isCountdownView()">
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef>NO.</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+          </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="countdown-name-column">
+                <mat-icon svgIcon="time"></mat-icon> CERTS/ APP REGISTRATION/ APP
+              </th>
+              <td mat-cell *matCellDef="let row" class="countdown-name-column">
+                <div class="countdown-name-cell">
+                  <b>{{ row.appName }}</b>
+                  <mat-basic-chip><i>{{ formatAppType(row.appType) }}</i></mat-basic-chip>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container *ngFor="let env of environmentsFilterForProject" [matColumnDef]="env.name">
+            <th mat-header-cell *matHeaderCellDef>
+              <div class="countdown-env-header">{{ env.displayName }}</div>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <ng-container *ngIf="getCountdownEntry(row, env.name) as countdownEntry; else noCountdown">
+                <div
+                  class="countdown-clock"
+                  [class.expired]="isExpired(countdownEntry.expiryDate)"
+                  [class.urgent]="isUrgent(countdownEntry.expiryDate)">
+                  <span class="clock-time">{{ getCountdownDisplay(countdownEntry.expiryDate) }}</span>
+                  <span class="clock-type">{{ formatAppType(countdownEntry.appType) }}</span>
+                  <span class="clock-meta">{{ getCountdownMeta(countdownEntry.expiryDate) }}</span>
+                </div>
+              </ng-container>
+              <ng-template #noCountdown>
+                <div class="countdown-empty">--</div>
+              </ng-template>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackByCountdownRow"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              No countdown data matching the filter "{{ appNameInput.value }}"
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <div *ngIf="isLoading" class="loading-spinner-overlay">
+    <div *ngIf="isLoading || isCountdownLoading" class="loading-spinner-overlay">
       <mat-progress-spinner color="primary" mode="indeterminate" diameter="1000" strokeWidth="8">
       </mat-progress-spinner>
     </div>

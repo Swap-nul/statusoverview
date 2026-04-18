@@ -54,10 +54,10 @@
     </mat-menu>
   </div>
 
-  <div>
+  <div class="theme-toggle">
     <mat-icon *ngIf="mode == false" svgIcon="light"></mat-icon>
     <mat-icon *ngIf="mode == true" svgIcon="dark"></mat-icon>
-    <input type="checkbox" [formControl]="toggleControl" id="switch" />
-    <label for="switch">Toggle</label>
+    <input class="theme-toggle__input" type="checkbox" [formControl]="toggleControl" id="switch" />
+    <label class="theme-toggle__label" for="switch">Toggle</label>
   </div>
 </mat-toolbar>

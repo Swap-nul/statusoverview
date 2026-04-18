@@ -45,6 +45,11 @@
   "jenkinsApiToken": "admin123",
   "jenkinsBulkDeployJobName": "bulk-deployment-trigger",
   "jenkinsSingleAppDeployJobName": "single-app-deployment",
+  "_comment_countdownAlertThreshold": "Highlight countdowns expiring within this window. Set months and/or days.",
+  "countdownAlertThreshold": {
+    "months": 7,
+    "days": 15
+  },
 
   "projects": [
     { "name": "alpha", "displayName": "Project-Alpha" },
@@ -840,6 +845,278 @@
             "appName": "authentication-api",
             "appType": "Mule",
             "url": "https://authentication-api-dr.cloud"
+          }
+        ]
+      },
+      "expiryTime": {
+        "alpha": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "04/15/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "05/15/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "05/01/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "10/15/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/15/2026"
+          }
+        ],
+        "qa": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "10/15/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/15/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/15/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "10/15/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/15/2026"
+          }
+        ],
+        "alpha2": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "10/20/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/20/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/20/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "10/28/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/28/2026"
+          }
+        ],
+        "qa2": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "05/25/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/25/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/25/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "10/30/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/30/2026"
+          }
+        ],
+        "uat": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/05/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/05/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/05/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/12/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/12/2026"
+          }
+        ],
+        "staging": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/10/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/10/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/10/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/16/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/16/2026"
+          }
+        ],
+        "staging1": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/15/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/15/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/15/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/22/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/22/2026"
+          }
+        ],
+        "staging2": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "11/20/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/20/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/20/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "11/27/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/27/2026"
+          }
+        ],
+        "prod": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/01/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/01/2027"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "02/01/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/08/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "01/08/2027"
+          }
+        ],
+        "dr": [
+          {
+            "appName": "empl-web-api",
+            "appType": "AppReg",
+            "expiryDate": "12/10/2026"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppReg",
+            "expiryDate": "01/10/2027"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppReg",
+            "expiryDate": "02/10/2027"
+          },
+          {
+            "appName": "cust-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "12/17/2026"
+          },
+          {
+            "appName": "rrp-web-api",
+            "appType": "AppCertificate",
+            "expiryDate": "01/17/2027"
           }
         ]
       }
