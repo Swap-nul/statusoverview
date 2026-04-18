@@ -1,5 +1,10 @@
 .main-content {
-  min-height: calc(100vh - 120px);
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.main-content.darkMode {
+  background-color: #333335;
 }
 
 @media (max-width: 768px) {

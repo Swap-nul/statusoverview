@@ -57,6 +57,7 @@ import { SortButtonComponent } from './components/sort-button/sort-button.compon
 import { StatusIconsTagLinksComponent } from './components/status-icons-tag-links/status-icons-tag-links.component';
 import { AppConfigService } from './app-config.service';
 import { ProjectComponent } from './components/project/project.component';
+import { ReleaseCalendarComponent } from './components/release-calendar/release-calendar.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { initializeKeycloak } from './init/keycloak-init.factory';
@@ -83,6 +84,7 @@ export function initializeApp(appConfig: AppConfigService) {
     EnvDetailsDialogComponent,
     BulkDeployDialogComponent,
     ProjectComponent,
+    ReleaseCalendarComponent,
     SortButtonComponent,
     LoginComponent,
     DashboardComponent,

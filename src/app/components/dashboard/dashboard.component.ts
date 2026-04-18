@@ -9,6 +9,8 @@ import { OverlayContainer } from '@angular/cdk/overlay';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  currentView: 'projects' | 'calendar' = 'projects';
+
   constructor(
     private overlay: OverlayContainer,
     @Inject(DOCUMENT) private document: Document
@@ -37,5 +39,9 @@ export class DashboardComponent implements OnInit {
     } else {
       this.document.body.classList.remove(darkClassName);
     }
+  }
+
+  setDashboardView(view: 'projects' | 'calendar') {
+    this.currentView = view;
   }
 }

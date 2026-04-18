@@ -1,0 +1,85 @@
+<section class="release-calendar-view">
+  <div class="release-calendar-layout" *ngIf="!isLoading; else loadingState">
+    <aside class="release-year-panel">
+      <div class="release-year-header">
+        <div class="release-year-title">Year</div>
+
+        <div class="release-year-nav">
+          <button mat-icon-button type="button" (click)="goToPreviousYear()" aria-label="Previous year">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="release-year-value">{{ getCalendarYearLabel() }}</span>
+          <button mat-icon-button type="button" (click)="goToNextYear()" aria-label="Next year">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="release-year-grid">
+        <button
+          type="button"
+          class="release-year-month"
+          *ngFor="let month of yearMonthSummaries"
+          [class.is-active]="month.isActiveMonth"
+          [class.has-events]="month.eventCount > 0"
+          (click)="selectYearMonth(month.monthIndex)">
+          <span class="release-year-month-label">{{ month.label }}</span>
+          <span class="release-year-month-count">{{ month.eventCount }}</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="release-calendar-panel">
+      <div class="release-calendar-header">
+        <div class="release-calendar-title">{{ getCalendarMonthLabel() }}</div>
+
+        <div class="release-calendar-nav">
+          <button mat-icon-button type="button" (click)="goToPreviousMonth()" aria-label="Previous month">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="goToNextMonth()" aria-label="Next month">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="release-calendar-weekdays">
+        <div class="release-calendar-weekday" *ngFor="let weekday of calendarWeekdayLabels">{{ weekday }}</div>
+      </div>
+
+      <div class="release-calendar-grid">
+        <ng-container *ngFor="let week of calendarWeeks">
+          <div
+            class="release-calendar-day"
+            *ngFor="let day of week"
+            [class.is-empty]="!day.isCurrentMonth"
+            [class.is-today]="day.isToday"
+            [class.is-selected]="day.isSelected"
+            [class.has-events]="day.events.length > 0"
+            (click)="selectCalendarDate(day)">
+            <ng-container *ngIf="day.isCurrentMonth">
+              <div class="release-calendar-day-number">{{ day.dayNumber }}</div>
+
+              <div class="release-calendar-events" *ngIf="day.events.length">
+                <div
+                  class="release-calendar-event"
+                  *ngFor="let event of day.events"
+                  [matTooltip]="event.note"
+                  [matTooltipDisabled]="!event.note">
+                  <span class="release-calendar-event-app">{{ event.appName }} - {{ event.type }}</span>
+                  <span class="release-calendar-event-version">{{ event.version }}</span>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingState>
+    <div class="release-calendar-panel release-calendar-loading">
+      <mat-progress-spinner color="primary" mode="indeterminate" diameter="56"></mat-progress-spinner>
+    </div>
+  </ng-template>
+</section>

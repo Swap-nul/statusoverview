@@ -11,6 +11,16 @@
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="toggleDashboardView()"
+    class="release-calendar-toggle-btn"
+    [matTooltip]="currentView === 'calendar' ? 'Return to the project tabs' : 'Show the global release calendar for all projects'">
+    <mat-icon>{{ currentView === 'calendar' ? 'dashboard' : 'calendar_month' }}</mat-icon>
+    {{ currentView === 'calendar' ? 'Projects View' : 'Release Calendar' }}
+  </button>
+
   <!-- User Authentication Section -->
   <div class="auth-section" *ngIf="isAuthenticated">
     <span class="username">{{ username }}</span>

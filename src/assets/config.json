@@ -16,17 +16,9 @@
   "_comment_authentication": "Authentication configuration for JWT token injection control",
   "authentication": {
     "_comment_skipUrls": "URL patterns that should skip JWT token injection (path-based)",
-    "skipUrls": [
-      "/assets/",
-      "/login",
-      "/silent-check-sso.html",
-      "keycloak",
-      "/realms/"
-    ],
+    "skipUrls": ["/assets/", "/login", "/silent-check-sso.html", "keycloak", "/realms/"],
     "_comment_skipDomains": "Domain patterns that should skip JWT token injection (hostname-based)",
-    "skipDomains": [
-      "localhost:3000"
-    ]
+    "skipDomains": ["localhost:3000"]
   },
   "argoCD_nonprod_Url": "https://argocd.hostname.cloud/applications/",
   "argoCD_prod_Url": "https://argocd.prod_hostname.cloud/applications/",
@@ -1646,5 +1638,75 @@
     "staging3",
     "prod",
     "dr"
+  ],
+  "Releases": [
+    {
+      "appName": "Customer portal",
+      "Events": [
+        {
+          "type": "Release",
+          "version": "v1.0",
+          "releaseDate": "05/15/2026",
+          "Note": "KYC"
+        },
+        {
+          "type": "Release",
+          "version": "v2.0",
+          "releaseDate": "05/25/2026",
+          "Note": "CRM"
+        }
+      ]
+    },
+    {
+      "appName": "Employee portal",
+      "Events": [
+        {
+          "type": "Release",
+          "version": "v1.888",
+          "releaseDate": "05/08/2026",
+          "Note": "KYC"
+        },
+        {
+          "type": "Release",
+          "version": "v2.999",
+          "releaseDate": "05/21/2026",
+          "Note": "CRM"
+        }
+      ]
+    },
+    {
+      "appName": "RRP portal",
+      "Events": [
+        {
+          "type": "Release",
+          "version": "v1.0111",
+          "releaseDate": "05/10/2026",
+          "Note": "KYC"
+        },
+        {
+          "type": "Update",
+          "version": "v2.0222",
+          "releaseDate": "05/26/2026",
+          "Note": "CRM"
+        }
+      ]
+    },
+    {
+      "appName": "QQQ Portal",
+      "Events": [
+        {
+          "type": "Update",
+          "version": "v1.1",
+          "releaseDate": "05/15/2026",
+          "Note": "Security Fixes"
+        },
+        {
+          "type": "Update",
+          "version": "v2.2",
+          "releaseDate": "05/25/2026",
+          "Note":"Upgrade"
+        }
+      ]
+    }
   ]
 }

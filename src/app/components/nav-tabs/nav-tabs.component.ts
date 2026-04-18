@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Entity } from 'src/app/models/data-model/entity';
 
 @Component({
@@ -8,6 +8,7 @@ import { Entity } from 'src/app/models/data-model/entity';
   styleUrls: ['./nav-tabs.component.scss'],
 })
 export class NavTabsComponent {
+  @Input() currentView: 'projects' | 'calendar' = 'projects';
   projects: Entity[] = [];
 
   constructor(private http: HttpClient) {}

@@ -1,5 +1,9 @@
 <!-- Main Content (Your existing app content) -->
 <div class="main-content mat-typography mat-app-background" [ngClass]="{'darkMode': addCss}">
-    <app-header (cssRefreshDarkMode)=refreshCss($event)></app-header>
-    <app-nav-tabs></app-nav-tabs>
+    <app-header
+      [currentView]="currentView"
+      (cssRefreshDarkMode)=refreshCss($event)
+      (viewChange)="setDashboardView($event)">
+    </app-header>
+    <app-nav-tabs [currentView]="currentView"></app-nav-tabs>
 </div>
