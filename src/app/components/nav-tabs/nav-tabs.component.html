@@ -1,4 +1,7 @@
+<app-release-calendar *ngIf="currentView === 'calendar'"></app-release-calendar>
+
 <mat-tab-group
+  *ngIf="currentView === 'projects'"
   mat-stretch-tabs="false"
   mat-align-tabs="start"
   animationDuration="0ms"

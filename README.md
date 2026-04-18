@@ -1,642 +1,286 @@
-
----
-
 # StatusOverview
 
 <p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview" width="838">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/StatusOverviewBanner.png" alt="StatusOverview banner" width="838">
 </p>
 
 [![Build](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml/badge.svg)](https://github.com/Swap-nul/statusoverview/actions/workflows/Build.yml)
 
-**StatusOverview** is a comprehensive dashboard tool designed to display version information, deployments, environments, and endpoints for multiple applications, typically microservices. It provides developers and DevOps teams with an eagle-eye view across all environments, ensuring seamless operations and quick insights into the application landscape.
+StatusOverview is an Angular dashboard for comparing application status across environments, checking certificate and app registration expiry windows, and tracking planned releases from a shared calendar view.
 
-## 🚀 Latest Features
+## Current Highlights
 
-- 🔐 **Multi-Provider PKCE Authentication**: Integrated both Keycloak and Azure AD with PKCE (Proof Key for Code Exchange) for secure, modern OAuth 2.0 authentication
-- 🎭 **Role-based Access Control**: Granular access control with custom roles and permissions
-- 🔑 **JWT Token Management**: Automatic token handling, refresh, and secure API calls
-- 🛡️ **Security Guards**: Route protection with automatic login redirection
-- 🎨 **Modern UI**: Angular 17 with Material Design components
-- 🌙 **Dark Mode Support**: Toggle between light and dark themes
-- 📱 **Responsive Design**: Works seamlessly across desktop and mobile devices
-- 🏢 **Enterprise Ready**: Support for Azure AD integration alongside Keycloak
-- 🚀 **Bulk Deployment**: Deploy multiple applications from one environment to another using Jenkins automation
-- ⚙️ **Jenkins Integration**: Built-in Jenkins server for automated deployment workflows
+- Project-based dashboard tabs loaded from `src/assets/config.json`
+- Environment status table with app filtering, environment filtering, column selection, sorting, and CSV export
+- Countdown view for certificate and app registration expiry dates with urgency highlighting
+- Global release calendar view available from the header
+- Runtime release, environment, repository, and expiry configuration from `src/assets/config.json`
+- Keycloak and Azure AD authentication support with provider selection
+- Dark mode support across the dashboard and Material overlays
+- Optional bulk deployment workflow with Jenkins integration
 
----
+## What Changed Recently
 
-## 📸 Screenshots
+- Added a dedicated `release-calendar` component for a full dashboard-level release calendar
+- Added a header toggle to switch between project tabs and the global release calendar
+- Added release schedule data support through the `Releases` section in `src/assets/config.json`
+- Added configurable countdown alert thresholds through `countdownAlertThreshold`
+- Expanded project configuration to drive tabs and environment-specific expiry data from config
+- Kept Jenkins integration in the app, but the Jenkins service is currently commented out in `docker-compose.yml`
+
+## Screenshots
 
 <p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/Dashboard.png" alt="StatusOverview Dashboard" width="838">
+  <img src="https://Swap-nul.github.io/statusoverview/screenshots/Dashboard.png" alt="StatusOverview dashboard" width="838">
 </p>
 
----
+## Stack
 
-## ✨ Key Benefits
+- Frontend: Angular 17, Angular Material, TypeScript
+- Auth: Keycloak, Azure AD (MSAL)
+- API: PostgREST
+- Data: PostgreSQL
+- Local orchestration: Docker Compose
+- Optional deployment automation: Jenkins
 
-- **Version Tracking**: Instantly see if the latest version is deployed across environments
-- **Deployment Details**: Drill down to see who deployed what, with commit details and messages
-- **Environment Overview**: Compare application states across dev, staging, and production
-- **Security First**: PKCE-enabled OAuth 2.0 ensures secure access to sensitive deployment data
-- **Role-based UI**: Show/hide features based on user roles and permissions
-- **Dark Mode**: Eye-friendly interface for extended monitoring sessions
-- **Bulk Operations**: Deploy multiple applications simultaneously with automated workflows
-- **Jenkins Integration**: Built-in CI/CD pipeline for streamlined deployment processes
-
-![DrillDownPopUp](https://Swap-nul.github.io/statusoverview/screenshots/drilldown.png "Drill Down Popup")
-
----
-
-## 🏗️ Architecture
-
-The application consists of:
-- **Frontend**: Angular 17 with TypeScript, Angular Material, and Keycloak integration
-- **Backend API**: PostgREST providing RESTful APIs over PostgreSQL
-- **Authentication**: Keycloak server for OAuth 2.0/OIDC authentication
-- **CI/CD**: Jenkins server for automated deployment workflows
-- **Database**: PostgreSQL for data persistence
-- **Database**: PostgreSQL for storing application metadata and deployment information
-- **Authentication**: Keycloak server for identity and access management
-- **Container Stack**: Docker Compose for local development environment
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
-- **Docker** and **Docker Compose** installed
-- **Node.js** (v18+) and **pnpm** package manager
-- **Git** for version control
+- Docker and Docker Compose
+- Node.js 18+
+- `pnpm`
 
-### 1. Clone the Repository
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/Swap-nul/statusoverview.git
 cd statusoverview
+pnpm install
 ```
 
-### 2. Start the Backend Services
-
-Start PostgreSQL, PostgREST, and Keycloak:
+### 2. Start the local services
 
 ```bash
 docker compose up -d
 ```
 
-This will start:
-- **PostgreSQL** on port 3579
-- **PostgREST** on port 3000
-- **Keycloak** on port 8081
-- **Jenkins** on port 8082 (optional, for bulk deployment feature)
+By default this starts:
 
-### 3. Set Up Keycloak Authentication
+- PostgreSQL on `localhost:3579`
+- PostgREST on `localhost:3000`
+- Keycloak on `localhost:8081`
 
-Wait for Keycloak to fully start (usually 1-2 minutes), then run the automated setup:
+Note: Jenkins is not started by default because the `jenkins` service is commented out in [docker-compose.yml](</s:/statusoverview/docker-compose.yml>).
 
-**For Linux/Mac:**
+### 3. Initialize the database
+
+```bash
+docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Database_Schema.sql
+docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Dummy_Data_Insert_Scripts.sql
+```
+
+### 4. Configure Keycloak
+
+Wait for Keycloak to finish starting, then run:
+
+```powershell
+.\keycloak-setup.ps1
+```
+
+or:
+
 ```bash
 chmod +x keycloak-setup.sh
 ./keycloak-setup.sh
 ```
 
-**For Windows (PowerShell):**
-```powershell
-.\keycloak-setup.ps1
+This creates the default realm, client, test user, and roles used by the app.
+
+### 5. Start the frontend
+
+```bash
+pnpm start
 ```
 
-The script automatically creates:
-- ✅ `statusoverview` realm
-- ✅ `statusoverview-app` client with PKCE enabled
-- ✅ Test user: `testuser` / `testpass123`
-- ✅ Default roles: `admin`, `user`, `viewer`
+The app will be available at `http://localhost:4200`.
 
-### 4. Set Up Jenkins (Optional - for Bulk Deployment)
+## Authentication
 
-For the bulk deployment feature, set up Jenkins:
+The app supports three auth modes through `authProvider` in `src/assets/config.json`:
 
-**For Linux/Mac:**
+- `keycloak`
+- `azure`
+- `both`
+
+When `both` is selected, users can choose a provider from the login screen. Route access to `/dashboard` is protected by `AuthGuard`.
+
+For Azure AD setup details, see [AZURE_SETUP.md](AZURE_SETUP.md).
+
+## Main Views
+
+### Project Tabs
+
+Each project tab renders a status matrix for the environments configured for that project. From the project view, users can:
+
+- Search by app name
+- Filter visible environments
+- Select or deselect environment columns
+- Sort application and environment data
+- Open environment detail dialogs
+- Download environment-specific CSV exports
+- Open the bulk deployment dialog
+- Switch to the countdown view
+
+### Countdown View
+
+The countdown view shows certificate and app registration expiry windows per environment. Urgency styling is controlled by `countdownAlertThreshold` in `src/assets/config.json`.
+
+### Global Release Calendar
+
+The header now includes a toggle between:
+
+- `Projects View`
+- `Release Calendar`
+
+The release calendar reads from the `Releases` section in `src/assets/config.json` and displays:
+
+- Month navigation
+- Year navigation
+- Monthly event counts
+- Daily release/update entries
+- Tooltip notes for release items
+
+## Configuration
+
+Most runtime behavior comes from `src/assets/config.json`.
+
+### Important sections
+
+- `projects`: top-level dashboard tabs
+- `environments`: display names for environment columns
+- `Repository`: app-to-repository links
+- `EnvAppInfoByParent`: environment-specific metadata by project
+- `countdownAlertThreshold`: warning window for expiry countdowns
+- `Releases`: release calendar entries
+- `authProvider`, `keycloak`, `azure`: authentication settings
+- `jenkins*`: optional Jenkins integration settings
+
+### Example: countdown threshold
+
+```json
+"countdownAlertThreshold": {
+  "months": 7,
+  "days": 15
+}
+```
+
+### Example: release calendar data
+
+```json
+"Releases": [
+  {
+    "appName": "Customer portal",
+    "Events": [
+      {
+        "type": "Release",
+        "version": "v1.0",
+        "releaseDate": "05/15/2026",
+        "Note": "KYC"
+      }
+    ]
+  }
+]
+```
+
+### Example: project and environment setup
+
+```json
+"projects": [
+  { "name": "alpha", "displayName": "Project-Alpha" },
+  { "name": "beta", "displayName": "Project-Beta" }
+],
+"environments": [
+  { "name": "alpha", "displayName": "ALPHA" },
+  { "name": "qa", "displayName": "QA" },
+  { "name": "prod", "displayName": "PROD" }
+]
+```
+
+## Optional Jenkins Integration
+
+The UI still includes bulk deployment support, proxy configuration, and Jenkins settings, but Jenkins is not enabled in the current default Docker Compose stack.
+
+To use it locally:
+
+1. Re-enable the `jenkins_home` volume and `jenkins` service in [docker-compose.yml](</s:/statusoverview/docker-compose.yml>).
+2. Start Jenkins with Docker Compose.
+3. Run the Jenkins setup script:
+
+```powershell
+.\jenkins-setup.ps1
+```
+
+or:
+
 ```bash
 chmod +x jenkins-setup.sh
 ./jenkins-setup.sh
 ```
 
-**For Windows (PowerShell):**
-```powershell
-.\jenkins-setup.ps1
-```
+4. Confirm the proxy target in [proxy.conf.json](</s:/statusoverview/proxy.conf.json>) still points to `http://localhost:8082`.
 
-This will:
-- ✅ Start Jenkins on port 8082
-- ✅ Create admin user: `admin` / `admin123`
-- ✅ Set up bulk deployment job with pipeline
-- ✅ Configure API integration with CSRF disabled
-- ✅ Install required plugins automatically
+Additional docs:
 
-**Jenkins Access:**
-- URL: http://localhost:8082
-- Username: admin
-- Password: admin123
+- [JENKINS_SETUP.md](JENKINS_SETUP.md)
+- [BULK_DEPLOYMENT_FEATURE.md](BULK_DEPLOYMENT_FEATURE.md)
 
-**Jenkins Features:**
-- **Bulk Deployment Job**: Pre-configured pipeline for deploying multiple applications
-- **API Integration**: RESTful API endpoints for triggering deployments
-- **CORS Support**: Configured to work with Angular frontend via proxy
-- **Docker Support**: Docker-in-Docker enabled for containerized deployments
-
-See [JENKINS_SETUP.md](JENKINS_SETUP.md) for detailed configuration and troubleshooting.
-
-### 5. Initialize Database
+## Available Scripts
 
 ```bash
-# Execute database schema
-docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Database_Schema.sql
-
-# Load sample data (optional)
-docker exec -i statusoverview-db psql -U postgres -d statusoverview_DB < database/Dummy_Data_Insert_Scripts.sql
+pnpm start   # Run the Angular dev server
+pnpm build   # Build the app
+pnpm watch   # Build in watch mode
+pnpm test    # Run unit tests
 ```
 
-### 6. Start the Frontend Application
+## Useful Files
 
-```bash
-# Install dependencies
-pnpm install
+- [src/assets/config.json](</s:/statusoverview/src/assets/config.json>)
+- [src/app/components/release-calendar/release-calendar.component.ts](</s:/statusoverview/src/app/components/release-calendar/release-calendar.component.ts>)
+- [src/app/components/project/project.component.ts](</s:/statusoverview/src/app/components/project/project.component.ts>)
+- [src/app/components/header/header.component.ts](</s:/statusoverview/src/app/components/header/header.component.ts>)
+- [src/app/components/nav-tabs/nav-tabs.component.ts](</s:/statusoverview/src/app/components/nav-tabs/nav-tabs.component.ts>)
+- [docker-compose.yml](</s:/statusoverview/docker-compose.yml>)
 
-# Start development server with Jenkins proxy support
-pnpm start
-```
+## Troubleshooting
 
-The application will be available at **http://localhost:4200**
+### App loads but data is empty
 
-**Note**: The development server is configured with a proxy (`proxy.conf.json`) to handle Jenkins API calls and avoid CORS issues. Jenkins APIs are accessible at `/jenkins/*` endpoints in the Angular application.
+- Confirm PostgREST is running on `localhost:3000`
+- Confirm the database schema and sample data were loaded
+- Confirm `database_hostname_port` and `database_baseUrl` in `src/assets/config.json`
 
----
+### Login does not work
 
-## 🔐 Authentication Flow
+- Confirm Keycloak is running on `localhost:8081`
+- Re-run the Keycloak setup script if the realm/client is missing
+- Verify `authProvider`, `keycloak`, and `azure` values in `src/assets/config.json`
 
-The application supports **multiple authentication providers**:
+### Bulk deployment does not work
 
-1. **Visit** `http://localhost:4200`
-2. **Choose provider** from the login page:
-   - **Keycloak**: Traditional enterprise SSO
-   - **Azure AD**: Microsoft cloud authentication
-3. **Authenticate** with your chosen provider
-4. **Redirected** to the main dashboard upon successful authentication
+- Confirm Jenkins is actually enabled and running
+- Confirm the proxy target in `proxy.conf.json`
+- Confirm the Jenkins job names in `src/assets/config.json`
 
-### Authentication Providers
+## Additional Docs
 
-<p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/MultiLoginProvider.png" alt="Multi-Provider Login Selection" width="600">
-</p>
+- [AZURE_SETUP.md](AZURE_SETUP.md)
+- [KEYCLOAK_SETUP.md](KEYCLOAK_SETUP.md)
+- [KEYCLOAK_TROUBLESHOOTING.md](KEYCLOAK_TROUBLESHOOTING.md)
+- [JENKINS_SETUP.md](JENKINS_SETUP.md)
+- [BULK_DEPLOYMENT_FEATURE.md](BULK_DEPLOYMENT_FEATURE.md)
 
-| Provider | Description | Use Case |
-|----------|-------------|----------|
-| **Keycloak** | Open-source identity management | Traditional enterprise environments |
-| **Azure AD** | Microsoft cloud identity platform | Microsoft-centric organizations |
-| **Both** | Multi-provider selection | Flexible enterprise environments |
+## License
 
-### Test Credentials
-
-**Keycloak:**
-| Username | Password | Roles |
-|----------|----------|-------|
-| testuser | testpass123 | user |
-
-**Azure AD:**
-Use your organization's Azure AD credentials or set up a test user in your Azure AD tenant.
-
-### Authentication Interfaces
-
-**Keycloak Login:**
-<p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/LoginWithKeyClock.png" alt="Keycloak Login Interface" width="600">
-</p>
-
-**Azure AD Login:**
-<p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/LoginWithAzure.png" alt="Azure AD Login Interface" width="600">
-</p>
-
----
-
-## 🚀 Bulk Deployment Feature
-
-The StatusOverview application includes a comprehensive bulk deployment feature powered by Jenkins automation.
-
-### Overview
-
-The bulk deployment feature allows you to:
-- Select multiple applications from a source environment
-- Deploy them to a target environment with a single operation
-- Monitor deployment progress and results in real-time
-- View detailed deployment logs and status
-
-<p align="center">
-  <img src="https://Swap-nul.github.io/statusoverview/screenshots/bulkDeployments.png" alt="Bulk Deployment Interface" width="838">
-</p>
-
-### How It Works
-
-1. **Environment Selection**: Choose source (FROM) and target (TO) environments
-2. **Application Selection**: Select applications using checkboxes in a responsive table
-3. **Version Management**: View current versions and branches for each application
-4. **Jenkins Integration**: Deployments are executed via Jenkins pipeline jobs
-5. **Real-time Monitoring**: Track deployment progress and view results
-
-### Usage
-
-1. Navigate to the main dashboard
-2. Click the "Bulk Deploy" button (requires appropriate permissions)
-3. Select source and target environments from dropdowns
-4. Use checkboxes to select applications for deployment
-5. Review the selection and click "Deploy Selected Applications"
-6. Monitor progress through Jenkins job execution
-
-### Jenkins Pipeline
-
-The bulk deployment job includes:
-- **Parameter Validation**: Ensures all required parameters are provided
-- **Pre-deployment Checks**: Validates applications and environments
-- **Deployment Execution**: Processes each application sequentially
-- **Post-deployment Verification**: Validates deployment success
-- **Results Summary**: Provides detailed deployment report
-
-### API Integration
-
-The feature uses Jenkins REST API for:
-- Triggering deployment jobs with parameters
-- Monitoring job status and progress
-- Retrieving console output and build results
-- Managing authentication and error handling
-
-### Security
-
-- CSRF protection disabled for API endpoints
-- Basic authentication with Jenkins admin credentials
-- Role-based access control for bulk deployment feature
-- Proxy configuration to handle cross-origin requests
-
----
-
-## ⚙️ Configuration
-
-### Keycloak & Azure AD Configuration
-
-Update `src/assets/config.json` for your environment:
-
-```json
-{
-  "keycloak": {
-    "url": "http://localhost:8081",
-    "realm": "statusoverview", 
-    "clientId": "statusoverview-app"
-  },
-  "azure": {
-    "clientId": "your-azure-app-client-id",
-    "authority": "https://login.microsoftonline.com/your-tenant-id",
-    "redirectUri": "http://localhost:4200",
-    "postLogoutRedirectUri": "http://localhost:4200",
-    "scopes": ["user.read"]
-  },
-  "authProvider": "both",
-  "authentication": {
-    "skipUrls": [
-      "/assets/",
-      "/login", 
-      "/silent-check-sso.html",
-      "keycloak",
-      "/realms/"
-    ],
-    "skipDomains": [
-      "localhost:3000"
-    ]
-  },
-  "database_hostname_port": "http://localhost:3000",
-  "database_baseUrl": "/statusoverview",
-  "jenkinsBaseUrl": "/jenkins",
-  "jenkinsApiUser": "admin",
-  "jenkinsApiToken": "admin123",
-  "jenkinsBulkDeployJobName": "bulk-deployment-job"
-}
-```
-
-#### Jenkins Configuration
-
-The Jenkins integration uses a proxy-based approach to avoid CORS issues:
-
-- **`jenkinsBaseUrl`**: Set to `/jenkins` to use the Angular development proxy
-- **`jenkinsApiUser`**: Jenkins admin username (default: `admin`)
-- **`jenkinsApiToken`**: Jenkins admin password (default: `admin123`)
-- **`jenkinsBulkDeployJobName`**: Name of the bulk deployment job (default: `bulk-deployment-job`)
-
-The proxy configuration (`proxy.conf.json`) automatically forwards requests from `/jenkins/*` to `http://localhost:8082/`.
-
-#### Authentication Configuration
-
-The `authentication` section controls which URLs and domains are excluded from JWT token injection:
-
-- **`skipUrls`**: URL patterns that should bypass authentication (static assets, login pages, Keycloak endpoints)
-- **`skipDomains`**: Domain patterns for external APIs that don't require authentication (like PostgREST database API)
-
-#### Authentication Provider Selection
-
-The `authProvider` configuration controls which authentication methods are available:
-
-- **`"keycloak"`**: Only Keycloak authentication
-- **`"azure"`**: Only Azure AD authentication  
-- **`"both"`**: User can choose between Keycloak and Azure AD
-
-#### Azure AD Setup
-
-For Azure AD authentication, you'll need to:
-
-1. **Create** an Azure AD app registration
-2. **Configure** redirect URIs and permissions
-3. **Update** the configuration with your client ID and tenant ID
-
-📚 **Detailed setup guide**: See [AZURE_SETUP.md](./AZURE_SETUP.md) for complete Azure AD configuration instructions.
-
-### Environment-Specific Configuration
-
-Configure the following files for your specific needs:
-
-```
-src/assets/config.json              # API endpoints, Keycloak config
-src/app/models/ELEMENT_DATA.ts       # Project and app names
-src/app/models/dataModel/EnvAppInfoData.ts  # Environment-specific app configurations
-src/app/models/dataModel/RepoData.ts        # Repository endpoints
-```
-
----
-
-## 🛡️ Role-Based Access Control
-
-### Using the HasRole Directive
-
-Control UI elements based on user roles:
-
-```html
-<!-- Only visible to admins -->
-<button *appHasRole="'admin'" mat-raised-button>
-  Admin Controls
-</button>
-
-<!-- Visible to multiple roles -->
-<div *appHasRole="['admin', 'user']">
-  User Dashboard Content
-</div>
-
-<!-- Visible to everyone (no role check) -->
-<span>Public Information</span>
-```
-
-### Protecting Routes
-
-Routes are automatically protected by the `AuthGuard`:
-
-```typescript
-const routes: Routes = [
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['user', 'admin'] }  // Optional role requirement
-  }
-];
-```
-
----
-
-## 🔧 Development
-
-### Project Structure
-
-```
-src/
-├── app/
-│   ├── components/          # Angular components
-│   │   ├── dashboard/       # Main dashboard
-│   │   ├── login/          # Custom login page
-│   │   ├── header/         # Navigation header
-│   │   └── bulk-deploy-dialog/ # Bulk deployment modal
-│   ├── services/           # Angular services
-│   │   ├── keycloak.service.ts     # Authentication service
-│   │   ├── applications.service.ts # Business logic
-│   │   └── jenkins.service.ts      # Jenkins API integration
-│   ├── guards/             # Route guards
-│   │   └── auth.guard.ts   # Authentication guard
-│   ├── interceptors/       # HTTP interceptors
-│   │   └── auth.interceptor.ts     # JWT token injection
-│   ├── directives/         # Custom directives
-│   │   └── has-role.directive.ts   # Role-based visibility
-│   └── init/              # App initialization
-│       └── keycloak-init.factory.ts # Keycloak setup
-├── assets/                # Static assets
-│   └── config.json        # Application configuration
-├── environments/          # Environment configs
-└── proxy.conf.json        # Proxy configuration for Jenkins
-jenkins/                   # Jenkins configuration
-├── Dockerfile            # Custom Jenkins image
-├── plugins.txt           # Jenkins plugins list
-└── init.groovy.d/        # Jenkins initialization scripts
-    ├── 01-basic-setup.groovy    # Basic Jenkins configuration
-    └── 02-create-job.groovy     # Bulk deployment job creation
-```
-
-### Available Scripts
-
-```bash
-# Development
-pnpm start              # Start dev server with Jenkins proxy
-pnpm build              # Build for production
-pnpm test               # Run unit tests
-pnpm lint               # Lint code
-
-# Docker Services
-docker compose up       # Start all services (PostgreSQL, PostgREST, Keycloak, Jenkins)
-docker compose up -d    # Start services in background
-docker compose down     # Stop all services
-docker compose restart  # Restart services
-
-# Jenkins Management
-./jenkins-setup.sh      # Setup Jenkins (Linux/Mac)
-.\jenkins-setup.ps1     # Setup Jenkins (Windows)
-
-# Service-specific operations
-docker compose up -d jenkins    # Start only Jenkins
-docker compose logs jenkins     # View Jenkins logs
-docker compose restart jenkins  # Restart Jenkins
-
-# Build custom Jenkins image
-docker compose build jenkins
-```
-
-### Adding New Roles
-
-1. **Create role in Keycloak** (Admin Console → Roles)
-2. **Assign to users** (Admin Console → Users → Role Mappings)
-3. **Use in templates**:
-   ```html
-   <div *appHasRole="'new-role'">New Feature</div>
-   ```
-
----
-
-## 🏭 Production Deployment
-
-### Frontend Build
-
-```bash
-# Build optimized production bundle
-pnpm run build
-
-# Output will be in dist/ directory
-# Deploy to your web server (NGINX, Apache, etc.)
-```
-
-### Production Keycloak Setup
-
-1. **Use production-grade Keycloak deployment**
-2. **Configure proper SSL/TLS certificates**
-3. **Set strong admin passwords**
-4. **Configure production database**
-5. **Update CORS and redirect URIs**
-
-### Environment Variables
-
-Create production environment files:
-
-```typescript
-// src/environments/environment.prod.ts
-export const environment = {
-  production: true,
-  keycloak: {
-    url: 'https://your-keycloak.domain.com',
-    realm: 'statusoverview',
-    clientId: 'statusoverview-app'
-  }
-};
-```
-
-### Security Checklist
-
-- [ ] HTTPS enabled for all services
-- [ ] Keycloak admin console secured
-- [ ] Strong passwords and proper token lifetimes
-- [ ] CORS properly configured
-- [ ] Production database secured
-- [ ] Regular security updates applied
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Authentication Errors:**
-```bash
-# Check Keycloak status
-docker logs keycloak
-
-# Verify Keycloak is accessible
-curl http://localhost:8081/realms/statusoverview
-```
-
-**Database Connection Issues:**
-```bash
-# Check PostgREST logs
-docker logs postgrest
-
-# Test database connection
-docker exec -it statusoverview-db psql -U postgres -d statusoverview_DB
-```
-
-**Jenkins API Issues:**
-```bash
-# Check Jenkins status
-docker logs statusoverview-jenkins
-
-# Test Jenkins API
-curl -u admin:admin123 http://localhost:8082/api/json
-
-# Test bulk deployment job
-curl -u admin:admin123 http://localhost:8082/job/bulk-deployment-job/api/json
-
-# Rebuild Jenkins with latest configuration
-docker compose build jenkins
-docker compose up -d jenkins
-```
-
-**Build Errors:**
-```bash
-# Clear node modules and reinstall
-rm -rf node_modules package-lock.json
-pnpm install
-
-# Clear Angular cache
-pnpm ng cache clean
-```
-
-**CORS Issues with Jenkins:**
-The application uses a proxy configuration to avoid CORS issues. If you encounter problems:
-
-1. Ensure `proxy.conf.json` exists in the project root
-2. Verify Jenkins is running on port 8082
-3. Check that `jenkinsBaseUrl` in `config.json` is set to `/jenkins`
-4. Restart the Angular development server after changes
-
-**Jenkins Job Creation Issues:**
-If the bulk deployment job isn't created automatically:
-
-1. Check Jenkins initialization logs: `docker compose logs jenkins`
-2. Manually trigger job creation by restarting Jenkins
-3. Verify plugins are installed: Check Jenkins plugin manager
-4. Review `jenkins/init.groovy.d/` scripts for errors
-
-### CORS Issues
-
-If you encounter CORS errors:
-
-**For Keycloak Authentication:**
-1. Open Keycloak Admin Console
-2. Navigate to Clients → statusoverview-app
-3. Add your application URL to "Web Origins"
-4. Save changes
-
-**For Jenkins API:**
-The application automatically handles Jenkins CORS through:
-- Angular development proxy (`proxy.conf.json`)
-- Jenkins CSRF protection disabled for API calls
-- Proper authentication headers in service calls
-
-No manual CORS configuration is needed for Jenkins when using the provided setup.
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🆘 Support
-
-- **Issues**: [GitHub Issues](https://github.com/Swap-nul/statusoverview/issues)
-- **Documentation**: Check the [Wiki](https://github.com/Swap-nul/statusoverview/wiki)
-- **Discussions**: [GitHub Discussions](https://github.com/Swap-nul/statusoverview/discussions)
-
----
-
-**Made with ❤️ for the DevOps community**
+This project is licensed under the MIT License. See [LICENSE](LICENSE).

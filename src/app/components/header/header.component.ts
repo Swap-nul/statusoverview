@@ -1,6 +1,8 @@
-import { Component, EventEmitter, HostBinding, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { AuthProviderService, UserInfo } from '../../services/auth-provider.service';
+
+type DashboardView = 'projects' | 'calendar';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +11,9 @@ import { AuthProviderService, UserInfo } from '../../services/auth-provider.serv
 })
 export class HeaderComponent implements OnInit {
   @HostBinding('class') className = '';
+  @Input() currentView: DashboardView = 'projects';
   @Output() cssRefreshDarkMode = new EventEmitter<boolean>();
+  @Output() viewChange = new EventEmitter<DashboardView>();
   toggleControl = new FormControl(true);
   mode: boolean = true; 
   addCssDarkmode = true;
@@ -113,5 +117,9 @@ export class HeaderComponent implements OnInit {
    */
   async refreshAuthenticationStatus(): Promise<void> {
     await this.updateAuthenticationStatus();
+  }
+
+  toggleDashboardView(): void {
+    this.viewChange.emit(this.currentView === 'calendar' ? 'projects' : 'calendar');
   }
 }

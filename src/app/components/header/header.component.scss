@@ -152,6 +152,16 @@
   font-size: larger;
 }
 
+.release-calendar-toggle-btn {
+  margin-right: 16px;
+  min-width: 165px;
+  height: 40px;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
 // Dark theme styles
 :host-context(.darkMode) {
   .user-profile-section {
