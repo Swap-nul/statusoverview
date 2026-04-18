@@ -72,6 +72,7 @@ export class AppComponent implements OnInit {
       .addSvgIcon(`azureRepo`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/azureRepo.svg"))
       .addSvgIcon(`github`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/github.svg"))
       .addSvgIcon(`github_repo`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/github_repo.svg"))
+      .addSvgIcon(`certificate`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/certificate.svg"))
 
       .addSvgIcon(`sort`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/sort.svg"))
       .addSvgIcon(`sort_active`, this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/sort_active.svg"))
