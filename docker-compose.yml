@@ -1,6 +1,6 @@
 volumes:
   postgres-statusoverview:
-  jenkins_home:
+  # jenkins_home:
 
 services:
   statusoverview-db:
@@ -44,24 +44,24 @@ services:
     networks:
       - statusoverview-net
 
-  jenkins:
-    build:
-      context: .
-      dockerfile: jenkins/Dockerfile
-    container_name: statusoverview-jenkins
-    privileged: true
-    user: root
-    ports:
-      - "8082:8080"
-      - "50000:50000"
-    environment:
-      - JENKINS_OPTS=--httpPort=8080
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP= -Djenkins.model.Jenkins.crumbIssuerProxyCompatibility=true -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - statusoverview-net
+  # jenkins:
+  #   build:
+  #     context: .
+  #     dockerfile: jenkins/Dockerfile
+  #   container_name: statusoverview-jenkins
+  #   privileged: true
+  #   user: root
+  #   ports:
+  #     - "8082:8080"
+  #     - "50000:50000"
+  #   environment:
+  #     - JENKINS_OPTS=--httpPort=8080
+  #     - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP= -Djenkins.model.Jenkins.crumbIssuerProxyCompatibility=true -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true
+  #   volumes:
+  #     - jenkins_home:/var/jenkins_home
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - statusoverview-net
 
 networks:
   statusoverview-net:
