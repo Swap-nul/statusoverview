@@ -106,3 +106,191 @@
     opacity: 0.6;
   }
 }
+
+.countdown-btn {
+  min-width: 140px;
+  height: 40px;
+  
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.countdown-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.countdown-name-column {
+  width: 280px;
+  min-width: 280px;
+  max-width: 300px;
+  white-space: nowrap;
+}
+
+.countdown-env-header {
+  font-weight: 700;
+  text-align: center;
+}
+
+.countdown-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 170px;
+  padding: 12px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(205, 163, 17, 0.28);
+  background:
+    radial-gradient(circle at top, rgba(255, 223, 113, 0.45), transparent 55%),
+    linear-gradient(180deg, #fffef4 0%, #f3f6fb 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 10px 24px rgba(44, 58, 82, 0.12);
+}
+
+.clock-time {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #157347;
+  text-shadow: 0 0 10px rgba(21, 115, 71, 0.14);
+}
+
+.clock-type,
+.clock-meta {
+  text-align: center;
+}
+
+.clock-type {
+  color: #946200;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.clock-meta {
+  color: #516072;
+  font-size: 0.7rem;
+}
+
+.countdown-clock.expired {
+  border-color: rgba(214, 63, 63, 0.28);
+  background:
+    radial-gradient(circle at top, rgba(255, 176, 176, 0.38), transparent 55%),
+    linear-gradient(180deg, #fff4f4 0%, #fbe9ea 100%);
+
+  .clock-time {
+    color: #b42318;
+    text-shadow: 0 0 10px rgba(180, 35, 24, 0.16);
+  }
+
+  .clock-type {
+    color: #b42318;
+  }
+}
+
+.countdown-clock.urgent:not(.expired) {
+  border-color: rgba(230, 149, 0, 0.38);
+  background:
+    radial-gradient(circle at top, rgba(255, 196, 92, 0.5), transparent 55%),
+    linear-gradient(180deg, #fff7e8 0%, #fff0cf 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 0 0 1px rgba(255, 179, 71, 0.2),
+    0 12px 28px rgba(255, 145, 0, 0.16);
+
+  .clock-time {
+    color: #a15c00;
+    text-shadow: 0 0 10px rgba(161, 92, 0, 0.16);
+  }
+
+  .clock-type {
+    color: #8a5300;
+  }
+}
+
+.countdown-empty {
+  min-width: 170px;
+  padding: 24px 10px;
+  border-radius: 16px;
+  text-align: center;
+  color: #7d8596;
+  border: 1px dashed rgba(125, 133, 150, 0.45);
+  background: rgba(15, 21, 34, 0.04);
+}
+
+:host-context(.darkMode) {
+  .countdown-clock {
+    border: 1px solid rgba(255, 205, 51, 0.35);
+    background:
+      radial-gradient(circle at top, rgba(255, 205, 51, 0.28), transparent 55%),
+      linear-gradient(180deg, #17202f 0%, #0c1220 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 10px 24px rgba(12, 18, 32, 0.28);
+  }
+
+  .clock-time {
+    color: #8bffb5;
+    text-shadow: 0 0 12px rgba(139, 255, 181, 0.45);
+  }
+
+  .clock-type {
+    color: #ffdf71;
+  }
+
+  .clock-meta {
+    color: #d4d9e2;
+  }
+
+  .countdown-clock.expired {
+    border-color: rgba(255, 128, 128, 0.35);
+    background:
+      radial-gradient(circle at top, rgba(255, 128, 128, 0.22), transparent 55%),
+      linear-gradient(180deg, #2c1519 0%, #170c0f 100%);
+
+    .clock-time {
+      color: #ff9f9f;
+      text-shadow: 0 0 12px rgba(255, 159, 159, 0.35);
+    }
+
+    .clock-type {
+      color: #ffc2c2;
+    }
+  }
+
+  .countdown-clock.urgent:not(.expired) {
+    border-color: rgba(255, 179, 71, 0.55);
+    background:
+      radial-gradient(circle at top, rgba(255, 179, 71, 0.36), transparent 55%),
+      linear-gradient(180deg, #38250f 0%, #1f1408 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 0 1px rgba(255, 179, 71, 0.18),
+      0 12px 28px rgba(255, 145, 0, 0.24);
+
+    .clock-time {
+      color: #ffd36b;
+      text-shadow: 0 0 14px rgba(255, 211, 107, 0.45);
+    }
+
+    .clock-type {
+      color: #ffe8a8;
+    }
+  }
+
+  .countdown-empty {
+    color: #7d8596;
+    border-color: rgba(125, 133, 150, 0.45);
+    background: rgba(15, 21, 34, 0.04);
+  }
+}
