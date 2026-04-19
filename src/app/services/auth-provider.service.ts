@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
 import { MsalService } from '@azure/msal-angular';
-import { AccountInfo, AuthenticationResult } from '@azure/msal-browser';
 import { AppConfigService } from '../app-config.service';
 
-export type AuthProvider = 'keycloak' | 'azure' | 'both';
+export type AuthProvider = 'none' | 'keycloak' | 'azure' | 'both';
 
 export interface UserInfo {
   id: string;
@@ -18,7 +17,7 @@ export interface UserInfo {
   providedIn: 'root'
 })
 export class AuthProviderService {
-  private currentProvider: AuthProvider = 'keycloak';
+  private currentProvider: AuthProvider = 'none';
   
   constructor(
     private keycloakService: KeycloakService,
@@ -29,8 +28,16 @@ export class AuthProviderService {
   }
 
   private initializeCurrentProvider(): void {
-    const configProvider = this.configService.get('authProvider') || 'keycloak';
+    const configProvider = this.configService.get('authProvider') || 'none';
     this.currentProvider = configProvider;
+  }
+
+  isAuthenticationEnabled(): boolean {
+    return this.getConfiguredProvider() !== 'none';
+  }
+
+  private getConfiguredProvider(): AuthProvider {
+    return (this.configService.get('authProvider') || 'none') as AuthProvider;
   }
 
   /**
@@ -46,13 +53,17 @@ export class AuthProviderService {
    */
   getCurrentProvider(): AuthProvider {
     const stored = localStorage.getItem('authProvider') as AuthProvider;
-    return stored || this.currentProvider;
+    return stored || this.getConfiguredProvider() || this.currentProvider;
   }
 
   /**
    * Check if user is authenticated with any provider
    */
   async isAuthenticated(): Promise<boolean> {
+    if (!this.isAuthenticationEnabled()) {
+      return false;
+    }
+
     const provider = this.getCurrentProvider();
     
     switch (provider) {
@@ -74,6 +85,10 @@ export class AuthProviderService {
    * Login with specified provider
    */
   async login(provider?: AuthProvider): Promise<void> {
+    if (!this.isAuthenticationEnabled()) {
+      return;
+    }
+
     const targetProvider = provider || this.getCurrentProvider();
     this.setProvider(targetProvider);
 
@@ -91,6 +106,11 @@ export class AuthProviderService {
    * Logout from current provider
    */
   async logout(): Promise<void> {
+    if (!this.isAuthenticationEnabled()) {
+      localStorage.removeItem('authProvider');
+      return;
+    }
+
     const provider = this.getCurrentProvider();
 
     switch (provider) {
@@ -112,6 +132,10 @@ export class AuthProviderService {
    * Get access token from current provider
    */
   async getAccessToken(): Promise<string | null> {
+    if (!this.isAuthenticationEnabled()) {
+      return null;
+    }
+
     const provider = this.getCurrentProvider();
 
     switch (provider) {
@@ -137,6 +161,10 @@ export class AuthProviderService {
    * Get user information from current provider
    */
   async getUserInfo(): Promise<UserInfo | null> {
+    if (!this.isAuthenticationEnabled()) {
+      return null;
+    }
+
     const provider = this.getCurrentProvider();
 
     switch (provider) {
@@ -162,9 +190,11 @@ export class AuthProviderService {
    * Get available authentication providers based on configuration
    */
   getAvailableProviders(): AuthProvider[] {
-    const configProvider = this.configService.get('authProvider') || 'keycloak';
+    const configProvider = this.getConfiguredProvider();
     
     switch (configProvider) {
+      case 'none':
+        return [];
       case 'both':
         return ['keycloak', 'azure'];
       case 'keycloak':
@@ -172,7 +202,7 @@ export class AuthProviderService {
       case 'azure':
         return ['azure'];
       default:
-        return ['keycloak'];
+        return [];
     }
   }
 

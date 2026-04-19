@@ -15,10 +15,64 @@ import {
 import { environment } from '../../environments/environment';
 import { AppConfigService } from '../app-config.service';
 
+function createNoopMsalInstance(): IPublicClientApplication {
+  return {
+    initialize: async () => undefined,
+    getAllAccounts: () => [],
+    getActiveAccount: () => null,
+    setActiveAccount: () => undefined,
+    acquireTokenSilent: async () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    acquireTokenPopup: async () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    acquireTokenRedirect: async () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    loginPopup: async () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    loginRedirect: async () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    logoutPopup: async () => undefined,
+    logoutRedirect: async () => undefined,
+    handleRedirectPromise: async () => null,
+    addEventCallback: () => null,
+    removeEventCallback: () => undefined,
+    addPerformanceCallback: () => '',
+    removePerformanceCallback: () => false,
+    enableAccountStorageEvents: () => undefined,
+    disableAccountStorageEvents: () => undefined,
+    getTokenCache: () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    getLogger: () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    setLogger: () => undefined,
+    setNavigationClient: () => undefined,
+    getConfiguration: () => {
+      throw new Error('MSAL is disabled for demo mode');
+    },
+    hydrateCache: async () => undefined,
+    clearCache: async () => undefined,
+    initializeWrapperLibrary: () => undefined,
+    setActiveBroker: () => undefined,
+  } as unknown as IPublicClientApplication;
+}
+
 export function initializeAzureMsal(
   configService: AppConfigService
 ): () => Promise<boolean> {
   return async () => {
+    const authProvider = (configService.get('authProvider') || (await configService.loadConfig().then(() => configService.get('authProvider')))) ?? 'none';
+    if (authProvider === 'none' || authProvider === 'keycloak') {
+      console.log('Skipping Azure MSAL initialization for authProvider:', authProvider);
+      return false;
+    }
+
     console.log('Initializing Azure MSAL...');
     
     try {
@@ -74,6 +128,12 @@ export function initializeAzureMsal(
 }
 
 export function MSALInstanceFactory(configService: AppConfigService): IPublicClientApplication {
+  const authProvider = (configService.get('authProvider') || 'none') as string;
+
+  if (authProvider === 'none' || authProvider === 'keycloak') {
+    return createNoopMsalInstance();
+  }
+
   // Get Azure configuration
   let azureConfig;
   try {

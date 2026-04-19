@@ -48,6 +48,15 @@ export class HeaderComponent implements OnInit {
 
   private async updateAuthenticationStatus(): Promise<void> {
     try {
+      if (!this.authProviderService.isAuthenticationEnabled()) {
+        this.isAuthenticated = false;
+        this.username = '';
+        this.userRoles = [];
+        this.userInfo = null;
+        this.authProvider = '';
+        return;
+      }
+
       this.isAuthenticated = await this.authProviderService.isAuthenticated();
       
       if (this.isAuthenticated) {
@@ -62,6 +71,10 @@ export class HeaderComponent implements OnInit {
     } catch (error) {
       console.error('Error checking authentication status:', error);
       this.isAuthenticated = false;
+      this.username = '';
+      this.userRoles = [];
+      this.userInfo = null;
+      this.authProvider = '';
     }
   }
 

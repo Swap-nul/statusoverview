@@ -98,6 +98,11 @@ export class AppComponent implements OnInit {
 
   private async checkAuthenticationState(): Promise<void> {
     try {
+      if (!this.authProviderService.isAuthenticationEnabled()) {
+        console.log('Authentication disabled for demo mode');
+        return;
+      }
+
       const isAuthenticated = await this.authProviderService.isAuthenticated();
       if (!isAuthenticated) {
         console.log('User not authenticated, will show login options');

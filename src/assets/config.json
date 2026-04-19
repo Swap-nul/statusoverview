@@ -11,8 +11,8 @@
     "postLogoutRedirectUri": "http://localhost:4200",
     "scopes": ["user.read"]
   },
-  "_comment_authProvider": "Authentication provider selection: 'keycloak', 'azure', or 'both'",
-  "authProvider": "both",
+  "_comment_authProvider": "Authentication provider selection: 'none', 'keycloak', 'azure', or 'both'",
+  "authProvider": "none",
   "_comment_authentication": "Authentication configuration for JWT token injection control",
   "authentication": {
     "_comment_skipUrls": "URL patterns that should skip JWT token injection (path-based)",
@@ -28,7 +28,7 @@
   "KibanaHOSTNAME_PROD_DR": "kibana.prod_hostname.cloud",
   "KibanaHOSTNAME_NONPROD": "kibana.hostname.cloud",
 
-  "database_hostname_port": "http://localhost:3000",
+  "database_hostname_port": "/api",
   "database_baseUrl": "/statusoverview",
 
   "_comment_jenkins": "Jenkins configuration for bulk deployment feature",

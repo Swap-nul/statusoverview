@@ -23,6 +23,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Get return URL from query parameters
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+
+    if (!this.authProviderService.isAuthenticationEnabled()) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
     
     // Check if already authenticated
     this.checkExistingAuthentication();

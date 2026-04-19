@@ -6,7 +6,13 @@ export function initializeKeycloak(
   keycloak: KeycloakService,
   configService: AppConfigService
 ): () => Promise<boolean> {
-  return () => {
+  return async () => {
+    const authProvider = (configService.get('authProvider') || (await configService.loadConfig().then(() => configService.get('authProvider')))) ?? 'none';
+    if (authProvider === 'none' || authProvider === 'azure') {
+      console.log('Skipping Keycloak initialization for authProvider:', authProvider);
+      return false;
+    }
+
     console.log('Initializing Keycloak...');
     
     // Get authentication configuration with fallback

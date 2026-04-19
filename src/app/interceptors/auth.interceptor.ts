@@ -16,6 +16,10 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!this.authProviderService.isAuthenticationEnabled()) {
+      return next.handle(req);
+    }
+
     // Always skip the config.json request to avoid circular dependency
     if (req.url.includes('/assets/config.json')) {
       return next.handle(req);
