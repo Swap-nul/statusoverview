@@ -1,8 +1,10 @@
-DROP VIEW statusoverview;
-drop table env_deployments;
-drop table builds;
-drop table apps;
-drop table environments;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+DROP VIEW IF EXISTS statusoverview;
+DROP TABLE IF EXISTS env_deployments;
+DROP TABLE IF EXISTS builds;
+DROP TABLE IF EXISTS apps;
+DROP TABLE IF EXISTS environments;
 
 
 CREATE TABLE

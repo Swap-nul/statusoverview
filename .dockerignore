@@ -1,0 +1,15 @@
+node_modules
+dist
+.angular
+.git
+.github
+.vscode
+backend
+screenshots
+Docs
+jenkins
+InitSetup
+Dockerfile*
+docker-compose.yml
+README.md
+*.log

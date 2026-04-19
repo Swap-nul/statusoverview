@@ -1,6 +1,7 @@
 {
   "name": "statusoverview",
   "version": "0.0.0",
+  "packageManager": "pnpm@9.14.4",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "start": "ng serve",
