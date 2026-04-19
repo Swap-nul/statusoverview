@@ -8,6 +8,8 @@
 
 StatusOverview is an Angular dashboard for comparing application status across environments, checking certificate and app registration expiry windows, and tracking planned releases from a shared calendar view.
 
+Demo site: https://statusoverview.swalaka.com/
+
 ## Current Highlights
 
 - Project-based dashboard tabs loaded from `src/assets/config.json`
