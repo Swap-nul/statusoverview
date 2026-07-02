@@ -1,24 +1,13 @@
 .main-content {
   min-height: 100vh;
-  background-color: #fafafa;
+  background:
+    radial-gradient(circle at 12% 0, rgba(109, 255, 180, 0.14), transparent 42%),
+    radial-gradient(circle at 86% 14%, rgba(71, 206, 237, 0.08), transparent 38%),
+    #070d10;
 }
 
-.main-content.darkMode {
-  background-color: #333335;
-}
-
-@media (max-width: 768px) {
-  .user-profile-section {
-    padding: 12px 16px;
-  }
-  
-  .user-info {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .user-roles {
-    flex-wrap: wrap;
-    gap: 8px;
+@media (max-width: 900px) {
+  .main-content {
+    min-height: 100dvh;
   }
 }

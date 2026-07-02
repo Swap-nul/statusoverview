@@ -1,168 +1,188 @@
-<h1 mat-dialog-title>
-  <mat-icon svgIcon="deployment"></mat-icon> App <b><i>{{data.app_name}}</i></b>
+<h1 mat-dialog-title class="dialog-title">
+  <mat-icon svgIcon="deployment"></mat-icon>
+  <span>App <b><i>{{ data.app_name }}</i></b></span>
 </h1>
-<mat-dialog-content class="mat-typography">
 
-  <h4>
-    <span>
-      <mat-icon svgIcon="tag"></mat-icon>
-      <b> Tag: </b> {{data.deployDetails.tag}}
-      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-        (click)="copyToClipboard(data.deployDetails.tag)" svgIcon="copyToClipboard"></mat-icon>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <mat-icon svgIcon="tag"></mat-icon>
-      <b> Previous Tag: </b> {{data.deployDetails.previous_tag}}
-      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-        (click)="copyToClipboard(data.deployDetails.previous_tag)" svgIcon="copyToClipboard"></mat-icon>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <mat-icon svgIcon="tag"></mat-icon>
-      <b> Latest Build Tag: </b> {{data.deployDetails.latest_build_tag}}
-      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-        (click)="copyToClipboard(data.deployDetails.latest_build_tag)" svgIcon="copyToClipboard"></mat-icon>
-    </span>
-  </h4>
+<mat-dialog-content class="dialog-content mat-typography">
+  <div class="details-scroll-frame">
+  <section class="summary-grid">
+    <article class="summary-card">
+      <div class="summary-header">
+        <div class="summary-label"><mat-icon svgIcon="tag"></mat-icon>Tag</div>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.tag)" matTooltip="Copy tag">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <div class="summary-value">{{ safe(data.deployDetails.tag) }}</div>
+    </article>
 
-  <h4><mat-icon svgIcon="env"></mat-icon> <b> Environment: </b> {{data.envName}}
-    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(data.envName)"
-      svgIcon="copyToClipboard"></mat-icon>
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    Open ArgoCD : <mat-icon matTooltip="open ArgoCD" matTooltipPosition="above"
-      (click)="goToLink(data.app_name,data.envName)" svgIcon="argo"></mat-icon>
-  </h4>
-  <h4><b> Commit Details: </b> <mat-icon svgIcon="commit"></mat-icon></h4>
-  <ul>
-    <li>
-      <span><mat-icon svgIcon="hashtag"></mat-icon><b> Commit Id: </b></span>
-      <span>{{data.deployDetails.commit_id}}</span>
-      <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-        (click)="copyToClipboard(data.deployDetails.commit_id)" svgIcon="copyToClipboard"></mat-icon>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="message"></mat-icon><b> Commit Message: </b></span>
-      <span>{{data.deployDetails.commitmessage}}</span>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="person"></mat-icon><b> Commit By: </b></span>
-      <span>{{data.deployDetails.commitby}}</span>
-    </li>
-  </ul>
+    <article class="summary-card">
+      <div class="summary-header">
+        <div class="summary-label"><mat-icon svgIcon="tag"></mat-icon>Previous Tag</div>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.previous_tag)" matTooltip="Copy previous tag">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <div class="summary-value">{{ safe(data.deployDetails.previous_tag) }}</div>
+    </article>
 
-  <h4><b> Deployment Details: </b> <mat-icon svgIcon="rocket"></mat-icon></h4>
+    <article class="summary-card">
+      <div class="summary-header">
+        <div class="summary-label"><mat-icon svgIcon="tag"></mat-icon>Latest Build</div>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.latest_build_tag)" matTooltip="Copy latest build">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <div class="summary-value">{{ safe(data.deployDetails.latest_build_tag) }}</div>
+    </article>
+  </section>
 
-  <ul>
-    <li>
-      <span><mat-icon svgIcon="time"></mat-icon><b> Deployed At: </b></span>
-      <span>{{data.deployDetails.image_deployed_at}}</span>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="person"></mat-icon><b> Deployed By: </b></span>
-      <span>{{data.deployDetails.image_deployed_by}}</span>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="branch"></mat-icon><b> Deployed Branch: </b></span>
-      <span>{{data.deployDetails.branch}}</span>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="question"></mat-icon><b> Deployment Status: </b></span>
-      <span>
-        {{data.deployDetails.status}}
-        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
-          *ngIf="data.deployDetails?.status === 'Healthy'" svgIcon="greenHeart"></mat-icon>
-        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
-          *ngIf="data.deployDetails?.status === 'Progressing'" svgIcon="progress"></mat-icon>
-        <mat-icon matTooltip="{{data.deployDetails.status}}" matTooltipPosition="right"
-          *ngIf="data.deployDetails?.status === 'Degraded'" svgIcon="brokenHeart"></mat-icon>
-        <mat-icon matTooltip="Null Status" matTooltipPosition="right" *ngIf="data.deployDetails?.status === ''"
-          svgIcon="nullStatus"></mat-icon>
-      </span>
-    </li>
-    <li>
-      <span><mat-icon svgIcon="time"></mat-icon><b> Image Created At: </b></span>
-      <span>{{data.deployDetails.image_created_at}}</span>
-    </li>
-  </ul>
+  <div class="stack-surface">
+    <section class="env-row section-block">
+      <div class="env-meta">
+        <mat-icon svgIcon="env"></mat-icon>
+        <span><b>Environment:</b> {{ safe(data.envName) }}</span>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.envName)" matTooltip="Copy environment">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <button mat-stroked-button class="argocd-btn" (click)="goToLink(data.app_name, data.envName)">
+        <mat-icon svgIcon="argo"></mat-icon>
+        Open ArgoCD
+      </button>
+    </section>
 
+    <section class="details-section section-block">
+      <h3>Commit Details</h3>
+      <div class="details-list">
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="hashtag"></mat-icon>Commit Id</span>
+          <span class="item-value">{{ safe(data.deployDetails.commit_id) }}</span>
+          <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.commit_id)" matTooltip="Copy commit id">
+            <mat-icon svgIcon="copyToClipboard"></mat-icon>
+          </button>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="message"></mat-icon>Commit Message</span>
+          <span class="item-value">{{ safe(data.deployDetails.commitmessage) }}</span>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="person"></mat-icon>Commit By</span>
+          <span class="item-value">{{ safe(data.deployDetails.commitby) }}</span>
+        </div>
+      </div>
+    </section>
 
-  <h4> <b> Builds List  </b> </h4>
-  <div>
-    <mat-accordion>
-      <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <b><i>{{data.deployDetails.branch}}</i></b> &nbsp; branch >
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+    <section class="details-section section-block">
+      <h3>Deployment Details</h3>
+      <div class="details-list">
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="time"></mat-icon>Deployed At</span>
+          <span class="item-value">{{ formatDateTime(data.deployDetails.image_deployed_at) }}</span>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="person"></mat-icon>Deployed By</span>
+          <span class="item-value">{{ safe(data.deployDetails.image_deployed_by) }}</span>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="branch"></mat-icon>Deployed Branch</span>
+          <span class="item-value">{{ safe(data.deployDetails.branch) }}</span>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="question"></mat-icon>Deployment Status</span>
+          <span class="item-value status-value">
+            {{ safe(data.deployDetails.status) }}
+            <mat-icon *ngIf="data.deployDetails.status === 'Healthy'" svgIcon="greenHeart"></mat-icon>
+            <mat-icon *ngIf="data.deployDetails.status === 'Progressing'" svgIcon="progress"></mat-icon>
+            <mat-icon *ngIf="data.deployDetails.status === 'Degraded'" svgIcon="brokenHeart"></mat-icon>
+            <mat-icon *ngIf="data.deployDetails.status === ''" svgIcon="nullStatus"></mat-icon>
+          </span>
+        </div>
+        <div class="details-item">
+          <span class="item-key"><mat-icon svgIcon="time"></mat-icon>Image Created At</span>
+          <span class="item-value">{{ formatDateTime(data.deployDetails.image_created_at) }}</span>
+        </div>
+      </div>
+    </section>
 
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <section class="details-section section-block">
+      <h3>Builds List</h3>
+      <mat-accordion class="builds-accordion">
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title><b><i>{{ safe(data.deployDetails.branch) }}</i></b>&nbsp;branch</mat-panel-title>
+          </mat-expansion-panel-header>
 
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <th mat-header-cell *matHeaderCellDef>NO. </th>
-            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-          </ng-container>
+          <div class="builds-table-wrap">
+            <table mat-table [dataSource]="dataSource">
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef>No.</th>
+                <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+              </ng-container>
 
-          <!-- Build Version Column -->
-          <ng-container matColumnDef="version">
-            <th mat-header-cell *matHeaderCellDef>
-              Build Version
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.tag}}
-              <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(element.tag)"
-                svgIcon="copyToClipboard"></mat-icon>
-            </td>
-          </ng-container>
+              <ng-container matColumnDef="version">
+                <th mat-header-cell *matHeaderCellDef>Build Version</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ safe(element.tag) }}
+                  <button mat-icon-button class="copy-btn inline-copy" (click)="copyToClipboard(element.tag)" matTooltip="Copy build tag">
+                    <mat-icon svgIcon="copyToClipboard"></mat-icon>
+                  </button>
+                </td>
+              </ng-container>
 
-          <!-- created_at Column -->
-          <ng-container matColumnDef="created_at">
-            <th mat-header-cell *matHeaderCellDef>
-              Created At
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.created_at}} </td>
-          </ng-container>
+              <ng-container matColumnDef="created_at">
+                <th mat-header-cell *matHeaderCellDef>Created At</th>
+                <td mat-cell *matCellDef="let element">{{ safe(element.created_at) }}</td>
+              </ng-container>
 
-          <!-- commitby Column -->
-          <ng-container matColumnDef="commitby">
-            <th mat-header-cell *matHeaderCellDef>
-              Commit By
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.commitby}} </td>
-          </ng-container>
+              <ng-container matColumnDef="commitby">
+                <th mat-header-cell *matHeaderCellDef>Commit By</th>
+                <td mat-cell *matCellDef="let element">{{ safe(element.commitby) }}</td>
+              </ng-container>
 
-          <!-- commitby Column -->
-          <ng-container matColumnDef="commitmessage">
-            <th mat-header-cell *matHeaderCellDef>
-              Commit Message
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.commitmessage}} </td>
-          </ng-container>
+              <ng-container matColumnDef="commitmessage">
+                <th mat-header-cell *matHeaderCellDef>Commit Message</th>
+                <td mat-cell *matCellDef="let element">{{ safe(element.commitmessage) }}</td>
+              </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </section>
 
-        </table>
-      </mat-expansion-panel>
-    </mat-accordion>
+    <section class="footer-grid section-block">
+      <div class="footer-item">
+        <span class="item-key"><mat-icon svgIcon="portfolio"></mat-icon>Portfolio</span>
+        <span class="item-value">{{ safe(data.portfolio) }}</span>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.portfolio)" matTooltip="Copy portfolio">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <div class="footer-item">
+        <span class="item-key"><mat-icon svgIcon="namespace"></mat-icon>Namespace</span>
+        <span class="item-value">{{ safe(data.deployDetails.namespace) }}</span>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.namespace)" matTooltip="Copy namespace">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+      <div class="footer-item">
+        <span class="item-key"><mat-icon svgIcon="cluster"></mat-icon>Cluster</span>
+        <span class="item-value">{{ safe(data.deployDetails.cluster) }}</span>
+        <button mat-icon-button class="copy-btn" (click)="copyToClipboard(data.deployDetails.cluster)" matTooltip="Copy cluster">
+          <mat-icon svgIcon="copyToClipboard"></mat-icon>
+        </button>
+      </div>
+    </section>
   </div>
-
-  &nbsp;
-  &nbsp;
-  <h4><mat-icon svgIcon="portfolio"></mat-icon>
-    <b> Portfolio: </b> {{data.portfolio}}
-    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right" (click)="copyToClipboard(data.portfolio)"
-      svgIcon="copyToClipboard"></mat-icon>
-  </h4>
-  <h4><mat-icon svgIcon="namespace"></mat-icon>
-    <b> Namespace: </b> {{data.deployDetails.namespace}}
-    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-      (click)="copyToClipboard(data.deployDetails.namespace)" svgIcon="copyToClipboard"></mat-icon>
-  </h4>
-  <h4><mat-icon svgIcon="cluster"></mat-icon>
-    <b> Cluster: </b> {{data.deployDetails.cluster}}
-    <mat-icon matTooltip="copy to clipboard" matTooltipPosition="right"
-      (click)="copyToClipboard(data.deployDetails.cluster)" svgIcon="copyToClipboard"></mat-icon>
-  </h4>
-
+  </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close><mat-icon svgIcon="close"></mat-icon>Close</button>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-flat-button mat-dialog-close class="close-btn">
+    <mat-icon svgIcon="close"></mat-icon>
+    Close
+  </button>
 </mat-dialog-actions>

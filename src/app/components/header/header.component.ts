@@ -1,5 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, Output, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { AuthProviderService, UserInfo } from '../../services/auth-provider.service';
 
 type DashboardView = 'projects' | 'calendar';
@@ -10,13 +9,8 @@ type DashboardView = 'projects' | 'calendar';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  @HostBinding('class') className = '';
   @Input() currentView: DashboardView = 'projects';
-  @Output() cssRefreshDarkMode = new EventEmitter<boolean>();
   @Output() viewChange = new EventEmitter<DashboardView>();
-  toggleControl = new FormControl(true);
-  mode: boolean = true; 
-  addCssDarkmode = true;
 
   // Authentication properties
   isAuthenticated = false;
@@ -28,15 +22,6 @@ export class HeaderComponent implements OnInit {
   constructor(private authProviderService: AuthProviderService) {}
 
   async ngOnInit(): Promise<void> {
-    // Initialize the dark mode state immediately
-    this.cssRefreshDarkMode.emit(this.toggleControl.value!);
-    
-    this.toggleControl.valueChanges.subscribe((darkMode) => {
-      this.cssRefreshDarkMode.emit(darkMode!);
-      this.mode = !this.mode;
-      this.addCssDarkmode = this.mode;
-    });
-
     // Check authentication status for multi-provider
     await this.updateAuthenticationStatus();
     

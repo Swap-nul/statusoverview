@@ -223,7 +223,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   openEnvInfoDialog(parent: string, env: string) {
     const data: EnvDetailsDialogData = { parent: parent, env: env };
-    this.dialog.open(EnvDetailsDialogComponent, { data });
+    this.dialog.open(EnvDetailsDialogComponent, {
+      data,
+      width: '980px',
+      maxWidth: '96vw',
+      panelClass: 'refined-env-details-dialog',
+    });
   }
 
   goToRepos(githubUrl: string) {
@@ -422,7 +427,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
       width: '1000px',
       maxWidth: '95vw',
       data: dialogData,
-      disableClose: true
+      disableClose: true,
+      panelClass: 'refined-bulk-deploy-dialog',
     });
 
     dialogRef.afterClosed().subscribe(result => {

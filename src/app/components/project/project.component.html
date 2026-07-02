@@ -1,15 +1,16 @@
-<div class="page-container"><span class="filter-toolbar">
-    <mat-form-field>
+<div class="page-container">
+  <div class="filter-toolbar">
+    <mat-form-field class="toolbar-field">
       <mat-label>Filter By App Name</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Search by AppName" #appNameInput />
     </mat-form-field>
-    <mat-divider vertical></mat-divider>
-    <mat-form-field>
+    <mat-divider vertical class="desktop-divider"></mat-divider>
+    <mat-form-field class="toolbar-field">
       <mat-label>Filter Environments</mat-label>
       <input matInput (keyup)="filterColumn($event)" placeholder="Filter Column by Env Name" #envColumnInput />
     </mat-form-field>
-    <mat-divider vertical></mat-divider>
-    <mat-form-field *ngIf="envForm">
+    <mat-divider vertical class="desktop-divider"></mat-divider>
+    <mat-form-field class="toolbar-field env-select-field" *ngIf="envForm">
       <mat-label>Select Environments</mat-label>
       <mat-select [formControl]="envForm" multiple>
         <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isIndeterminate()" (click)="toggleSelectAll()" class="select-all-option">
@@ -20,14 +21,15 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-divider vertical></mat-divider>
-    
-    <button mat-raised-button
-            color="primary" 
-            (click)="openBulkDeployDialog()" 
-            [disabled]="isLoading || isCountdownLoading || !dataTableApps.length"
-            matTooltip="Deploy multiple applications from one environment to another"
-            class="bulk-deploy-btn">
+    <mat-divider vertical class="desktop-divider"></mat-divider>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openBulkDeployDialog()"
+      [disabled]="isLoading || isCountdownLoading || !dataTableApps.length"
+      matTooltip="Deploy multiple applications from one environment to another"
+      class="bulk-deploy-btn">
       <mat-icon>rocket_launch</mat-icon>
       Bulk Deploy
     </button>
@@ -42,12 +44,13 @@
       <mat-icon>{{ isCountdownView() ? 'monitoring' : 'timer' }}</mat-icon>
       {{ isCountdownView() ? 'Status View' : 'Count Down' }}
     </button>
-  </span>
+  </div>
 
   <section class="mat-elevation-z8 table-section-wrapper">
     <div class="horizontal-scroll-container">
       <div class="vertical-scroll-content">
         <table
+          class="service-matrix-table"
           mat-table
           [dataSource]="dataSource"
           matSort
@@ -64,9 +67,9 @@
               <mat-icon svgIcon="app"></mat-icon> APPLICATION
             </th>
             <td mat-cell *matCellDef="let element">
-              <div>
+              <div class="app-name-cell">
                 <b>{{ element.app_name }} &nbsp;&nbsp;</b>
-                <mat-icon matTooltip="open Repo" matTooltipPosition="below" *ngIf="element.app_repo" svgIcon="github" (click)="goToRepos(element.app_repo)">
+                <mat-icon matTooltip="Open Repo" matTooltipPosition="below" *ngIf="element.app_repo" svgIcon="github" (click)="goToRepos(element.app_repo)">
                 </mat-icon>
               </div>
               <mat-basic-chip><i>{{ element ? element.portfolio : " " }}</i></mat-basic-chip>
@@ -76,12 +79,12 @@
           <!-- Environment Column Template -->
           <ng-container *ngFor="let env of environmentsFilterForProject" [matColumnDef]="env.name">
             <th mat-header-cell *matHeaderCellDef>
-              <button mat-raised-button (click)="openEnvInfoDialog(projectName, env.name)">
+              <button class="env-header-btn" mat-raised-button (click)="openEnvInfoDialog(projectName, env.name)">
                 {{ env.displayName }}
               </button>
-              <div>
+              <div class="env-header-actions">
                 <app-sort-button (dataEmitter)="sortTableBy($event, env.name)"></app-sort-button>
-                <button mat-icon-button color="basic" matTooltip="Download Env Details" matTooltipPosition="right" (click)="downloadCSV(env.name)">
+                <button mat-icon-button color="basic" matTooltip="Download Env Details" matTooltipPosition="right" (click)="downloadCSV(env.name)" class="download-env-btn">
                   <mat-icon svgIcon="csv"></mat-icon>
                 </button>
               </div>
@@ -102,7 +105,7 @@
           </tr>
         </table>
 
-        <table mat-table [dataSource]="filteredCountdownRows" *ngIf="environmentsFilterForProject && isCountdownView()">
+        <table class="service-matrix-table" mat-table [dataSource]="filteredCountdownRows" *ngIf="environmentsFilterForProject && isCountdownView()">
           <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef>NO.</th>
             <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
@@ -153,7 +156,7 @@
       </div>
     </div>
     <div *ngIf="isLoading || isCountdownLoading" class="loading-spinner-overlay">
-      <mat-progress-spinner color="primary" mode="indeterminate" diameter="1000" strokeWidth="8">
+      <mat-progress-spinner color="primary" mode="indeterminate" diameter="88" strokeWidth="6">
       </mat-progress-spinner>
     </div>
   </section>
