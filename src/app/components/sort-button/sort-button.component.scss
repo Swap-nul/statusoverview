@@ -1,0 +1,15 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host ::ng-deep .mat-mdc-icon-button {
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+  color: #94a9b4;
+}
+
+:host-context(.darkMode) ::ng-deep .mat-mdc-icon-button {
+  color: #a6bcc7;
+}

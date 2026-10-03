@@ -1,47 +1,84 @@
+:host {
+  display: block;
+}
+
 .page-container {
+  --surface-bg: rgba(247, 250, 252, 0.92);
+  --surface-border: rgba(92, 111, 122, 0.18);
+  --panel-bg: rgba(255, 255, 255, 0.86);
+  --panel-muted: rgba(72, 89, 99, 0.68);
+  --text-main: #1f2d37;
+  --text-muted: #607482;
+  --accent: #33d496;
+  --accent-soft: rgba(51, 212, 150, 0.14);
+  --warn: #e8b93e;
+
   display: flex;
   flex-direction: column;
-  height: 90vh;
-  overflow: hidden;
+  gap: 12px;
+  min-height: calc(100vh - 170px);
 }
+
 .filter-toolbar {
   display: flex;
-  flex-direction: row;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 8px 16px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  background: var(--surface-bg);
+}
 
-  > mat-form-field {
-    width: auto;
-    flex-grow: 1;
-    max-width: 250px;
-  }
+.toolbar-field {
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+}
 
-  > div {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-  }
+.env-select-field {
+  min-width: 220px;
+}
 
-  > mat-divider[vertical] {
-    align-self: center;
-    height: 36px;
-    border-color: #ffcd33;
-    border-right-width: 2px;
-  }
+.desktop-divider {
+  height: 32px;
+  border-right-width: 1px;
+  border-color: var(--surface-border);
+}
+
+.select-all-option {
+  font-weight: 700 !important;
+}
+
+.bulk-deploy-btn,
+.countdown-btn {
+  height: 40px;
+  min-width: 140px;
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.bulk-deploy-btn .mat-icon,
+.countdown-btn .mat-icon {
+  margin-right: 6px;
 }
 
 .table-section-wrapper {
-  flex-grow: 1;
-  position: relative;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at top right, var(--accent-soft), transparent 34%),
+    var(--surface-bg);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
 .horizontal-scroll-container {
-  flex-grow: 1;
+  height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -49,252 +86,136 @@
 .vertical-scroll-content {
   height: 100%;
   overflow-y: auto;
-
-  table.mat-table {
-    width: 100%;
-    min-width: max-content;
-  }
 }
 
-.mat-mdc-header-row {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.loading-spinner-overlay {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.mat-mdc-form-field {
-  font-size: 14px;
+.service-matrix-table {
   width: 100%;
-}
-
-.mat-basic-chip {
-  font-size: 10px;
-  text-align: right;
-}
-
-.mat-divider.mat-divider-vertical {
-  border-color: #ffcd33;
-  border-right-width: 2px;
-}
-
-.select-all-option {
-  font-weight: 700 !important;
-  
-  &:hover {
-    background-color: rgba(63, 81, 181, 0.1) !important;
-  }
-  
-  .mat-checkbox {
-    pointer-events: none;
-  }
-}
-
-.bulk-deploy-btn {
-  min-width: 140px;
-  height: 40px;
-  
-  mat-icon {
-    margin-right: 8px;
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-  }
-}
-
-.countdown-btn {
-  min-width: 150px;
-  height: 40px;
-  
-  &:disabled {
-    opacity: 0.6;
-  }
-
-  mat-icon {
-    margin-right: 8px;
-  }
-}
-
-.release-calendar-btn {
-  min-width: 140px;
-  height: 40px;
-  
-  &:disabled {
-    opacity: 0.6;
-  }
-
-  mat-icon {
-    margin-right: 8px;
-  }
-}
-
-.release-calendar-view {
-  padding: 24px;
-}
-
-.release-calendar-panel {
-  border-radius: 24px;
-  border: 1px solid rgba(205, 163, 17, 0.28);
-  background:
-    radial-gradient(circle at top, rgba(255, 223, 113, 0.35), transparent 58%),
-    linear-gradient(180deg, #fffef4 0%, #f6f8fc 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    0 12px 28px rgba(44, 58, 82, 0.1);
-  padding: 20px 22px 24px;
-}
-
-.release-calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.release-calendar-title {
-  color: #7a4b00;
-  font-size: 1.45rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.release-calendar-nav {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.release-calendar-weekdays,
-.release-calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
-.release-calendar-weekdays {
-  margin-bottom: 10px;
-  border-bottom: 1px solid rgba(148, 98, 0, 0.14);
-}
-
-.release-calendar-weekday {
-  padding: 10px 8px 12px;
-  text-align: center;
-  color: #7a4b00;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.release-calendar-day {
-  min-height: 132px;
-  padding: 10px 8px;
-  border-right: 1px solid rgba(148, 98, 0, 0.12);
-  border-bottom: 1px solid rgba(148, 98, 0, 0.12);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-
-  &:nth-child(7n) {
-    border-right: 0;
-  }
-
-  &:hover:not(.is-empty) {
-    background: rgba(255, 223, 113, 0.12);
-  }
-}
-
-.release-calendar-day.is-empty {
-  cursor: default;
+  min-width: max-content;
   background: transparent;
 }
 
-.release-calendar-day.is-selected:not(.is-empty) {
-  background:
-    radial-gradient(circle at top, rgba(255, 223, 113, 0.22), transparent 72%),
-    rgba(255, 223, 113, 0.08);
+:host ::ng-deep {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    border-radius: 8px !important;
+    background: var(--panel-bg) !important;
+  }
+
+  .mat-mdc-form-field-focus-overlay {
+    background: transparent !important;
+  }
+
+  .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: rgba(22, 32, 38, 0.95);
+  }
+
+  .mat-mdc-header-cell {
+    border-bottom-color: var(--surface-border) !important;
+    color: #a7bbc4;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    padding: 14px 10px;
+  }
+
+  .mat-mdc-cell {
+    border-bottom-color: rgba(94, 113, 123, 0.16) !important;
+    color: var(--text-main);
+    padding: 10px;
+    vertical-align: top;
+    min-width: 176px;
+  }
+
+  .mat-column-position {
+    min-width: 56px !important;
+    max-width: 56px;
+    text-align: center;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .mat-column-name {
+    min-width: 250px !important;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: inherit;
+  }
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background: rgba(72, 201, 146, 0.05);
+  }
 }
 
-.release-calendar-day.is-today .release-calendar-day-number {
-  color: #946200;
-}
-
-.release-calendar-day-number {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: inline-flex;
+.app-name-cell {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  color: #223042;
-  font-size: 1.05rem;
-  font-weight: 700;
+  gap: 8px;
+
+  .mat-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--panel-muted);
+    cursor: pointer;
+  }
 }
 
-.release-calendar-day.is-selected .release-calendar-day-number {
-  background: #f0c93d;
-  color: #1a2233;
+.env-header-btn {
+  border-radius: 8px !important;
+  min-width: 122px;
+  min-height: 34px;
+  box-shadow: none !important;
 }
 
-.release-calendar-events {
+.env-header-actions {
+  margin-top: 4px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
-.release-calendar-event {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 2px;
-  padding: 6px 7px;
-  border-radius: 10px;
-  border-left: 3px solid #f0c93d;
-  background: rgba(255, 255, 255, 0.76);
 }
 
-.release-calendar-event-app,
-.release-calendar-event-version {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.download-env-btn {
+  color: var(--panel-muted);
 }
 
-.release-calendar-event-app {
-  color: #223042;
-  font-size: 0.74rem;
-  font-weight: 700;
+.loading-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(10, 16, 20, 0.28);
+  z-index: 4;
 }
 
-.release-calendar-event-version {
-  color: #516072;
-  font-size: 0.68rem;
+.mat-basic-chip {
+  font-size: 0.64rem;
+  color: var(--text-muted);
 }
 
 .countdown-name-cell {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .countdown-name-column {
-  width: 280px;
-  min-width: 280px;
-  max-width: 300px;
+  width: 290px;
+  min-width: 290px;
+  max-width: 310px;
   white-space: nowrap;
 }
 
 .countdown-env-header {
-  font-weight: 700;
   text-align: center;
+  font-weight: 700;
 }
 
 .countdown-clock {
@@ -302,56 +223,36 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  min-width: 170px;
-  padding: 12px 10px;
-  border-radius: 16px;
-  border: 1px solid rgba(205, 163, 17, 0.28);
-  background:
-    radial-gradient(circle at top, rgba(255, 223, 113, 0.45), transparent 55%),
-    linear-gradient(180deg, #fffef4 0%, #f3f6fb 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    0 10px 24px rgba(44, 58, 82, 0.12);
+  min-width: 165px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(97, 116, 126, 0.28);
+  background: var(--panel-bg);
 }
 
 .clock-time {
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 1.2rem;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #157347;
-  text-shadow: 0 0 10px rgba(21, 115, 71, 0.14);
-}
-
-.clock-type,
-.clock-meta {
-  text-align: center;
+  color: #187551;
 }
 
 .clock-type {
-  color: #946200;
-  font-size: 0.72rem;
-  font-weight: 700;
+  color: #6c8090;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
 }
 
 .clock-meta {
-  color: #516072;
-  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
 }
 
 .countdown-clock.expired {
-  border-color: rgba(214, 63, 63, 0.28);
-  background:
-    radial-gradient(circle at top, rgba(255, 176, 176, 0.38), transparent 55%),
-    linear-gradient(180deg, #fff4f4 0%, #fbe9ea 100%);
+  border-color: rgba(208, 63, 63, 0.42);
+  background: rgba(255, 235, 235, 0.9);
 
-  .clock-time {
-    color: #b42318;
-    text-shadow: 0 0 10px rgba(180, 35, 24, 0.16);
-  }
-
+  .clock-time,
   .clock-type {
     color: #b42318;
   }
@@ -359,176 +260,151 @@
 
 .countdown-clock.urgent:not(.expired) {
   border-color: rgba(230, 149, 0, 0.38);
-  background:
-    radial-gradient(circle at top, rgba(255, 196, 92, 0.5), transparent 55%),
-    linear-gradient(180deg, #fff7e8 0%, #fff0cf 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.88),
-    0 0 0 1px rgba(255, 179, 71, 0.2),
-    0 12px 28px rgba(255, 145, 0, 0.16);
+  background: rgba(255, 245, 224, 0.92);
 
-  .clock-time {
-    color: #a15c00;
-    text-shadow: 0 0 10px rgba(161, 92, 0, 0.16);
-  }
-
+  .clock-time,
   .clock-type {
-    color: #8a5300;
+    color: #975b00;
   }
 }
 
 .countdown-empty {
-  min-width: 170px;
-  padding: 24px 10px;
-  border-radius: 16px;
-  text-align: center;
-  color: #7d8596;
+  min-width: 165px;
+  padding: 20px 8px;
   border: 1px dashed rgba(125, 133, 150, 0.45);
-  background: rgba(15, 21, 34, 0.04);
+  border-radius: 8px;
+  text-align: center;
+  color: #758394;
+  background: rgba(163, 177, 191, 0.06);
 }
 
 :host-context(.darkMode) {
+  .page-container {
+    --surface-bg: rgba(11, 18, 22, 0.88);
+    --surface-border: rgba(92, 117, 128, 0.32);
+    --panel-bg: rgba(19, 30, 37, 0.82);
+    --panel-muted: rgba(145, 168, 180, 0.8);
+    --text-main: #deebf1;
+    --text-muted: #95abb6;
+    --accent-soft: rgba(69, 255, 173, 0.12);
+  }
+
+  :host ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background: rgba(17, 28, 34, 0.9) !important;
+    }
+
+    .mat-mdc-form-field-infix,
+    .mdc-floating-label,
+    .mat-mdc-select-value-text,
+    .mat-mdc-input-element {
+      color: #d3e1e8 !important;
+    }
+
+    .mat-mdc-header-cell {
+      color: #8fa4ae;
+    }
+
+    .mat-mdc-row:hover .mat-mdc-cell {
+      background: rgba(76, 227, 156, 0.08);
+    }
+  }
+
   .countdown-clock {
-    border: 1px solid rgba(255, 205, 51, 0.35);
-    background:
-      radial-gradient(circle at top, rgba(255, 205, 51, 0.28), transparent 55%),
-      linear-gradient(180deg, #17202f 0%, #0c1220 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 10px 24px rgba(12, 18, 32, 0.28);
+    border-color: rgba(102, 132, 144, 0.45);
   }
 
   .clock-time {
-    color: #8bffb5;
-    text-shadow: 0 0 12px rgba(139, 255, 181, 0.45);
+    color: #74f8b5;
   }
 
   .clock-type {
-    color: #ffdf71;
-  }
-
-  .clock-meta {
-    color: #d4d9e2;
+    color: #afc0c9;
   }
 
   .countdown-clock.expired {
-    border-color: rgba(255, 128, 128, 0.35);
-    background:
-      radial-gradient(circle at top, rgba(255, 128, 128, 0.22), transparent 55%),
-      linear-gradient(180deg, #2c1519 0%, #170c0f 100%);
+    background: rgba(80, 34, 34, 0.74);
 
-    .clock-time {
-      color: #ff9f9f;
-      text-shadow: 0 0 12px rgba(255, 159, 159, 0.35);
-    }
-
+    .clock-time,
     .clock-type {
-      color: #ffc2c2;
+      color: #ffb8b8;
     }
   }
 
   .countdown-clock.urgent:not(.expired) {
-    border-color: rgba(255, 179, 71, 0.55);
-    background:
-      radial-gradient(circle at top, rgba(255, 179, 71, 0.36), transparent 55%),
-      linear-gradient(180deg, #38250f 0%, #1f1408 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 0 1px rgba(255, 179, 71, 0.18),
-      0 12px 28px rgba(255, 145, 0, 0.24);
+    background: rgba(73, 51, 17, 0.8);
 
-    .clock-time {
-      color: #ffd36b;
-      text-shadow: 0 0 14px rgba(255, 211, 107, 0.45);
-    }
-
+    .clock-time,
     .clock-type {
-      color: #ffe8a8;
+      color: #ffd680;
     }
   }
 
   .countdown-empty {
-    color: #7d8596;
-    border-color: rgba(125, 133, 150, 0.45);
-    background: rgba(15, 21, 34, 0.04);
-  }
-
-  .release-calendar-panel {
-    border-color: rgba(255, 205, 51, 0.32);
-    background:
-      radial-gradient(circle at top, rgba(255, 205, 51, 0.22), transparent 58%),
-      linear-gradient(180deg, #17202f 0%, #0c1220 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 12px 28px rgba(12, 18, 32, 0.28);
-  }
-
-  .release-calendar-title,
-  .release-calendar-weekday {
-    color: #ffdf71;
-  }
-
-  .release-calendar-weekdays,
-  .release-calendar-day {
-    border-color: rgba(255, 223, 113, 0.12);
-  }
-
-  .release-calendar-day:hover:not(.is-empty) {
-    background: rgba(255, 223, 113, 0.08);
-  }
-
-  .release-calendar-day.is-selected:not(.is-empty) {
-    background:
-      radial-gradient(circle at top, rgba(255, 223, 113, 0.18), transparent 72%),
-      rgba(255, 223, 113, 0.06);
-  }
-
-  .release-calendar-day-number {
-    color: #ecf1f8;
-  }
-
-  .release-calendar-day.is-today .release-calendar-day-number {
-    color: #ffdf71;
-  }
-
-  .release-calendar-day.is-selected .release-calendar-day-number {
-    background: #f0c93d;
-    color: #101827;
-  }
-
-  .release-calendar-event {
-    background: rgba(12, 18, 32, 0.52);
-    border-left-color: #f0c93d;
-  }
-
-  .release-calendar-event-app {
-    color: #ecf1f8;
-  }
-
-  .release-calendar-event-version {
-    color: #d4d9e2;
+    background: rgba(73, 88, 99, 0.15);
+    color: #a4b6bf;
   }
 }
 
 @media (max-width: 960px) {
-  .release-calendar-view {
-    padding: 16px;
+  .page-container {
+    min-height: calc(100dvh - 192px);
+    gap: 10px;
   }
 
-  .release-calendar-panel {
-    padding: 16px;
+  .filter-toolbar {
+    gap: 8px;
+    padding: 10px;
   }
 
-  .release-calendar-day {
-    min-height: 110px;
-    padding: 8px 6px;
+  .toolbar-field,
+  .env-select-field {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 calc(50% - 8px);
   }
 
-  .release-calendar-event-app {
-    font-size: 0.68rem;
+  .bulk-deploy-btn,
+  .countdown-btn {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
   }
 
-  .release-calendar-event-version {
-    font-size: 0.62rem;
+  .desktop-divider {
+    display: none;
+  }
+
+  :host ::ng-deep .mat-mdc-cell {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-container {
+    min-height: calc(100dvh - 202px);
+  }
+
+  .toolbar-field,
+  .env-select-field,
+  .bulk-deploy-btn,
+  .countdown-btn {
+    flex-basis: 100%;
+  }
+
+  :host ::ng-deep {
+    .mat-column-name {
+      min-width: 210px !important;
+    }
+
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      padding: 8px 8px;
+    }
+  }
+
+  .countdown-name-column {
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
   }
 }

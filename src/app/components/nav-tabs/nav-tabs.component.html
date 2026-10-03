@@ -1,17 +1,15 @@
 <app-release-calendar *ngIf="currentView === 'calendar'"></app-release-calendar>
 
 <mat-tab-group
+  class="project-tabs"
   *ngIf="currentView === 'projects'"
   mat-stretch-tabs="false"
   mat-align-tabs="start"
-  animationDuration="0ms"
->
+  animationDuration="0ms">
   <mat-tab *ngFor="let project of projects">
     <ng-template mat-tab-label>
       <mat-icon svgIcon="tag"></mat-icon>
-      <span
-        ><b>{{ project.displayName }}</b></span
-      >
+      <span><b>{{ project.displayName }}</b></span>
     </ng-template>
     <ng-template matTabContent>
       <app-project [projectName]="project.name"></app-project>

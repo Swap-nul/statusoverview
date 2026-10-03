@@ -1,73 +1,64 @@
 <mat-toolbar class="custom-mat-toolbar">
-  <img src="../../../assets/images/SO-logo.png" class="logo" />
-  <span class="toolbar-spacer">
-    <div style="vertical-align: baseline">Status Overview</div>
-  </span>
-
-  <a href="https://github.com/swapnil512/statusoverview" target="_blank" rel="noopener noreferrer" title="Go to Repository" style="color: rgb(210, 210, 210); text-decoration: none"
-    class="repoText">
-    <mat-icon style="height: 40px; width: 40px" svgIcon="github_repo"></mat-icon>
-    GitHub
-  </a>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="toggleDashboardView()"
-    class="release-calendar-toggle-btn"
-    [matTooltip]="currentView === 'calendar' ? 'Return to the project tabs' : 'Show the global release calendar for all projects'">
-    <mat-icon>{{ currentView === 'calendar' ? 'dashboard' : 'calendar_month' }}</mat-icon>
-    {{ currentView === 'calendar' ? 'Projects View' : 'Release Calendar' }}
-  </button>
-
-  <!-- User Authentication Section -->
-  <div class="auth-section" *ngIf="isAuthenticated">
-    <span class="username">{{ username }}</span>
-    <span class="provider-badge" *ngIf="authProvider">
-      <small>({{ getProviderDisplayName() }})</small>
-    </span>
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
-      <mat-icon svgIcon="account"></mat-icon>
-    </button>
-    <mat-menu #userMenu="matMenu">
-      <div class="user-info-header" mat-menu-item disabled>
-        <strong>{{ username }}</strong>
-        <br>
-        <small>{{ userInfo?.email }}</small>
-        <br>
-        <small class="provider-info">Authenticated via {{ getProviderDisplayName() }}</small>
-      </div>
-      <mat-divider></mat-divider>
-      
-      <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'keycloak'">
-        <mat-icon svgIcon="account-settings"></mat-icon>
-        <span>KeyClock Portal</span>
-      </button>
-      
-      <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'azure'">
-        <mat-icon svgIcon="account-settings"></mat-icon>
-        <span>Azure Portal</span>
-      </button>
-      
-      <button mat-menu-item (click)="logout()">
-        <mat-icon svgIcon="logout"></mat-icon>
-        <span>Logout</span>
-      </button>
-
-      <!-- <div class="user-roles" *ngIf="userRoles.length > 0">
-        <span class="roles-label">Roles:</span>
-        <mat-chip-set>
-          <mat-chip *ngFor="let role of userRoles" class="roles">{{ role }}</mat-chip>
-        </mat-chip-set>
-      </div> -->
-    </mat-menu>
+  <div class="toolbar-brand">
+    <img src="../../../assets/images/SO-logo.png" class="logo" alt="Status Overview logo" />
+    <div class="brand-copy">
+      <div class="brand-title">Service Matrix</div>
+      <div class="brand-subtitle">Live deployment overview</div>
+    </div>
   </div>
 
-  <div class="theme-toggle">
-    <mat-icon *ngIf="mode == false" svgIcon="light"></mat-icon>
-    <mat-icon *ngIf="mode == true" svgIcon="dark"></mat-icon>
-    <input class="theme-toggle__input" type="checkbox" [formControl]="toggleControl" id="switch" />
-    <label class="theme-toggle__label" for="switch">Toggle</label>
+  <div class="toolbar-actions">
+    <a
+      href="https://github.com/swapnil512/statusoverview"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Go to repository"
+      class="repo-link">
+      <mat-icon svgIcon="github_repo"></mat-icon>
+      <span>GitHub</span>
+    </a>
+
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="toggleDashboardView()"
+      class="release-calendar-toggle-btn"
+      [matTooltip]="currentView === 'calendar' ? 'Return to the project tabs' : 'Show the global release calendar for all projects'">
+      <mat-icon>{{ currentView === 'calendar' ? 'dashboard' : 'calendar_month' }}</mat-icon>
+      {{ currentView === 'calendar' ? 'Projects View' : 'Release Calendar' }}
+    </button>
+
+    <div class="auth-section" *ngIf="isAuthenticated">
+      <span class="username">{{ username }}</span>
+      <span class="provider-badge" *ngIf="authProvider">({{ getProviderDisplayName() }})</span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn" aria-label="Open user menu">
+        <mat-icon svgIcon="account"></mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div class="user-info-header" mat-menu-item disabled>
+          <strong>{{ username }}</strong>
+          <br />
+          <small>{{ userInfo?.email }}</small>
+          <br />
+          <small class="provider-info">Authenticated via {{ getProviderDisplayName() }}</small>
+        </div>
+        <mat-divider></mat-divider>
+
+        <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'keycloak'">
+          <mat-icon svgIcon="account-settings"></mat-icon>
+          <span>Keycloak Portal</span>
+        </button>
+
+        <button mat-menu-item (click)="goToAccountManagement()" *ngIf="authProvider === 'azure'">
+          <mat-icon svgIcon="account-settings"></mat-icon>
+          <span>Azure Portal</span>
+        </button>
+
+        <button mat-menu-item (click)="logout()">
+          <mat-icon svgIcon="logout"></mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
   </div>
 </mat-toolbar>

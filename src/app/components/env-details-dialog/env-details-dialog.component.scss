@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e8f0f4;
+  margin: 0;
+}
+
+.dialog-content {
+  padding-top: 8px;
+  overflow: visible;
+}
+
+.table-shell {
+  border: 1px solid rgba(90, 120, 132, 0.3);
+  border-radius: 10px;
+  overflow: auto;
+  max-height: calc(100dvh - 220px);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 158, 170, 0.82) rgba(30, 45, 53, 0.78);
+  background:
+    radial-gradient(circle at right top, rgba(81, 248, 175, 0.1), transparent 35%),
+    rgba(11, 20, 26, 0.82);
+}
+
+.table-shell::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.table-shell::-webkit-scrollbar-track {
+  background: rgba(30, 45, 53, 0.78);
+  border-radius: 999px;
+}
+
+.table-shell::-webkit-scrollbar-thumb {
+  background: rgba(125, 158, 170, 0.82);
+  border: 3px solid rgba(30, 45, 53, 0.78);
+  border-radius: 999px;
+}
+
+.env-table {
+  width: 100%;
+  min-width: 700px;
+  background: transparent;
+}
+
+.type-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.url-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  button {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mat-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.url-text {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialog-actions {
+  border-top: 1px solid rgba(90, 120, 132, 0.3);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.close-btn {
+  border-radius: 8px;
+  background: rgba(28, 41, 48, 0.9);
+  color: #e7eef2;
+}
+
+:host ::ng-deep {
+  .mat-mdc-header-row {
+    background: rgba(21, 31, 38, 0.98);
+  }
+
+  .mat-mdc-header-cell {
+    color: #9fb5bf;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    border-bottom-color: rgba(93, 122, 136, 0.3) !important;
+  }
+
+  .mat-mdc-cell {
+    color: #e7eff3;
+    border-bottom-color: rgba(93, 122, 136, 0.16) !important;
+  }
+}

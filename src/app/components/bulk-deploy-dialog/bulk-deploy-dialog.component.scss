@@ -1,373 +1,233 @@
 .bulk-deploy-dialog {
-  width: 1000px; // Increased width to accommodate new columns
+  width: 1000px;
   max-width: 95vw;
+}
 
-  .dialog-content {
-    padding: 20px;
-    max-height: 70vh;
-    overflow-y: auto;
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e8f0f4;
+  margin: 0;
+}
+
+.dialog-content {
+  padding: 14px;
+  max-height: 72vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.environment-selection,
+.apps-section {
+  border: 1px solid rgba(93, 122, 136, 0.3);
+  border-radius: 10px;
+  padding: 14px;
+  background:
+    radial-gradient(circle at top right, rgba(84, 233, 169, 0.1), transparent 36%),
+    rgba(12, 21, 27, 0.76);
+}
+
+h3 {
+  margin: 0 0 12px;
+  color: #dbe8ef;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.env-dropdowns {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.env-dropdown {
+  flex: 1;
+  min-width: 220px;
+}
+
+.arrow-icon {
+  color: #9fb5bf;
+}
+
+.apps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.filter-field {
+  width: 260px;
+}
+
+.table-container {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid rgba(93, 122, 136, 0.3);
+  border-radius: 10px;
+  background: rgba(10, 17, 23, 0.86);
+}
+
+.apps-table {
+  width: 100%;
+  min-width: 840px;
+}
+
+.version-chip,
+.branch-chip,
+.to-version-chip,
+.to-branch-chip {
+  font-size: 0.72rem;
+  border-radius: 999px;
+  height: 26px;
+  border: 1px solid transparent;
+}
+
+.version-chip {
+  background: rgba(64, 196, 140, 0.2);
+  color: #8ef0bf;
+  border-color: rgba(64, 196, 140, 0.38);
+}
+
+.to-version-chip {
+  background: rgba(242, 191, 74, 0.22);
+  color: #ffd673;
+  border-color: rgba(242, 191, 74, 0.4);
+}
+
+.branch-chip {
+  background: rgba(89, 174, 255, 0.2);
+  color: #9fd3ff;
+  border-color: rgba(89, 174, 255, 0.38);
+}
+
+.to-branch-chip {
+  background: rgba(199, 116, 255, 0.2);
+  color: #d5a6ff;
+  border-color: rgba(199, 116, 255, 0.35);
+}
+
+.branch-chip mat-icon,
+.to-branch-chip mat-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+}
+
+.na-text {
+  color: #8ea3ad;
+  font-style: italic;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 20px;
+  color: #9db0ba;
+}
+
+.selection-summary {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(66, 190, 136, 0.4);
+  border-radius: 8px;
+  background: rgba(33, 74, 57, 0.44);
+  color: #9af0c5;
+  padding: 10px 12px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 12px;
+  color: #c3d3da;
+}
+
+.dialog-actions {
+  padding: 14px 22px;
+  border-top: 1px solid rgba(93, 122, 136, 0.3);
+}
+
+.cancel-btn {
+  color: #b9c9d0;
+}
+
+.deploy-btn {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+:host ::ng-deep {
+  .mat-mdc-text-field-wrapper {
+    border-radius: 8px !important;
+    background: rgba(17, 28, 35, 0.92) !important;
   }
 
-  .environment-selection {
-    margin-bottom: 30px;
-
-    h3 {
-      margin: 0 0 16px 0;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .env-dropdowns {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      .env-dropdown {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .arrow-icon {
-        color: #666;
-        font-size: 24px;
-        height: 24px;
-        width: 24px;
-      }
-    }
+  .mdc-floating-label,
+  .mat-mdc-select-value-text,
+  .mat-mdc-input-element {
+    color: #d8e6ed !important;
   }
 
-  .apps-section {
-    .apps-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-
-      h3 {
-        margin: 0;
-        color: #333;
-        font-weight: 500;
-      }
-
-      .filter-field {
-        width: 250px;
-      }
-    }
-
-    .table-container {
-      max-height: 400px;
-      overflow: auto; // Allow both horizontal and vertical scrolling
-      border: 1px solid #e0e0e0;
-      border-radius: 4px;
-
-      .apps-table {
-        width: 100%;
-        min-width: 800px; // Ensure minimum width for all columns
-
-        .mat-column-select {
-          width: 60px;
-        }
-
-        .mat-column-appName {
-          width: 180px;
-        }
-
-        .mat-column-currentVersion {
-          width: 140px;
-        }
-
-        .mat-column-currentBranch {
-          width: 140px;
-        }
-
-        .mat-column-toEnvVersion {
-          width: 140px;
-        }
-
-        .mat-column-toEnvBranch {
-          width: 140px;
-        }
-
-        .mat-header-row {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          background-color: #f5f5f5;
-        }
-
-        .mat-header-cell {
-          background-color: #f5f5f5;
-          font-weight: 600;
-          color: #333;
-          border-bottom: 2px solid #e0e0e0;
-        }
-
-        .mat-row {
-          cursor: pointer;
-          transition: background-color 0.2s ease;
-
-          &:hover {
-            background-color: #f9f9f9;
-          }
-
-          &.selected-row {
-            background-color: #e3f2fd;
-          }
-        }
-
-        .version-chip {
-          background-color: #4caf50;
-          color: white;
-          font-size: 12px;
-          height: 24px;
-          line-height: 24px;
-        }
-
-        .to-version-chip {
-          background-color: #ff9800;
-          color: white;
-          font-size: 12px;
-          height: 24px;
-          line-height: 24px;
-        }
-
-        .branch-chip {
-          background-color: #2196f3;
-          color: white;
-          font-size: 12px;
-          height: 24px;
-          line-height: 24px;
-
-          mat-icon {
-            font-size: 14px;
-            height: 14px;
-            width: 14px;
-            margin-right: 4px;
-          }
-        }
-
-        .to-branch-chip {
-          background-color: #9c27b0;
-          color: white;
-          font-size: 12px;
-          height: 24px;
-          line-height: 24px;
-
-          mat-icon {
-            font-size: 14px;
-            height: 14px;
-            width: 14px;
-            margin-right: 4px;
-          }
-        }
-
-        .na-text {
-          color: #999;
-          font-style: italic;
-        }
-      }
-
-      .no-data {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 40px;
-        color: #666;
-
-        mat-icon {
-          font-size: 48px;
-          height: 48px;
-          width: 48px;
-          margin-bottom: 16px;
-          color: #999;
-        }
-
-        p {
-          margin: 0;
-          font-size: 14px;
-        }
-      }
-    }
-
-    .selection-summary {
-      display: flex;
-      align-items: center;
-      margin-top: 16px;
-      padding: 12px;
-      background-color: #e8f5e8;
-      border-radius: 4px;
-      color: #2e7d32;
-
-      mat-icon {
-        margin-right: 8px;
-        color: #4caf50;
-      }
-
-      span {
-        font-weight: 500;
-      }
-    }
+  .mat-mdc-header-row {
+    background: rgba(21, 31, 38, 0.98);
   }
 
-  .loading-container {
-    display: flex;
+  .mat-mdc-header-cell {
+    color: #9fb5bf;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    border-bottom-color: rgba(93, 122, 136, 0.3) !important;
+  }
+
+  .mat-mdc-cell {
+    color: #e7eff3;
+    border-bottom-color: rgba(93, 122, 136, 0.16) !important;
+  }
+
+  .mat-mdc-row {
+    cursor: pointer;
+  }
+
+  .mat-mdc-row:hover {
+    background: rgba(76, 218, 154, 0.08);
+  }
+
+  .selected-row {
+    background: rgba(59, 157, 117, 0.2) !important;
+  }
+}
+
+@media (max-width: 840px) {
+  .env-dropdowns {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-
-    mat-progress-spinner {
-      margin-bottom: 16px;
-    }
-
-    p {
-      margin: 0;
-      color: #666;
-      font-size: 14px;
-    }
+    align-items: stretch;
   }
 
-  .dialog-actions {
-    padding: 16px 24px;
-    border-top: 1px solid #e0e0e0;
-
-    button {
-      margin-left: 8px;
-
-      mat-icon {
-        margin-right: 8px;
-      }
-    }
-  }
-}
-
-// Dark theme styles
-:host-context(.darkMode) .bulk-deploy-dialog {
-  .environment-selection {
-    h3 {
-      color: #fff;
-    }
-
-    .env-dropdowns {
-      .arrow-icon {
-        color: #ccc;
-      }
-    }
+  .arrow-icon {
+    transform: rotate(90deg);
+    align-self: center;
   }
 
-  .apps-section {
-    .apps-header {
-      h3 {
-        color: #fff;
-      }
-    }
-
-    .table-container {
-      border-color: #555;
-
-      .apps-table {
-        .mat-header-row {
-          background-color: #424242;
-        }
-
-        .mat-header-cell {
-          background-color: #424242;
-          color: #fff;
-          border-bottom-color: #555;
-        }
-
-        .mat-row {
-          &:hover {
-            background-color: #555;
-          }
-
-          &.selected-row {
-            background-color: #1e3a5f;
-          }
-        }
-
-        .na-text {
-          color: #aaa;
-        }
-      }
-
-      .no-data {
-        color: #ccc;
-
-        mat-icon {
-          color: #666;
-        }
-      }
-    }
-
-    .selection-summary {
-      background-color: #2d5a2d;
-      color: #81c784;
-
-      mat-icon {
-        color: #4caf50;
-      }
-    }
+  .apps-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .loading-container {
-    p {
-      color: #ccc;
-    }
-  }
-
-  .dialog-actions {
-    border-top-color: #555;
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .bulk-deploy-dialog {
-    width: 95vw;
-
-    .environment-selection .env-dropdowns {
-      flex-direction: column;
-      gap: 16px;
-
-      .arrow-icon {
-        transform: rotate(90deg);
-      }
-    }
-
-    .apps-section .apps-header {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 16px;
-
-      .filter-field {
-        width: 100%;
-      }
-    }
-
-    .table-container {
-      .apps-table {
-        .mat-column-appName {
-          width: 150px;
-        }
-
-        .mat-column-currentVersion {
-          width: 120px;
-        }
-
-        .mat-column-currentBranch {
-          width: 120px;
-        }
-
-        .mat-column-toEnvVersion {
-          width: 120px;
-        }
-
-        .mat-column-toEnvBranch {
-          width: 120px;
-        }
-      }
-    }
+  .filter-field {
+    width: 100%;
   }
 }

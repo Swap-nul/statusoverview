@@ -1,43 +1,40 @@
-<div style="padding-top: 8px;">
-  <span matBadge="🠉" matBadgeOverlap="false" matBadgePosition="before" matBadgeSize="small"
-    [matBadgeHidden]="appDeployDetails?.tag === appDeployDetails?.latest_build_tag"
-    (click)="copyToClipboard(appDeployDetails.tag)">
-    <b>{{ appDeployDetails ? appDeployDetails.tag : " " }}</b>
-  </span>
-</div>
+<div class="deployment-tile">
+  <div class="tag-row">
+    <span
+      class="version-tag"
+      matBadge="NEW"
+      matBadgeOverlap="false"
+      matBadgePosition="before"
+      matBadgeSize="small"
+      [matBadgeHidden]="!appDeployDetails.tag || appDeployDetails.tag === appDeployDetails.latest_build_tag"
+      (click)="copyToClipboard(appDeployDetails.tag)">
+      <b>{{ appDeployDetails.tag || "--" }}</b>
+    </span>
+  </div>
 
-<div>
-  <mat-basic-chip style="font-style: italic !important; font-size: 12px !important;" class="branch_style">{{
-    appDeployDetails ?
-    appDeployDetails?.branch : " " }}</mat-basic-chip>
-</div>
+  <div class="tile-meta-row">
+    <mat-basic-chip class="branch-style">
+      {{ appDeployDetails.branch || "no-branch" }}
+    </mat-basic-chip>
 
-<div *ngIf="appDeployDetails?.image_deployed_at">
-  <mat-basic-chip style="font-size: 12px !important;">
-    {{ (((appDeployDetails?.image_deployed_at != null && appDeployDetails?.image_deployed_at != 'null' )?
-    appDeployDetails?.image_deployed_at : '') | date: 'mediumDate'
-    : 'Canada/Central') + ' '
-    + (((appDeployDetails?.image_deployed_at != null && appDeployDetails?.image_deployed_at != 'null' ) ?
-    appDeployDetails?.image_deployed_at : '') | date: 'shortTime' :
-    'Canada/Central') }}
-  </mat-basic-chip>
-</div>
+    <mat-basic-chip class="date-chip" *ngIf="appDeployDetails.image_deployed_at">
+      {{ (((appDeployDetails.image_deployed_at != null && appDeployDetails.image_deployed_at != 'null' )?
+      appDeployDetails.image_deployed_at : '') | date: 'mediumDate'
+      : 'Canada/Central') + ' '
+      + (((appDeployDetails.image_deployed_at != null && appDeployDetails.image_deployed_at != 'null' ) ?
+      appDeployDetails.image_deployed_at : '') | date: 'shortTime' :
+      'Canada/Central') }}
+    </mat-basic-chip>
+    <mat-basic-chip class="date-chip" *ngIf="!appDeployDetails.image_deployed_at">no-deploy-time</mat-basic-chip>
+  </div>
 
-<div>
-  <span>
-    <mat-icon matTooltip="Healthy" matTooltipPosition="below" *ngIf="appDeployDetails?.status === 'Healthy'"
-      svgIcon="greenHeart"></mat-icon>
-    <mat-icon matTooltip="Progressing" matTooltipPosition="below" *ngIf="appDeployDetails?.status === 'Progressing'"
-      svgIcon="progress"></mat-icon>
-    <mat-icon matTooltip="Degraded" matTooltipPosition="below" *ngIf="appDeployDetails?.status === 'Degraded'"
-      svgIcon="brokenHeart"></mat-icon>
-    <mat-icon matTooltip="Null" matTooltipPosition="below" *ngIf="appDeployDetails?.status === ''"
-      svgIcon="nullStatus"></mat-icon>
-    <mat-icon matTooltip="More info" matTooltipPosition="below" *ngIf="appDeployDetails?.status"
-      (click)="openDetailsDialog(env, appDeployDetails, app)" svgIcon="info"></mat-icon>
-    <mat-icon matTooltip="open ArgoCD" matTooltipPosition="below" (click)="goToArgoCD(app.app_name,env)"
-      *ngIf="appDeployDetails?.status" svgIcon="argo"></mat-icon>
-    <mat-icon matTooltip="open Kibana" matTooltipPosition="below" (click)="goToKibana(app.app_name,env,app.portfolio)"
-      *ngIf="appDeployDetails?.status" svgIcon="kibana"></mat-icon>
-  </span>
+  <div class="tile-actions">
+    <mat-icon matTooltip="Healthy" matTooltipPosition="below" *ngIf="appDeployDetails.status === 'Healthy'" svgIcon="greenHeart"></mat-icon>
+    <mat-icon matTooltip="Progressing" matTooltipPosition="below" *ngIf="appDeployDetails.status === 'Progressing'" svgIcon="progress"></mat-icon>
+    <mat-icon matTooltip="Degraded" matTooltipPosition="below" *ngIf="appDeployDetails.status === 'Degraded'" svgIcon="brokenHeart"></mat-icon>
+    <mat-icon matTooltip="Null" matTooltipPosition="below" *ngIf="appDeployDetails.status === ''" svgIcon="nullStatus"></mat-icon>
+    <mat-icon matTooltip="More info" matTooltipPosition="below" *ngIf="appDeployDetails.status" (click)="openDetailsDialog(env, appDeployDetails, app)" svgIcon="info"></mat-icon>
+    <mat-icon matTooltip="Open ArgoCD" matTooltipPosition="below" (click)="goToArgoCD(app.app_name,env)" *ngIf="appDeployDetails.status" svgIcon="argo"></mat-icon>
+    <mat-icon matTooltip="Open Kibana" matTooltipPosition="below" (click)="goToKibana(app.app_name,env,app.portfolio)" *ngIf="appDeployDetails.status" svgIcon="kibana"></mat-icon>
+  </div>
 </div>

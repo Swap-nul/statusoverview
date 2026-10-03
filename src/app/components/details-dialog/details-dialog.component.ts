@@ -44,6 +44,11 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
     this.applicationService
       .getApplicationAppId(this.dialogData.app_name)
       .subscribe((appIds) => {
+        if (!appIds?.length || !this.dialogData.deployDetails.branch) {
+          this.dataApp.next([]);
+          return;
+        }
+
         this.applicationService
           .getAllBuildsForAppAndBranch(
             appIds[0].id,
@@ -51,15 +56,11 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
           )
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe((builds) => {
-            builds.forEach((build) => {
-              const parsedDate = new Date(build.created_at);
-              build.created_at = this.datePipe.transform(
-                parsedDate,
-                'yyyy-MM-dd HH:mm:ss'
-              )!;
-              this.dataTableBuilds.push(build);
-              this.dataApp.next(this.dataTableBuilds);
-            });
+            this.dataTableBuilds = builds.map((build) => ({
+              ...build,
+              created_at: this.formatDateTime(build.created_at),
+            }));
+            this.dataApp.next(this.dataTableBuilds);
           });
       });
   }
@@ -70,11 +71,41 @@ export class DetailsDialogComponent implements OnInit, OnDestroy {
   }
 
   copyToClipboard(tag: string) {
+    if (!tag) {
+      return;
+    }
     this.clipboard.copy(tag);
     this.snackBar.open('Copied to clipboard', tag, { duration: 1000 });
   }
 
   goToLink(appName: string, env: string) {
     this.applicationService.goToArgoCD(appName, env);
+  }
+
+  safe(value: unknown, fallback: string = '--'): string {
+    if (value === null || value === undefined) {
+      return fallback;
+    }
+
+    const text = String(value).trim();
+    if (!text || text.toLowerCase() === 'null' || text.toLowerCase() === 'undefined') {
+      return fallback;
+    }
+
+    return text;
+  }
+
+  formatDateTime(value: string): string {
+    const sanitized = this.safe(value, '');
+    if (!sanitized) {
+      return '--';
+    }
+
+    const parsedDate = new Date(sanitized);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return this.safe(value);
+    }
+
+    return this.datePipe.transform(parsedDate, 'yyyy-MM-dd HH:mm:ss') || this.safe(value);
   }
 }

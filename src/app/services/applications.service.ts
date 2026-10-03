@@ -30,28 +30,31 @@ export class ApplicationsService {
   }
 
   async fillLatestBuildTagForEachEnv(app: App): Promise<App> {
-    return new Promise<App>(async (resolve, reject) => {
-      const config: any = await firstValueFrom(this.http.get('/assets/config.json'));
-      const envKeys: string[] = config.EnvList;
-      const appKeys = Object.keys(app);
-      const appObjects = Object.values(app);
-      appKeys.forEach((appKey, index) => {
-        if (envKeys.includes(appKey.toString()) && appObjects[index] != undefined) {
-          if (!(appObjects[index].branch == undefined)) {
-            const branch = appObjects[index].branch.replace(/\//g, '%2F');
-            const endpoint =
-              '/builds?branch=like.*' + branch + '*&image=like.*' + app.app_name + '*&order=build_id.desc';
-            this.postgrestHttpService.get(endpoint).subscribe((builds: Builds[]) => {
-              if (builds.length != 0) {
-                appObjects[index].latest_build_tag = builds[0].tag;
-              }
-            });
-          }
+    const config: any = await firstValueFrom(this.http.get('/assets/config.json'));
+    const envKeys: string[] = config.EnvList;
+    const appRecord = app as unknown as Record<string, DeployDetails | string | object | null | undefined>;
+
+    const latestBuildLookups = Object.keys(appRecord)
+      .filter((appKey) => envKeys.includes(appKey))
+      .map(async (appKey) => {
+        const deployDetails = appRecord[appKey] as DeployDetails | null | undefined;
+
+        if (!deployDetails?.branch) {
+          return;
+        }
+
+        const branch = deployDetails.branch.replace(/\//g, '%2F');
+        const endpoint = '/builds?branch=like.*' + branch + '*&image=like.*' + app.app_name + '*&order=build_id.desc';
+        const builds = await firstValueFrom(this.postgrestHttpService.get(endpoint) as Observable<Builds[]>);
+
+        if (builds.length !== 0) {
+          deployDetails.latest_build_tag = builds[0].tag;
         }
       });
-      app.app_repo = config.Repository[app.app_name];
-      resolve(app);
-    });
+
+    await Promise.all(latestBuildLookups);
+    app.app_repo = config.Repository[app.app_name];
+    return app;
   }
 
   getFilteredAppsByProjectAndDeployments(projectName: string): Observable<App[]> {

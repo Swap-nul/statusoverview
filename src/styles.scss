@@ -8,20 +8,6 @@ $angular-primary: custom-palettes.$blue-palette;
 $angular-accent: custom-palettes.$yellow-palette;
 $angular-warn: custom-palettes.$grey-palette;
 
-// Define light theme
-$angular-default-theme: mat.define-light-theme(
-  (
-    color: (
-      primary: $angular-primary,
-      accent: $angular-accent,
-      warn: $angular-warn,
-    ),
-  )
-);
-
-// Apply the light theme
-@include mat.all-component-themes($angular-default-theme);
-
 // Define dark theme
 $angular-dark-theme: mat.define-dark-theme(
   (
@@ -33,29 +19,128 @@ $angular-dark-theme: mat.define-dark-theme(
   )
 );
 
-// Apply the dark theme in `.darkMode`
-.darkMode {
-  @include mat.all-component-colors($angular-dark-theme);
-}
+// Apply dark theme globally (dark-only app)
+@include mat.all-component-themes($angular-dark-theme);
 
 // Body background handling
 body {
-  background-color: #fafafa; // Light theme default
+  background-color: #070d10;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Inter, Roboto, "Helvetica Neue", sans-serif;
+  color: #deebf1;
 }
 
-body.darkMode {
-  background-color: #303030; // Dark theme background
+* {
+  box-sizing: border-box;
 }
 
-table th,
-table td {
-  border-right: 1px solid rgba(100, 100, 100, 0.5); /* Adjust the color and opacity as needed */
-  border-radius: 12px;
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-table th:last-child,
-table td:last-child {
-  border-right: none; /* Remove the border from the last column */
+::-webkit-scrollbar-track {
+  background: rgba(65, 84, 95, 0.16);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(104, 126, 136, 0.56);
+  border-radius: 999px;
+}
+
+body ::-webkit-scrollbar-track {
+  background: rgba(62, 79, 88, 0.3);
+}
+
+body ::-webkit-scrollbar-thumb {
+  background: rgba(119, 151, 163, 0.45);
+}
+
+.refined-details-dialog {
+  height: min(92dvh, 980px) !important;
+  max-height: calc(100dvh - 24px) !important;
+}
+
+.refined-details-dialog .mat-mdc-dialog-container,
+.refined-details-dialog .mdc-dialog__container {
+  height: 100%;
+  max-height: 100%;
+}
+
+.refined-details-dialog .mdc-dialog__surface,
+.refined-bulk-deploy-dialog .mdc-dialog__surface,
+.refined-env-details-dialog .mdc-dialog__surface {
+  border-radius: 12px !important;
+  border: 1px solid rgba(90, 120, 132, 0.36);
+  background:
+    radial-gradient(circle at right top, rgba(77, 235, 169, 0.12), transparent 34%),
+    #0d171d !important;
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: #e6eff3;
+  max-height: calc(100dvh - 24px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.refined-details-dialog .mdc-dialog__surface {
+  height: 100%;
+}
+
+.refined-details-dialog .mat-mdc-dialog-inner-container {
+  max-height: 100dvh;
+}
+
+.refined-details-dialog .mat-mdc-dialog-title,
+.refined-bulk-deploy-dialog .mat-mdc-dialog-title,
+.refined-env-details-dialog .mat-mdc-dialog-title {
+  flex: 0 0 auto;
+}
+
+.refined-details-dialog .mat-mdc-dialog-container .mdc-dialog__content,
+.refined-bulk-deploy-dialog .mat-mdc-dialog-container .mdc-dialog__content,
+.refined-env-details-dialog .mat-mdc-dialog-container .mdc-dialog__content {
+  color: #d9e6ec;
+}
+
+.refined-details-dialog .mat-mdc-dialog-container .mdc-dialog__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none !important;
+  overflow: hidden !important;
+  overscroll-behavior: contain;
+}
+
+.refined-bulk-deploy-dialog .mat-mdc-dialog-container .mdc-dialog__content {
+  overflow: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 158, 170, 0.78) rgba(30, 45, 53, 0.78);
+}
+
+.refined-env-details-dialog .mat-mdc-dialog-container .mdc-dialog__content {
+  overflow: visible !important;
+}
+
+.refined-bulk-deploy-dialog .mat-mdc-dialog-container .mdc-dialog__content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.refined-bulk-deploy-dialog .mat-mdc-dialog-container .mdc-dialog__content::-webkit-scrollbar-track {
+  background: rgba(30, 45, 53, 0.78);
+  border-radius: 999px;
+}
+
+.refined-bulk-deploy-dialog .mat-mdc-dialog-container .mdc-dialog__content::-webkit-scrollbar-thumb {
+  background: rgba(125, 158, 170, 0.78);
+  border: 3px solid rgba(30, 45, 53, 0.78);
+  border-radius: 999px;
+}
+
+.refined-details-dialog .mat-mdc-dialog-actions,
+.refined-bulk-deploy-dialog .mat-mdc-dialog-actions,
+.refined-env-details-dialog .mat-mdc-dialog-actions {
+  flex: 0 0 auto;
 }

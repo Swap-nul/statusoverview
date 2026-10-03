@@ -1,4 +1,63 @@
-.mat-icon {
-  padding-right: 20px;
-  margin-right: 8px;
+:host {
+  display: block;
+  padding: 0 14px 16px;
+}
+
+:host ::ng-deep .project-tabs {
+  .mat-mdc-tab-header {
+    border: 1px solid rgba(131, 147, 155, 0.2);
+    border-radius: 8px;
+    background: rgba(10, 18, 24, 0.56);
+    margin: 10px 0 14px;
+    padding: 0 8px;
+  }
+
+  .mat-mdc-tab-label-container {
+    overflow-x: auto;
+  }
+
+  .mdc-tab {
+    min-width: 144px;
+    height: 46px;
+    padding: 0 14px;
+  }
+
+  .mdc-tab__text-label {
+    color: #c6d5dc;
+    font-size: 0.84rem;
+    letter-spacing: 0;
+  }
+
+  .mdc-tab .mat-icon {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .mdc-tab--active .mdc-tab__text-label {
+    color: #78f3b4;
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: #57e2a1;
+  }
+}
+
+@media (max-width: 900px) {
+  :host {
+    padding: 0 8px 10px;
+  }
+
+  :host ::ng-deep .project-tabs {
+    .mat-mdc-tab-header {
+      margin: 8px 0 10px;
+      padding: 0 4px;
+    }
+
+    .mdc-tab {
+      min-width: 120px;
+      padding: 0 10px;
+      height: 42px;
+    }
+  }
 }

@@ -1,11 +1,99 @@
-branch_style {
-  font-size: 10px;
-  text-align: left;
-  justify-content: flex-end;
+.deployment-tile {
+  border: 1px solid rgba(102, 122, 133, 0.26);
+  border-radius: 8px;
+  padding: 8px 9px;
+  background:
+    radial-gradient(circle at right top, rgba(73, 230, 168, 0.08), transparent 36%),
+    rgba(18, 29, 35, 0.74);
+  min-height: 86px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.mat-badge-content {
-  background: #ffcd33;
-  color: #000;
-  font-size: small;
+.tag-row {
+  display: flex;
+  align-items: center;
+}
+
+.version-tag {
+  color: #eaf2f7;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.tile-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.branch-style,
+.date-chip {
+  font-size: 0.62rem;
+  color: #9cb1bb;
+  background: rgba(36, 52, 61, 0.75);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.branch-style {
+  font-style: italic;
+}
+
+.tile-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+
+  .mat-icon {
+    width: 18px;
+    height: 18px;
+    color: #b4c4cc;
+    cursor: pointer;
+    transition: transform 0.16s ease;
+  }
+
+  .mat-icon:hover {
+    transform: translateY(-1px);
+  }
+}
+
+:host ::ng-deep .mat-badge-content {
+  background: #f2c94c;
+  color: #10161a;
+  border: 1px solid rgba(255, 229, 139, 0.9);
+  box-shadow: 0 0 0 2px rgba(15, 23, 28, 0.95);
+  font-size: 0.56rem;
+  font-weight: 800;
+  min-width: 28px;
+  height: 18px;
+  line-height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  transform: translate(-12px, -8px);
+}
+
+:host-context(.darkMode) {
+  .deployment-tile {
+    border-color: rgba(97, 131, 145, 0.34);
+    background:
+      radial-gradient(circle at right top, rgba(73, 230, 168, 0.09), transparent 38%),
+      rgba(12, 22, 28, 0.86);
+  }
+}
+
+@media (max-width: 700px) {
+  .deployment-tile {
+    min-height: 78px;
+    padding: 7px;
+  }
+
+  .version-tag {
+    font-size: 0.84rem;
+  }
 }
