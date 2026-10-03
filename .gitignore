@@ -133,3 +133,7 @@ dist
 
 #angular
 .angular
+
+
+#ignore the backend for now
+backend/

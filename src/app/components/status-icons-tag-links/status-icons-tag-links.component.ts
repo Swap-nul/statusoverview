@@ -66,7 +66,6 @@ export class StatusIconsTagLinksComponent {
     this.dialog.open(DetailsDialogComponent, {
       data,
       width: '1080px',
-      height: '92vh',
       maxWidth: '96vw',
       maxHeight: 'calc(100vh - 24px)',
       panelClass: 'refined-details-dialog',
